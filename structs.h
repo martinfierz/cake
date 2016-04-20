@@ -9,8 +9,6 @@
 #define sint8  signed char
 
 
-
-
 struct coor					/* coordinate structure for board coordinates */
 	{
 	int x;

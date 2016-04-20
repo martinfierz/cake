@@ -10,8 +10,11 @@
 // prototypes for all functions in cakepp.c
 void absolutehashkey(POSITION *p, HASH *hash);
 int allscoresearch(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, MOVE *best);
+int bitcount(int32 n);
+static int booklookup(POSITION *p, int *value, int depth, int32 *best, int *bestindex, char str[256]);
 int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maxtime, int depthtosearch,int32 maxnodes, char str[1024], int *playnow, int logging,int reset);
 void countmaterial(POSITION *p, MATERIALCOUNT *m);
+int exitcake();
 static int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, int alpha, int beta, MOVE *best);
 static void getpv(SEARCHINFO *si, POSITION *p, char *str);
 int hashlookup(SEARCHINFO *si, int *value, int *valuetype, int depth, int32 *bestindex, int color, int *ispvnode);
@@ -25,9 +28,8 @@ static int negamax(SEARCHINFO *si, POSITION *p,int depth, int alpha, int32 *best
 				   int *bestmoveindex, int truncationdepth, int truncationdepth2,int iid);
 int perft(SEARCHINFO *si, POSITION *p, int depth);
 int perftrec(SEARCHINFO *si, POSITION *p, int depth);
-int	prune(int v1, POSITION *p, int delta, int d, int *truncationdepth, int *truncationdepth2);
 int pvhashlookup(SEARCHINFO *si, int *value, int *valuetype, int depth, int32 *forcefirst, int color, int *ispvnode);
-
+void resetsearchinfo(SEARCHINFO *s);
 int selfstalemate(POSITION *p);
 int testcapture(POSITION *p);
 void updatehashkey(MOVE *m, HASH *h);

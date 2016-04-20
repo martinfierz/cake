@@ -15,8 +15,8 @@
 #define KING  8
 #define FREE 16
 #define CC 3
-#define DEPTH1 17	//17
-#define DEPTH2 21	//21
+#define DEPTH1 17
+#define DEPTH2 21
 
 #undef TESTBOOKGEN
 
@@ -231,8 +231,6 @@ main()
 		
 		r17*=((double)newnodes[n][0]/(double)oldnodes[n][0]);
 		r21*=((double)newnodes[n][1]/(double)oldnodes[n][1]);
-
-		hashreallocate(128); 
 		}
 
 	printf("\n n is %i",n);
