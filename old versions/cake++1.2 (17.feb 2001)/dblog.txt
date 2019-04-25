@@ -1,0 +1,13 @@
+database file db4
+database index file db4.idx
+number of stones 4
+number of buffers 220
+Wait for database loading...
+... creating table
+... using database db4
+... allocating 224256/220 entry index
+... initializing 2 piece database
+... initializing 3 piece database
+... initializing 4 piece database
+... allocating 220 buffers
+... initializing 220 buffers

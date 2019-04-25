@@ -1,0 +1,1 @@
+c:\programme\micros~7\vc98\bin\vcvars32

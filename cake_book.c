@@ -8,7 +8,7 @@
 #include "move_gen.h"
 #include "cake_misc.h"
 
-// TODO: variabls such as the book hashtable, number of bookentries and the usethebook setting should be owned by this file
+// TODO: variables such as the book hashtable, number of bookentries and the usethebook setting should be owned by this file
 
 int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], HASHENTRY *book, int bookentries, int usethebook)
 	{
@@ -38,31 +38,56 @@ int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *b
 
 	if(pointer == NULL)
 		return 0;
+
+	printboardtofile(p); 
 	
 	// now, look up current position
 	absolutehashkey(p,&hash);
 	index = hash.key % size;
+
+	sprintf(Lstr, "hash is %i (key) %i (lock), index is %i, searching through %i book entries", hash.key, hash.lock, index, bookentries);
+	logtofile(Lstr); 
+	printf(str); 
+
+	sprintf(Lstr, "the size of an int32 is %zi", sizeof(int32)); 
+	logtofile(Lstr); 
 	
 	// harmonize colors between cake and book
 	bookcolor = p->color;
 	if(p->color==2) 
 		bookcolor=0;
 
+	//index = 0; 
 	while(iter<bucketsize)
+	//while (iter<bookentries)
 		{
-		if(pointer[index].lock == hash.lock && ((int)pointer[index].color==bookcolor)) // found position
-			{
-			*remainingdepth = pointer[index].depth;
-			*value = pointer[index].value;
-			*best = pointer[index].best;
-			bookfound = 1;
+		sprintf(Lstr, "iteration %i index %i: %i =? %i", iter, index, pointer[index].lock, hash.lock);
+		logtofile(Lstr);
+		if(pointer[index].lock == hash.lock)  {
+			sprintf(Lstr, "\npotential match in book found"); 
+			logtofile(Lstr); 
+			if (((int)pointer[index].color == bookcolor)) {
+				*remainingdepth = pointer[index].depth;
+				*value = pointer[index].value;
+				*best = pointer[index].best;
+				bookfound = 1;
+				}
 			}
+
 		iter++;
 		index++;
 		index %= size;
+		
 		if(bookfound) 
 			break;
 		}
+
+	if (bookfound)
+		sprintf(Lstr, "found position in book at index %i", index);
+	else
+		sprintf(Lstr, "position not found in book after %i iterations", iter);
+	logtofile(Lstr);
+	printf(Lstr);
 
 	if(bookfound)
 		{

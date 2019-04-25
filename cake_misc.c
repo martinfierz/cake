@@ -12,6 +12,7 @@
 #include "cakepp.h"
 #include "move_gen.h"
 #include "cake_misc.h"
+#include "dblookup.h"
 
 
 static FILE * cake_fp = 0;
@@ -241,11 +242,16 @@ void clearlogfile()
 
 void getcakedir(char *lstr)
 {
+	sprintf(lstr, "C:\\code"); 
+	return; 
 	/* Create the directories under My Documents. */
-	PathAppend(lstr, "Martin Fierz");
+	//WCHAR *s = (WCHAR)* "Martin Fierz";
+	//TCHAR *s = "Martin Fierz"; 
+	
+	//PathAppend(lstr, "Martin Fierz");
 	CreateDirectory(lstr, NULL);
 
-	PathAppend(lstr, "Cake");
+	//PathAppend(lstr, "Cake");
 	CreateDirectory(lstr, NULL);
 }
 
@@ -254,11 +260,12 @@ int logtofile(char *str)
 	// log a string to the engine logfile "cakelog.txt"
 	FILE *fp;
 
-	printf("%s\n",str);
+	//printf("%s\n",str);
 	fp = getlogfile();
 	if(fp != NULL)
 		{
 		fprintf(fp,"\n%s",str);
+		fflush(fp); 
 		fclose(fp);
 		return 1;
 		}
@@ -313,39 +320,22 @@ int isforced(POSITION *p)
 	return 0;
 	}
 
+void resetsearchinfo(SEARCHINFO *s)
+	{
+	// resets the search info structure nearly completely, with the exception of
+	// the pointer si.repcheck, to which we allocated memory during initialization - this is restored
+	int *rep = (int*)s->repcheck; 
+	memset(s, 0, sizeof(SEARCHINFO)); 
+	s->repcheck = (REPETITION *) rep; //malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
+	s->repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
+		
+	}
 
-		/*
-       WHITE
-   		28  29  30  31
-	 24  25  26  27
-	   20  21  22  23
-	 16  17  18  19
-	   12  13  14  15
-	  8   9  10  11
-	    4   5   6   7
-	  0   1   2   3                4   3   2    1 etc
-	      BLACK
-	*/
+int exitcake()
+	{
+	// deallocate memory 
+	db_exit();
+	return 1;
+	}
 
 
-	// a function to get a board number and return the bit number
-
-
-
-/*
-int32 myrand(void)
-{
-// myrand produces a 32-bit random number 
-// rand() returns a 15-bit random number, not 16,
-//	that's the reason i only take the last 8 bits instead of 16
-int32 result=0;
-result+=(rand() & 0xFF);
-result=result<<8;
-result+=(rand() & 0xFF);
-result=result<<8;
-result+=(rand() & 0xFF);
-result=result<<8;
-result+=(rand() & 0xFF);
-return result;
-}
-*/

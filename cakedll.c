@@ -23,8 +23,6 @@ void FENtoboard8(int board[8][8], char *p, int *color);
 void numbertocoors(int number,int *x, int *y);
 int staticevaluation(SEARCHINFO *si, EVALUATION *e, POSITION *p,int *total, int *material, int *positional, int*delta);
 
-
-
 /* user-definable engine options */
 extern int hashmegabytes;
 extern int dbmegabytes;
@@ -158,10 +156,10 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(!cake_is_init)
 			{
-			sprintf(reply,"Cake %s\nAugust 2010 by Martin Fierz\n\nEngine not initialized yet!",version);
+			sprintf(reply,"Cake %s\nApril 2011 by Martin Fierz\n\nEngine not initialized yet!",version);
 			return 1;
 			}
-		sprintf(reply,"Cake %s\nAugust 2010 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
+		sprintf(reply,"Cake %s\nApril 2011 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
 #ifdef ETC
 		strcat(reply,"\n    - ETC");
 #endif
@@ -225,7 +223,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 		}
 
 	// new in cake 1.801: perft: usage perft FEN depth
-	if(strcmp(command, "perft") ==0)
+	if(strcmp(command, "perft") == 0)
 		{
 		FENtoboard8(board8,param1,&p.color);	
 		boardtobitboard(board8,&p);
@@ -414,11 +412,20 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		// allocate memory for repcheck array
 		si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
 		absolutehashkey(&p, &h);
+
+		// initialize repdetect array
 		repdetect[HISTORYOFFSET].hash = h.key;
-		repdetect[HISTORYOFFSET].irreversible = 0;
+		repdetect[HISTORYOFFSET].irreversible = !(p.bk && p.wk); // only if both sides have kings it can be reversible 
 		for(i = 0; i<=HISTORYOFFSET;i++) 
 			si.repcheck[i] = repdetect[i];
-	
+		// if reset, then we clear repdetect array
+		if(info & 1) {
+			for(i = 0 ;i<HISTORYOFFSET; i++) {
+				repdetect[i].hash = 0;
+				repdetect[i].irreversible = 1; 
+			}
+		}
+
 		// tell cake whether allscores is true or not.
 		if(allscores == 1)
 			info |= 8;
@@ -530,7 +537,6 @@ void FENtoboard8(int board[8][8], char *p, int *color)
 	int i,j;
 	int number;
 	int piece;
-
 
 	/* reset board */
 	for(i=0;i<8;i++)

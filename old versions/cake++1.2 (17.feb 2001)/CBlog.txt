@@ -1,0 +1,572 @@
+logfile created
+message:36	LO(wParam): 0	lParam: 6880068
+message:129	LO(wParam): 0	lParam: 6880104
+message:131	LO(wParam): 0	lParam: 6880136
+message:1	LO(wParam): 0	lParam: 6880104
+message:85	LO(wParam): 3724	lParam: 3
+message:297	LO(wParam): 0	lParam: 0
+message:528	LO(wParam): 1	lParam: 3724
+message:124	LO(wParam): 65516	lParam: 6877700
+message:125	LO(wParam): 65516	lParam: 6877700
+
+initializing primary engine...
+enginename found
+primary engine is: Cake++ 1.2b
+engineabout found
+enginehelp found
+engineoptions found
+getmove found
+staticevaluation found
+islegal not found
+gametype not found
+primary engine initialized
+
+message:12	LO(wParam): 0	lParam: 6879596
+CB initialized
+message:24	LO(wParam): 1	lParam: 0
+message:70	LO(wParam): 0	lParam: 6880110
+message:70	LO(wParam): 0	lParam: 6879860
+message:28	LO(wParam): 1	lParam: -1839933
+message:134	LO(wParam): 1	lParam: 0
+message:13	LO(wParam): 255	lParam: 6877248
+message:6	LO(wParam): 1	lParam: 0
+message:7	LO(wParam): 0	lParam: 0
+message:133	LO(wParam): 1	lParam: 0
+message:13	LO(wParam): 255	lParam: 6877300
+message:20	LO(wParam): 1534	lParam: 0
+message:71	LO(wParam): 0	lParam: 6880174
+message:5	LO(wParam): 0	lParam: 28443016
+message:3	LO(wParam): 0	lParam: 9961586
+message:15	LO(wParam): 0	lParam: 0
+message:85	LO(wParam): 2148	lParam: 3
+message:297	LO(wParam): 0	lParam: 0
+message:20	LO(wParam): 1534	lParam: 0
+message:20	LO(wParam): 1534	lParam: 0
+message:528	LO(wParam): 1	lParam: 2148
+starting message loop
+WMCOMMAND	LO(wParam): 342	lParam: 0
+message:15	LO(wParam): 0	lParam: 0
+message:78	LO(wParam): 200	lParam: 6879968
+A: Autothread started
+WMTIMER
+WMTIMER
+WMTIMER
+message:32	LO(wParam): 2148	lParam: 33554433
+message:78	LO(wParam): 200	lParam: 6880012
+message:32	LO(wParam): 2148	lParam: 33554433
+message:132	LO(wParam): 0	lParam: 12583307
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 2621721
+message:132	LO(wParam): 0	lParam: 13369713
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 3408127
+message:132	LO(wParam): 0	lParam: 13893981
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 3932395
+WMTIMER
+message:132	LO(wParam): 0	lParam: 13893961
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 3932375
+message:132	LO(wParam): 0	lParam: 13500725
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 3539139
+message:132	LO(wParam): 0	lParam: 12976419
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 3014833
+message:132	LO(wParam): 0	lParam: 12910875
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 2949289
+WMTIMER
+message:132	LO(wParam): 0	lParam: 12386588
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 2425002
+WMTIMER
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+WMTIMER
+message:32	LO(wParam): 2148	lParam: 33554433
+message:132	LO(wParam): 0	lParam: 9634101
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9634101
+message:132	LO(wParam): 0	lParam: 9699637
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9699637
+WMTIMER
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+WMTIMER
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+message:32	LO(wParam): 2148	lParam: 33554433
+WMTIMER
+message:132	LO(wParam): 0	lParam: 9896192
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9896192
+message:132	LO(wParam): 0	lParam: 9502977
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9502977
+message:132	LO(wParam): 0	lParam: 9437442
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9437442
+WMTIMER
+message:132	LO(wParam): 0	lParam: 9306371
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9306371
+message:132	LO(wParam): 0	lParam: 9175300
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9175300
+message:132	LO(wParam): 0	lParam: 9109764
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9109764
+message:132	LO(wParam): 0	lParam: 9044229
+message:32	LO(wParam): 3088	lParam: 33554437
+message:160	LO(wParam): 5	lParam: 9044229
+WMTIMER
+message:132	LO(wParam): 0	lParam: 9044229
+message:32	LO(wParam): 3088	lParam: 33619973
+message:161	LO(wParam): 5	lParam: 9044229
+message:274	LO(wParam): 61589	lParam: 9044229
+message:529	LO(wParam): 0	lParam: 0
+message:32	LO(wParam): 3088	lParam: 2
+message:278	LO(wParam): 2492	lParam: 0
+message:287	LO(wParam): 3	lParam: 2492
+message:279	LO(wParam): 2552	lParam: 3
+message:289	LO(wParam): 2	lParam: 136
+WMTIMER
+message:289	LO(wParam): 2	lParam: 136
+message:289	LO(wParam): 2	lParam: 136
+WMTIMER
+message:289	LO(wParam): 2	lParam: 136
+message:289	LO(wParam): 2	lParam: 136
+message:289	LO(wParam): 2	lParam: 136
+message:289	LO(wParam): 2	lParam: 136
+message:289	LO(wParam): 2	lParam: 136
+message:287	LO(wParam): 600	lParam: 2552
+message:289	LO(wParam): 2	lParam: 136
+WMTIMER
+WMTIMER
+message:289	LO(wParam): 2	lParam: 136
+WMTIMER
+message:533	LO(wParam): 0	lParam: 0
+message:287	LO(wParam): 0	lParam: 0
+message:530	LO(wParam): 0	lParam: 0
+WMCOMMAND	LO(wParam): 600	lParam: 0
+message:31	LO(wParam): 0	lParam: 0
+message:8	LO(wParam): 0	lParam: 0
+message:10	LO(wParam): 0	lParam: 0
+message:134	LO(wParam): 0	lParam: 924
+message:13	LO(wParam): 255	lParam: 6874756
+message:6	LO(wParam): 0	lParam: 924
+message:70	LO(wParam): 0	lParam: 6877366
+message:32	LO(wParam): 3088	lParam: 33619966
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:32	LO(wParam): 3088	lParam: 33619966
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:32	LO(wParam): 3088	lParam: 33619966
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:32	LO(wParam): 3088	lParam: 33619966
+message:32	LO(wParam): 3088	lParam: 33619966
+message:32	LO(wParam): 3088	lParam: 33619966
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+WMTIMER
+message:289	LO(wParam): 0	lParam: 924
+message:289	LO(wParam): 0	lParam: 924
+message:12	LO(wParam): 0	lParam: 4491896
+message:13	LO(wParam): 255	lParam: 6873994
+message:10	LO(wParam): 1	lParam: 0
+message:70	LO(wParam): 0	lParam: 6876500
+message:134	LO(wParam): 1	lParam: 924
+message:13	LO(wParam): 255	lParam: 6873888
+message:6	LO(wParam): 1	lParam: 924
+message:7	LO(wParam): 924	lParam: 0
+message:132	LO(wParam): 0	lParam: 31850987
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21889401
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+message:132	LO(wParam): 0	lParam: 31850986
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21889400
+message:132	LO(wParam): 0	lParam: 31850980
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21889394
+WMTIMER
+message:132	LO(wParam): 0	lParam: 31850966
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21889380
+message:132	LO(wParam): 0	lParam: 31850948
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21889362
+message:132	LO(wParam): 0	lParam: 31916460
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21954874
+message:132	LO(wParam): 0	lParam: 31916432
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21954846
+message:132	LO(wParam): 0	lParam: 31916406
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21954820
+WMTIMER
+message:132	LO(wParam): 0	lParam: 31785314
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 21823728
+message:132	LO(wParam): 0	lParam: 30343508
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 20381922
+message:132	LO(wParam): 0	lParam: 29557074
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19595488
+WMTIMER
+WMTIMER
+message:132	LO(wParam): 0	lParam: 30081352
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 20119766
+message:132	LO(wParam): 0	lParam: 30015792
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 20054206
+message:132	LO(wParam): 0	lParam: 29950240
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19988654
+WMTIMER
+message:132	LO(wParam): 0	lParam: 29950228
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19988642
+message:132	LO(wParam): 0	lParam: 29819146
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19857560
+message:132	LO(wParam): 0	lParam: 29819138
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19857552
+WMTIMER
+message:132	LO(wParam): 0	lParam: 29819137
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19857551
+message:132	LO(wParam): 0	lParam: 29753600
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19792014
+message:132	LO(wParam): 0	lParam: 29688056
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19726470
+message:132	LO(wParam): 0	lParam: 29556974
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19595388
+WMTIMER
+message:132	LO(wParam): 0	lParam: 29425894
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19464308
+message:132	LO(wParam): 0	lParam: 29425893
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19464307
+message:132	LO(wParam): 0	lParam: 29360357
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19398771
+WMTIMER
+message:132	LO(wParam): 0	lParam: 29360359
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19398773
+message:132	LO(wParam): 0	lParam: 29360359
+message:32	LO(wParam): 3088	lParam: 33619969
+LBUTTONDOWN	wParam: 1	lParam: 19398773
+message:15	LO(wParam): 0	lParam: 0
+message:78	LO(wParam): 200	lParam: 6879968
+message:132	LO(wParam): 0	lParam: 29360359
+message:32	LO(wParam): 3088	lParam: 33685505
+message:514	LO(wParam): 0	lParam: 19398773
+message:132	LO(wParam): 0	lParam: 29294823
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19333237
+message:132	LO(wParam): 0	lParam: 29229299
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 19267713
+WMTIMER
+message:132	LO(wParam): 0	lParam: 28311817
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 18350231
+message:132	LO(wParam): 0	lParam: 27525405
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 17563819
+message:132	LO(wParam): 0	lParam: 26738979
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16777393
+message:132	LO(wParam): 0	lParam: 26345765
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16384179
+WMTIMER
+message:132	LO(wParam): 0	lParam: 26280230
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16318644
+WMTIMER
+message:132	LO(wParam): 0	lParam: 26280230
+message:32	LO(wParam): 3088	lParam: 33619969
+LBUTTONDOWN	wParam: 1	lParam: 16318644
+checking if move is legal
+checking coorstonumber...coorstonumber(2,2)
+coortonumber(2,2)
+coorstonumber(3,3)
+coortonumber(3,3)
+ ok
+coorstonumber(3,3)
+coortonumber(3,3)
+coorstonumber(2,2)
+coortonumber(2,2)
+builtinislegal called
+now calling getmovelist...getmovelist called sucessfully
+legal check ok
+appended move to movelist
+closing old animation thread
+starting animation thread......animation thread started successfully
+check legal done
+printboard done
+message:15	LO(wParam): 0	lParam: 0
+message:78	LO(wParam): 200	lParam: 6879968
+
+
+ANI: begin animation thread
+ANI: animation thread initialized, checking for jumps...
+ANI: ...jumps:0
+ANI: normal move, animating step 0
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 1
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 2
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 3
+message:15	LO(wParam): 0	lParam: 0
+WMTIMER
+ANI: normal move, animating step 4
+message:132	LO(wParam): 0	lParam: 26280230
+message:32	LO(wParam): 3088	lParam: 33685505
+message:514	LO(wParam): 0	lParam: 16318644
+message:132	LO(wParam): 0	lParam: 26280229
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16318643
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 5
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 6
+message:132	LO(wParam): 0	lParam: 26345765
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16384179
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 7
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 8
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 9
+message:15	LO(wParam): 0	lParam: 0
+ANI: normal move, animating step 10
+message:15	LO(wParam): 0	lParam: 0
+ANI: animation done
+message:132	LO(wParam): 0	lParam: 26280229
+message:32	LO(wParam): 3088	lParam: 33554433
+message:512	LO(wParam): 0	lParam: 16318643
+WMTIMER
+ANI: clean image restored
+ANI: terminating animation thread
+message:15	LO(wParam): 0	lParam: 0
+message:78	LO(wParam): 200	lParam: 6879968
+WMTIMER
+message:78	LO(wParam): 200	lParam: 6879968
+A: sending play command
+A: Postmessage command successful
+WMCOMMAND	LO(wParam): 201	lParam: 0
+PLAY command received, closing old engine thread...
+...done, starting engine thread
+engine thread started
+E: starting engine thread
+E: calling getmove
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+message:134	LO(wParam): 0	lParam: 0
+message:13	LO(wParam): 255	lParam: 6877284
+message:6	LO(wParam): 0	lParam: 0
+message:28	LO(wParam): 0	lParam: -1755269
+message:8	LO(wParam): 0	lParam: 0
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER
+WMTIMER

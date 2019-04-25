@@ -1,0 +1,1 @@
+int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], HASHENTRY *book, int bookentries, int usethebook);

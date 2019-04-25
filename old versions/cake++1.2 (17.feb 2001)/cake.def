@@ -1,0 +1,6 @@
+EXPORTS 	getmove
+         engineoptions
+         enginename
+         engineabout
+         enginehelp
+         staticevaluation

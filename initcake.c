@@ -9,8 +9,7 @@
 #include "cakepp.h"
 #include "initcake.h"
 #include "cake_misc.h"
-
-
+#include "boolean.h"
 
 #ifdef BOOK
 HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
@@ -18,14 +17,16 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 // sets bookentries to the number of entries in the opening book.
 {
 	FILE *Lfp;
-	int i,j;
+	int32 i,j;
 	char Lstr[256];
 	static HASHENTRY *book;
 	char dirname[256]; 
+//	__int64 *x; 
 
 	GetCurrentDirectory(256, dirname);
 
-	Lfp = fopen("engines\\book.bin","rb");
+	Lfp = fopen("engines\\book.bin", "rb");
+	//Lfp = fopen("D:\\book.bin", "rb");
 	if(Lfp == NULL)
 		{
 		/* book file not found */
@@ -35,7 +36,10 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 		return 0;	
 		}
 
+	printf("book found, loading");
+
 	fscanf(Lfp,"%i",bookentries);
+	printf("book claims to have %i book entries", *bookentries);
 #ifdef WINMEM
 	book = VirtualAlloc(0, bookentries*sizeof(struct bookhashentry), MEM_COMMIT, PAGE_READWRITE);
 #else
@@ -49,22 +53,36 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 		return NULL;
 	}
 
+	// hack on new laptop where file cannot be read otherwise!
+	fseek(Lfp, -1, SEEK_CUR); 
+
 	fread(book,sizeof(struct bookhashentry),(*bookentries),Lfp);
+	fclose(Lfp); 
 
 	sprintf(Lstr,"allocated %zi KB for book hashtable",sizeof(struct bookhashentry)*(*bookentries)/1024);
 	logtofile(Lstr);
+	printf(Lstr); 
 	sprintf(Lstr,"book hashtable with %i entries allocated\n",(*bookentries));
 	logtofile(Lstr);
+	printf(Lstr); 
+
+	//Lfp = fopen("d:\\booklog.txt", "w"); 
+	
 
 	j=0;
 	for(i=0;i<(*bookentries);i++)
 		{
+		//x = &(book[i]); 
+		//sprintf(Lstr, "index %i, entry %i, lock %i (%x), best %i, value %i, color %i, ispvnode %i, depth %i, valuetype %i [%llx]\n",
+		//	i, j, book[i].lock, book[i].lock, book[i].best, book[i].value, book[i].color, book[i].ispvnode, book[i].depth, book[i].valuetype, *x); 
+		//fprintf(Lfp, Lstr); 
 		if(book[i].lock != 0)
 			j++;
 		}
 
 	sprintf(Lstr,"%i moves in opening book\n",j);
 	logtofile(Lstr);
+	printf(Lstr); 
 
 	*bookmovenum = j;
 
@@ -74,41 +92,13 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 
 #endif
 
-int initbitoperations(unsigned char bitsinword[65536], unsigned char LSBarray[256])
-{
-	int i;
-
-	for(i=0;i<65536;i++)
-		bitsinword[i] = recbitcount((int32)i);
-	
-	//for(i=0;i<256;i++)
-	//	bitsinbyte[i] = recbitcount((int32)i);
-
-	// initialize LSBarray;
-	for(i=0;i<256;i++)
-		{
-		if(i&128) LSBarray[i] = 7;
-		if(i&64) LSBarray[i] = 6;
-		if(i&32) LSBarray[i] = 5;
-		if(i&16) LSBarray[i] = 4;
-		if(i&8) LSBarray[i] = 3;
-		if(i&4) LSBarray[i] = 2;
-		if(i&2) LSBarray[i] = 1;
-		if(i&1) LSBarray[i] = 0;
-		}
-	return 1;
-}
-
-
 HASHENTRY *inithashtable(int hashsize)
 	{
 	// allocate memory for the hashtable. 
 	// align the hashtable on a 64-byte-boundary
 	// terminate program if hashtable cannot be allocated.
 	char Lstr[256];
-	int i;
 	HASHENTRY *ptr;
-
 
 #ifdef WINMEM
 	hashtable = VirtualAlloc(0, (hashsize+HASHITER)*sizeof(HASHENTRY), MEM_COMMIT, PAGE_READWRITE);
@@ -122,13 +112,6 @@ HASHENTRY *inithashtable(int hashsize)
 		logtofile(Lstr);
 		exit(0);
 		}
-
-	// TODO: the code below generates warnings - can i do that suomehow without warnings?
-	// we have a hashtable, now align it on a 64-bit-boundary:
-	i = (int) ptr;
-	i &= 0xFFFFFFC0;
-	i += 64;
-	ptr = (HASHENTRY *) i;
 
 	return ptr;
 }
@@ -149,8 +132,8 @@ int initializematerial(short materialeval[13][13][13][13])
 				for(l=0;l<13;l++)
 					{
 					/*bm bk wm wk */
-					v1 = 100*i + 130*j;
-					v2 = 100*k + 130*l;
+					v1 = 100*i + 130*j;  // optimized? 130
+					v2 = 100*k + 130*l;  // optimized? 130
 					if(v1+v2 == 0) 
 						continue;
 					v1 = v1-v2+(EXBIAS*(v1-v2))/(v1+v2);
@@ -172,7 +155,6 @@ int initializematerial(short materialeval[13][13][13][13])
 
 	
 int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256], char blackbackrankpower[256], char whitebackrankpower[256])
-//int initializebackrank(void)
 	{
 	// initializes the arrays   blackbackrankeval
 	//							whitebackrankeval
@@ -189,12 +171,12 @@ int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256],
 	POSITION p;
 	int32 u;
 	int32 index;
-	const int devsinglecornerval = 5;
-	const int intactdoublecornerval = 5;
+	const int devsinglecornerval = 5; // optimized? 5;
+	const int intactdoublecornerval = 5; // optimized? 5;
 	
-	const int oreoval = 8; 
+	const int oreoval = 8; // optimized?  8;
 	
-	const int idealdoublecornerval = 4; 
+	const int idealdoublecornerval = 4; // optimized? 4;
 	
 
 	/* 		WHITE
@@ -245,7 +227,6 @@ int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256],
 			BLACK */
 
 		/* oreo */
-		// TODO: use squares instead of bits
 		if( match1(p.bm, SQ2|SQ3|SQ7)) 
 			{
 			blackbackrankeval[u] += oreoval; 
@@ -255,11 +236,7 @@ int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256],
 			whitebackrankeval[u] += oreoval; 
 			}
 
-		// the stuff below doesn't work at all!
-		/*if( match1(p.bm, (SQ2|SQ5|SQ6)) && !(p.bm&SQ1))
-			blackbackrankeval[u] += 2;
-		if( match1(p.wm, (SQ31|SQ28|SQ27)) && !(p.wm&SQ32))
-			whitebackrankeval[u] += 2;*/
+		
 
 	
 		// developed single corner
@@ -271,27 +248,6 @@ int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256],
 			blackbackrankeval[u] += devsinglecornerval; //devsinglecorner 5!!
 		if( ((~p.wm)&SQ29) && ((~p.wm)&SQ25) ) 
 			whitebackrankeval[u] += devsinglecornerval;//2!!
-
-		// developed single corner bonus only if there is a man on sq 3/30
-		/*if(p.bm & SQ3)
-			{
-			if((~p.bm) & SQ4)
-				{
-				blackbackrankeval[u] += 2;
-				if((~p.bm) & SQ8)
-					blackbackrankeval[u] += 2;
-				}
-			}
-
-		if(p.wm & SQ30)
-			{
-			if((~p.wm) & SQ29)
-				{
-				whitebackrankeval[u] += 2;
-				if((~p.wm) & SQ25)
-					whitebackrankeval[u] += 2;
-				}
-			}*/
 
 		
 		//  double corner evals: intact and developed 
@@ -432,18 +388,3 @@ int initxors(int *ptr)
 }
 
 
-// recursive bitcount 
-int recbitcount(int32 n)
-	/* counts & returns the number of bits which are set in a 32-bit integer
-		slower than a table-based bitcount if many bits are
-		set. used to make the table for the table-based bitcount on initialization
-	*/
-	{
-	int r=0;
-	while(n)
-		{
-		n=n&(n-1);
-		r++;
-		}
-	return r;
-	}

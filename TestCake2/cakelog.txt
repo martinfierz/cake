@@ -1,0 +1,1586 @@
+Cake log file
+
+
+working directory is:
+C
+characters returned: 22 
+
+
+db search path is:
+C:\Program Files\CheckerBoard64\db
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db2.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db2.idx
+  1 blocks
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db3.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db3.idx
+  3 blocks
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db4.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db4.idx
+  179 blocks
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db5.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db5.idx
+  1583 blocks
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db6.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db6.idx
+  40148 blocks
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db7.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db7.idx
+  366114 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_4040.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_4040.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_4040.idx
+  380154 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_3140.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_3140.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_3140.idx
+  520757 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_3131.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_3131.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_3131.idx
+  754081 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_2240.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_2240.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_2240.idx
+  927901 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_2231.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_2231.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_2231.idx
+  1792601 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_2222.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_2222.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_2222.idx
+  2317386 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_1340.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_1340.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_1340.idx
+  2389498 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_1331.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_1331.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_1331.idx
+  2921722 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_1322.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_1322.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_1322.idx
+  3733945 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_1313.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_1313.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_1313.idx
+  3952505 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_0440.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_0440.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_0440.idx
+  3965791 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_0431.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_0431.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_0431.idx
+  4085702 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_0422.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_0422.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_0422.idx
+  4370403 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_0413.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_0413.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_0413.idx
+  4496374 blocks
+trying to parse:
+C:\Program Files\CheckerBoard64\db\db8_0404.idx
+found an index file:
+parsing C:\Program Files\CheckerBoard64\db\db8_0404.idx
+parsing index file C:\Program Files\CheckerBoard64\db\db8_0404.idx
+  4504742 blocks
+index files parsed
+allocated 17611 KB for indexing
+
+allocated 131072 KB for DB cache 
+
+allocated 17968 KB for block pointer array
+
+allocated 1536 KB for LRU linked list
+database found:
+C:\Program Files\CheckerBoard64\db\db2.cpr
+database found:
+C:\Program Files\CheckerBoard64\db\db3.cpr
+database found:
+C:\Program Files\CheckerBoard64\db\db4.cpr
+database found:
+C:\Program Files\CheckerBoard64\db\db5.cpr
+database found:
+C:\Program Files\CheckerBoard64\db\db6.cpr
+database found:
+C:\Program Files\CheckerBoard64\db\db7.cpr
+no opening book detected under C\engines\book.bin
+
+
+
+ w w w -
+w - - w 
+ w w - -
+- w w b 
+ - - - -
+b - - - 
+ - b b b
+b b b b 
+3817593F 45134728 not found in book
+
+depth 1/4/2.0  time 0.00s  value=0  nodes 50  5kN/s  db 0% cut 100.0% pv 25-21 17-22 
+depth 3/7/4.2  time 0.00s  value=0  nodes 388  32kN/s  db 0% cut 93.8% pv 25-21 17-22 18-14  4- 8 
+depth 5/16/6.9  time 0.01s  value=-2  nodes 3085  181kN/s  db 0% cut 92.7% pv 31-26  5- 9 25-21 17-22 26x17  9-14 
+depth 7/18/8.7  time 0.02s  value=-6  nodes 14344  462kN/s  db 0% cut 94.4% pv 18-15  4- 8 32-27  6- 9 25-21 17-22 23-18 
+depth 9/24/11.5  time 0.05s  value=-6  nodes 63605  1042kN/s  db 31% cut 95.0% pv 25-21  6-10 21x14 10x17 32-27  4- 8 19-15  1- 6 
+depth 11/28/13.5  time 0.10s  value=-6  nodes 201975  1787kN/s  db 28% cut 95.2% pv 25-21  6-10 21x14 10x17 32-27  4- 8 19-15  1- 6 
+depth 13/32/15.1  time 0.28s  value=-10  nodes 744554  2603kN/s  db 26% cut 95.5% pv 25-21 17-22 21-17  6-10 18-14 10-15 19x10  5- 9 
+depth 15/38/16.5  time 0.87s  value=-12  nodes 2675268  3040kN/s  db 29% cut 95.4% pv 18-15  4- 8 24-20  5- 9 28-24  9-13 31-27  7-11 
+depth 17/42/18.6  time 2.61s  value=-20  nodes 8168247  3114kN/s  db 36% cut 95.5% pv 18-15  4- 8 32-27  5- 9 31-26  9-13 24-20  7-11 
+
+
+ w w w -
+w - - w 
+ w w - -
+- w w b 
+ - - - -
+b - - - 
+ - b b b
+b b b b 
+3817593F 45134728 not found in book
+
+depth 1/4/2.0  time 0.00s  value=0  nodes 50  5kN/s  db 0% cut 100.0% pv 25-21 17-22 
+depth 3/7/4.2  time 0.00s  value=0  nodes 388  27kN/s  db 0% cut 93.8% pv 25-21 17-22 18-14  4- 8 
+depth 5/16/6.9  time 0.01s  value=-2  nodes 3085  123kN/s  db 0% cut 92.7% pv 31-26  5- 9 25-21 17-22 26x17  9-14 
+depth 7/18/8.7  time 0.02s  value=-6  nodes 14344  434kN/s  db 0% cut 94.4% pv 18-15  4- 8 32-27  6- 9 25-21 17-22 23-18 
+depth 9/24/11.5  time 0.04s  value=-6  nodes 63605  1200kN/s  db 31% cut 95.0% pv 25-21  6-10 21x14 10x17 32-27  4- 8 19-15  1- 6 
+depth 11/28/13.5  time 0.08s  value=-6  nodes 201975  2148kN/s  db 28% cut 95.2% pv 25-21  6-10 21x14 10x17 32-27  4- 8 19-15  1- 6 
+depth 13/32/15.1  time 0.25s  value=-10  nodes 744554  2841kN/s  db 26% cut 95.5% pv 25-21 17-22 21-17  6-10 18-14 10-15 19x10  5- 9 
+depth 15/38/16.5  time 0.76s  value=-12  nodes 2675164  3487kN/s  db 29% cut 95.4% pv 18-15  4- 8 24-20  5- 9 28-24  9-13 31-27  7-11 
+depth 17/42/18.6  time 2.20s  value=-20  nodes 8167981  3694kN/s  db 36% cut 95.5% pv 18-15  4- 8 32-27  5- 9 31-26  9-13 24-20  7-11 
+depth 19/42/20.4  time 5.08s  value=-20  nodes 18854808  3703kN/s  db 38% cut 95.9% pv 18-15  4- 8 24-20  5- 9 28-24  9-13 31-27 17-21 
+depth 21/43/22.1  time 16.39s  value=-34  nodes 58963479  3596kN/s  db 39% cut 95.7% pv 18-14  4- 8 32-27  8-11 31-26  6- 9 23-18 17-22 
+reallocating hashtable to 128 MB
+
+
+ w - B -
+w - - - 
+ w w - -
+- - w - 
+ - - - -
+- - - - 
+ - - - b
+b - b b 
+4F5A8482 98E0AAA4 not found in book
+
+depth 1/1/1.0  time 0.00s  value=-58  nodes 10  1kN/s  db 0% cut -nan(ind)% pv 23-19 
+depth 3/5/3.2  time 0.01s  value=-64  nodes 161  10kN/s  db 0% cut 64.5% pv 18-14  1- 6 23-18 
+depth 5/16/6.8  time 0.01s  value=-98  nodes 1462  66kN/s  db 23% cut 87.1% pv 32-27 30-25 23-19 25-21 18-14 
+depth 7/17/9.1  time 0.02s  value=-112  nodes 7278  214kN/s  db 22% cut 89.7% pv 32-27 30-25 23-19 25-21 24-20 21-17 27-24  1- 6 
+depth 9/18/10.4  time 0.04s  value=-106  nodes 35987  692kN/s  db 20% cut 91.8% pv 23-19 30-26 18-15  5- 9 15-11 26-23 19-16  9-14 
+depth 11/19/11.8  time 0.07s  value=-96  nodes 106187  1279kN/s  db 17% cut 93.2% pv 23-19 30-26 18-15  1- 6 15-11 26-23 19-16 23-18 
+depth 13/22/13.4  time 0.14s  value=-58  nodes 234493  1532kN/s  db 17% cut 94.9% pv 23-19 30-26 18-15  1- 6 15-11 26-23 19-16 23-18 
+depth 15/26/15.2  time 0.30s  value=-90  nodes 510006  1661kN/s  db 18% cut 95.6% pv 18-15 30-25 24-20 25-22 28-24  1- 6 15-11 22-17 
+depth 17/26/17.0  time 0.57s  value=-52  nodes 1082493  1863kN/s  db 20% cut 96.7% pv 18-15 30-25 24-20 25-22 28-24  1- 6 15-11 22-17 
+
+
+ w - B -
+w - - - 
+ w w - -
+- - w - 
+ - - - -
+- - - - 
+ - - - b
+b - b b 
+4F5A8482 98E0AAA4 not found in book
+
+depth 1/1/1.0  time 0.00s  value=-58  nodes 10  1kN/s  db 0% cut -nan(ind)% pv 23-19 
+depth 3/4/3.1  time 0.01s  value=-64  nodes 161  10kN/s  db 67% cut 64.5% pv 18-14  1- 6 23-18 
+depth 5/9/5.2  time 0.01s  value=-98  nodes 760  36kN/s  db 45% cut 80.1% pv 32-27 30-25 23-19 25-21 18-14 
+depth 7/16/8.7  time 0.02s  value=-112  nodes 6493  216kN/s  db 47% cut 88.2% pv 32-27 30-25 23-19 25-21 24-20 21-17 27-24  1- 6 
+depth 9/18/10.3  time 0.04s  value=-106  nodes 25664  557kN/s  db 49% cut 92.5% pv 23-19 30-26 18-15 26-22 15-11  5- 9 19-16  9-14 
+depth 11/19/11.1  time 0.05s  value=-96  nodes 53433  834kN/s  db 36% cut 94.1% pv 23-19 30-26 18-15 26-22 15-11 22-18 19-16 18-23 
+depth 13/20/12.9  time 0.10s  value=-80  nodes 158713  1511kN/s  db 30% cut 95.2% pv 23-19 30-25 18-15 25-22 15-11 22-18 32-27  1- 6 
+depth 15/23/14.8  time 0.18s  value=-56  nodes 322874  1735kN/s  db 26% cut 96.4% pv 23-19 30-25 18-15 25-22 15-11 22-18 32-27  1- 6 
+depth 17/29/15.8  time 0.37s  value=-72  nodes 754362  2006kN/s  db 24% cut 96.8% pv 24-20 30-25 28-24  1- 6 18-15 25-22 15-11 22-17 
+depth 19/32/19.0  time 1.51s  value=-48  nodes 3189101  2091kN/s  db 26% cut 96.8% pv 23-19 30-26 18-15  5- 9 15-11 26-23 19-16  9-14 
+depth 21/32/21.1  time 3.85s  value=-46  nodes 8465421  2190kN/s  db 28% cut 96.9% pv 23-19 30-25 18-15 25-22 15-11 22-18 19-16 18-23 
+reallocating hashtable to 128 MB
+
+
+ w - w -
+w - - - 
+ w w b w
+- w - - 
+ - - - -
+b - - - 
+ - b - -
+b b b b 
+59471D92 9226DAB8 not found in book
+
+depth 1/3/1.4  time 0.00s  value=-8  nodes 16  1kN/s  db 0% cut 100.0% pv 21-17 
+depth 3/8/4.2  time 0.00s  value=-14  nodes 212  16kN/s  db 0% cut 96.7% pv 23-18  4- 8 19-16 12x19 
+depth 5/11/6.7  time 0.01s  value=-20  nodes 1583  79kN/s  db 0% cut 95.6% pv 23-18  4- 8 19-16 12x19 24x15  8-12 28-24 22-25 
+depth 7/16/8.6  time 0.02s  value=-22  nodes 7114  263kN/s  db 0% cut 96.0% pv 23-18  4- 8 19-15 22-25 21-17 25-29 24-19  7-11 
+depth 9/19/10.6  time 0.04s  value=-20  nodes 39523  760kN/s  db 38% cut 94.8% pv 23-18 22-25 21-17 25-29 24-20  4- 8 17-13  1- 6 
+depth 11/23/12.6  time 0.08s  value=-18  nodes 119788  1345kN/s  db 42% cut 95.2% pv 23-18  4- 8 21-17  8-11 19-15 11-16 32-27 16-19 
+depth 13/28/13.5  time 0.17s  value=-22  nodes 335570  1874kN/s  db 52% cut 95.7% pv 24-20  4- 8 19-15 22-25 21-17 25-29 28-24  2- 6 
+depth 15/30/15.7  time 0.31s  value=-24  nodes 784060  2419kN/s  db 51% cut 96.1% pv 24-20  4- 8 19-15  7-10 15x 6  2x 9 21-17  9-13 
+depth 17/34/17.2  time 0.99s  value=-30  nodes 3144776  3141kN/s  db 47% cut 96.5% pv 23-18  4- 8 21-17  8-11 19-15 11-16 32-27 16-19 
+
+
+ w - w -
+w - - - 
+ w w b w
+- w - - 
+ - - - -
+b - - - 
+ - b - -
+b b b b 
+59471D92 9226DAB8 not found in book
+
+depth 1/3/1.4  time 0.00s  value=-8  nodes 16  1kN/s  db 0% cut 100.0% pv 21-17 
+depth 3/8/4.2  time 0.00s  value=-14  nodes 212  15kN/s  db 0% cut 96.7% pv 23-18  4- 8 19-16 12x19 
+depth 5/11/6.7  time 0.02s  value=-20  nodes 1583  54kN/s  db 0% cut 95.6% pv 23-18  4- 8 19-16 12x19 24x15  8-12 28-24 22-25 
+depth 7/16/8.6  time 0.03s  value=-22  nodes 7114  173kN/s  db 25% cut 96.0% pv 23-18  4- 8 19-15 22-25 21-17 25-29 24-19  7-11 
+depth 9/19/10.6  time 0.05s  value=-20  nodes 39523  658kN/s  db 60% cut 94.8% pv 23-18 22-25 21-17 25-29 24-20  4- 8 17-13  1- 6 
+depth 11/23/12.6  time 0.09s  value=-18  nodes 119758  1174kN/s  db 54% cut 95.2% pv 23-18  4- 8 21-17  8-11 19-15 11-16 32-27 16-19 
+depth 13/28/13.5  time 0.16s  value=-22  nodes 335401  1927kN/s  db 55% cut 95.6% pv 24-20  4- 8 19-15 22-25 21-17 25-29 28-24  2- 6 
+depth 15/30/15.7  time 0.29s  value=-24  nodes 782793  2600kN/s  db 52% cut 96.1% pv 24-20  4- 8 19-15  7-10 15x 6  2x 9 21-17  9-13 
+depth 17/34/17.2  time 0.98s  value=-30  nodes 3123629  3151kN/s  db 47% cut 96.5% pv 23-18  4- 8 21-17  8-11 19-15 11-16 32-27 16-19 
+depth 19/36/19.1  time 1.85s  value=-30  nodes 5796505  3118kN/s  db 46% cut 96.8% pv 23-18  4- 8 24-20  8-11 19-15 11-16 20x11  7x16 
+depth 21/38/20.8  time 6.48s  value=-18  nodes 19447896  2995kN/s  db 44% cut 96.7% pv 32-27  7-11 23-18 11-16 19-15 16-20 24-19  3- 7 
+reallocating hashtable to 128 MB
+
+
+ - w B -
+w w - - 
+ - w - -
+b - - B 
+ b - - b
+b - - w 
+ b w W -
+- - - - 
+E19A8FD E063150C not found in book
+
+depth 1/3/1.2  time 0.00s  value=50  nodes 22  2kN/s  db 0% cut 100.0% pv  7- 3 
+depth 3/8/4.4  time 0.01s  value=18  nodes 547  32kN/s  db 0% cut 90.6% pv  6-10 17-14 10x17 13x22 
+depth 5/11/6.3  time 0.01s  value=-8  nodes 3046  121kN/s  db 33% cut 90.5% pv 27-24 20x27 31x24 16-20 24-19 30-26 
+depth 7/15/9.1  time 0.02s  value=-4  nodes 6187  193kN/s  db 25% cut 92.4% pv 27-24 20x27 31x24 16-20 24-19 30-26  9- 5  8-11 
+depth 9/18/11.2  time 0.04s  value=-6  nodes 19181  408kN/s  db 21% cut 94.1% pv 27-24 20x27 31x24 16-20 24-19 30-26  9- 5 20-24 
+depth 11/20/13.5  time 0.07s  value=-12  nodes 72316  915kN/s  db 30% cut 95.3% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 13/25/15.4  time 0.13s  value=-10  nodes 208132  1530kN/s  db 25% cut 95.2% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 15/27/17.4  time 0.28s  value=-12  nodes 565605  1977kN/s  db 25% cut 95.4% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 17/31/19.5  time 0.75s  value=-10  nodes 1690430  2233kN/s  db 26% cut 95.5% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+
+
+ - w B -
+w w - - 
+ - w - -
+b - - B 
+ b - - b
+b - - w 
+ b w W -
+- - - - 
+E19A8FD E063150C not found in book
+
+depth 1/3/1.2  time 0.00s  value=50  nodes 22  2kN/s  db 0% cut 100.0% pv  7- 3 
+depth 3/8/4.4  time 0.01s  value=18  nodes 547  36kN/s  db 0% cut 90.6% pv  6-10 17-14 10x17 13x22 
+depth 5/10/6.3  time 0.01s  value=-8  nodes 3046  126kN/s  db 67% cut 90.5% pv 27-24 20x27 31x24 16-20 24-19 30-26 
+depth 7/15/9.1  time 0.02s  value=-4  nodes 6186  206kN/s  db 39% cut 92.3% pv 27-24 20x27 31x24 16-20 24-19 30-26  9- 5  8-11 
+depth 9/18/11.2  time 0.04s  value=-6  nodes 19068  423kN/s  db 28% cut 94.1% pv 27-24 20x27 31x24 16-20 24-19 30-26  9- 5 20-24 
+depth 11/20/13.5  time 0.07s  value=-12  nodes 71429  952kN/s  db 31% cut 95.2% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 13/25/15.4  time 0.12s  value=-10  nodes 205392  1592kN/s  db 26% cut 95.3% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 15/27/17.4  time 0.28s  value=-12  nodes 565463  1943kN/s  db 25% cut 95.4% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 17/31/19.7  time 0.85s  value=-6  nodes 1979793  2304kN/s  db 25% cut 95.2% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 19/33/21.9  time 2.26s  value=-4  nodes 5403440  2376kN/s  db 25% cut 95.2% pv 27-24 20x27 31x24 16-20 24-19 20-24  9- 5 24-27 
+depth 21/35/23.8  time 5.76s  value=-4  nodes 14287954  2474kN/s  db 29% cut 95.1% pv 27-24 20x27 31x24 16-20 24-19 30-26  9- 5 17-22 
+reallocating hashtable to 128 MB
+
+
+ - w w -
+w - w - 
+ w - - w
+- b - - 
+ - b b w
+b - b - 
+ b - - -
+- - - b 
+67B035A0 881E588C not found in book
+
+depth 1/3/1.3  time 0.00s  value=-28  nodes 20  2kN/s  db 0% cut 100.0% pv  8-11 
+depth 3/8/4.4  time 0.00s  value=-18  nodes 338  24kN/s  db 0% cut 89.9% pv  1- 6 26-22  8-11 24-20 
+depth 5/13/7.0  time 0.01s  value=-14  nodes 1442  72kN/s  db 0% cut 93.6% pv  1- 6 26-22 14-18 22-17  8-11 17-14 10x17 
+depth 7/16/8.6  time 0.02s  value=-8  nodes 4197  161kN/s  db 50% cut 94.4% pv  1- 6 26-22 14-18 22-17 18-23 17-14 10x17 21x14 
+depth 9/22/10.0  time 0.02s  value=-10  nodes 10586  320kN/s  db 49% cut 95.5% pv  1- 6 26-22 12-16 24-20  8-11 31-26 14-18 21-17 
+depth 11/22/11.0  time 0.03s  value=-16  nodes 27691  643kN/s  db 41% cut 95.6% pv 14-18 21-17  1- 5 17-14 10x17 26-22 17x26 30x14 
+depth 13/23/13.2  time 0.05s  value=-12  nodes 57911  1015kN/s  db 40% cut 96.4% pv 14-18 21-17  1- 5 17-14 10x17 26-22 18x25 30x14 
+depth 15/25/15.1  time 0.07s  value=-14  nodes 118375  1461kN/s  db 37% cut 97.2% pv 14-18 21-17  1- 5 17-14 10x17 26-22 18x25 30x14 
+depth 17/29/17.2  time 0.12s  value=-16  nodes 259219  1949kN/s  db 35% cut 97.3% pv 14-18 21-17  1- 5 17-14 10x17 26-22 18x25 30x14 
+
+
+ - w w -
+w - w - 
+ w - - w
+- b - - 
+ - b b w
+b - b - 
+ b - - -
+- - - b 
+67B035A0 881E588C not found in book
+
+depth 1/3/1.3  time 0.00s  value=-28  nodes 20  1kN/s  db 0% cut 100.0% pv  8-11 
+depth 3/8/4.4  time 0.01s  value=-18  nodes 338  22kN/s  db 0% cut 89.9% pv  1- 6 26-22  8-11 24-20 
+depth 5/13/7.0  time 0.01s  value=-14  nodes 1442  65kN/s  db 0% cut 93.6% pv  1- 6 26-22 14-18 22-17  8-11 17-14 10x17 
+depth 7/16/8.6  time 0.02s  value=-8  nodes 4197  155kN/s  db 50% cut 94.4% pv  1- 6 26-22 14-18 22-17 18-23 17-14 10x17 21x14 
+depth 9/22/10.0  time 0.03s  value=-10  nodes 10578  302kN/s  db 48% cut 95.5% pv  1- 6 26-22 12-16 24-20  8-11 31-26 14-18 21-17 
+depth 11/22/10.9  time 0.04s  value=-16  nodes 27570  612kN/s  db 43% cut 95.7% pv 14-18 21-17  1- 5 17-14 10x17 26-22 17x26 30x14 
+depth 13/23/13.1  time 0.05s  value=-12  nodes 56995  949kN/s  db 40% cut 96.4% pv 14-18 21-17  1- 5 17-14 10x17 26-22 17x26 30x14 
+depth 15/24/15.0  time 0.08s  value=-10  nodes 116314  1306kN/s  db 37% cut 97.1% pv 14-18 21-17  1- 5 17-14 10x17 26-22 17x26 30x14 
+depth 17/28/17.2  time 0.14s  value=-16  nodes 256432  1744kN/s  db 34% cut 97.3% pv 14-18 21-17  1- 5 17-14 10x17 26-22 17x26 30x14 
+depth 19/30/19.4  time 0.29s  value=-16  nodes 616097  2060kN/s  db 32% cut 97.2% pv 14-18 21-17  1- 5 17-14 10x17 26-22 18x25 30x14 
+depth 21/33/21.2  time 0.82s  value=0  nodes 2146038  2591kN/s  db 32% cut 96.8% pv 14-18 21-17  1- 5 17-14 10x17 26-22 18x25 30x14 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w - w 
+ w - w w
+- w - - 
+ - - - -
+b b b - 
+ b b b b
+b b b b 
+EA0B9C63 AC99E34C not found in book
+
+depth 1/4/2.7  time 0.00s  value=10  nodes 36  3kN/s  db 0% cut 100.0% pv 11-16 27-23 
+depth 3/14/5.7  time 0.01s  value=12  nodes 568  35kN/s  db 0% cut 93.7% pv  5- 9 27-23  1- 5 32-27 
+depth 5/19/8.0  time 0.01s  value=10  nodes 3169  137kN/s  db 0% cut 93.5% pv  5- 9 27-23  1- 5 32-27 11-15 22-18 15x22 
+depth 7/23/10.1  time 0.02s  value=12  nodes 14494  439kN/s  db 0% cut 94.5% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 9/23/11.9  time 0.05s  value=14  nodes 52018  852kN/s  db 0% cut 94.6% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 11/28/14.0  time 0.09s  value=16  nodes 198909  1969kN/s  db 67% cut 95.0% pv  5- 9 27-23 11-15 22-18 15x22 25x18  8-11 30-25 
+depth 13/32/16.0  time 0.20s  value=14  nodes 676089  3219kN/s  db 64% cut 95.2% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 15/35/18.0  time 0.77s  value=16  nodes 2983663  3805kN/s  db 43% cut 95.5% pv 11-16 19-15 10x19 24x15  5- 9 22-18 16-20 25-22 
+depth 17/44/20.4  time 2.51s  value=16  nodes 10853585  4300kN/s  db 49% cut 95.7% pv 11-16 19-15 10x19 24x15  5- 9 28-24  9-14 32-28 
+
+
+ w w w w
+w w - w 
+ w - w w
+- w - - 
+ - - - -
+b b b - 
+ b b b b
+b b b b 
+EA0B9C63 AC99E34C not found in book
+
+depth 1/4/2.7  time 0.00s  value=10  nodes 36  3kN/s  db 0% cut 100.0% pv 11-16 27-23 
+depth 3/14/5.7  time 0.00s  value=12  nodes 568  40kN/s  db 0% cut 93.7% pv  5- 9 27-23  1- 5 32-27 
+depth 5/19/8.0  time 0.01s  value=10  nodes 3169  144kN/s  db 0% cut 93.5% pv  5- 9 27-23  1- 5 32-27 11-15 22-18 15x22 
+depth 7/23/10.1  time 0.02s  value=12  nodes 14494  483kN/s  db 0% cut 94.5% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 9/23/11.9  time 0.04s  value=14  nodes 52018  1061kN/s  db 0% cut 94.6% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 11/28/14.0  time 0.08s  value=16  nodes 198909  2116kN/s  db 67% cut 95.0% pv  5- 9 27-23 11-15 22-18 15x22 25x18  8-11 30-25 
+depth 13/32/16.0  time 0.20s  value=14  nodes 676089  3144kN/s  db 64% cut 95.2% pv  5- 9 27-23 11-15 32-27  8-11 22-17  9-14 25-22 
+depth 15/35/18.0  time 0.70s  value=16  nodes 2983663  4172kN/s  db 43% cut 95.5% pv 11-16 19-15 10x19 24x15  5- 9 22-18 16-20 25-22 
+depth 17/44/20.4  time 2.51s  value=16  nodes 10853585  4303kN/s  db 49% cut 95.7% pv 11-16 19-15 10x19 24x15  5- 9 28-24  9-14 32-28 
+depth 19/45/22.5  time 7.95s  value=24  nodes 33009610  4144kN/s  db 50% cut 95.5% pv 11-16 27-23 16-20 32-27  8-11 22-18  6- 9 25-22 
+depth 21/49/24.1  time 23.13s  value=26  nodes 96188975  4156kN/s  db 51% cut 95.4% pv 11-16 24-20 16x23 27x18  5- 9 21-17  1- 5 17-13 
+reallocating hashtable to 128 MB
+
+
+ w - w -
+w w w w 
+ - w w w
+- - - - 
+ b w b b
+b - - - 
+ - b b b
+b - b b 
+3B649925 CCACCC60 not found in book
+
+depth 1/10/5.4  time 0.00s  value=-8  nodes 72  7kN/s  db 0% cut 96.4% pv  5- 9 
+depth 3/14/6.6  time 0.00s  value=-4  nodes 778  55kN/s  db 0% cut 93.6% pv  5- 9 22-18  7-10 27-24 
+depth 5/20/8.9  time 0.01s  value=-6  nodes 4083  214kN/s  db 0% cut 93.3% pv  7-10 15-11  5- 9 28-24 16-20 
+depth 7/21/9.7  time 0.01s  value=-4  nodes 9793  391kN/s  db 0% cut 94.6% pv 16-19 23x16 12x19 22-18 14x23 27x18 13-17 21x14 
+depth 9/24/11.8  time 0.03s  value=-4  nodes 32979  891kN/s  db 60% cut 95.4% pv  7-10 23-19 16x23 26x19 14-18 15-11 10-15 19x10 
+depth 11/28/13.0  time 0.05s  value=-18  nodes 121984  1936kN/s  db 43% cut 95.9% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+depth 13/35/15.4  time 0.09s  value=-8  nodes 281580  2707kN/s  db 57% cut 95.8% pv  7-10 15-11 10-15 27-24 16-20 23-19 20x27 32x23 
+depth 15/35/16.8  time 0.16s  value=-6  nodes 537495  3161kN/s  db 53% cut 96.2% pv  7-10 15-11 10-15 27-24 16-20 24-19 15x24 28x19 
+depth 17/39/19.1  time 0.50s  value=-18  nodes 1671687  3303kN/s  db 53% cut 95.8% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+
+
+ w - w -
+w w w w 
+ - w w w
+- - - - 
+ b w b b
+b - - - 
+ - b b b
+b - b b 
+3B649925 CCACCC60 not found in book
+
+depth 1/10/5.4  time 0.00s  value=-8  nodes 72  6kN/s  db 0% cut 96.4% pv  5- 9 
+depth 3/14/6.6  time 0.01s  value=-4  nodes 778  51kN/s  db 0% cut 93.6% pv  5- 9 22-18  7-10 27-24 
+depth 5/20/8.9  time 0.01s  value=-6  nodes 4083  194kN/s  db 0% cut 93.3% pv  7-10 15-11  5- 9 28-24 16-20 
+depth 7/21/9.7  time 0.02s  value=-4  nodes 9793  337kN/s  db 0% cut 94.6% pv 16-19 23x16 12x19 22-18 14x23 27x18 13-17 21x14 
+depth 9/24/11.8  time 0.03s  value=-4  nodes 32979  766kN/s  db 60% cut 95.4% pv  7-10 23-19 16x23 26x19 14-18 15-11 10-15 19x10 
+depth 11/28/13.0  time 0.06s  value=-18  nodes 121984  1767kN/s  db 43% cut 95.9% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+depth 13/35/15.4  time 0.10s  value=-8  nodes 281580  2491kN/s  db 57% cut 95.8% pv  7-10 15-11 10-15 27-24 16-20 23-19 20x27 32x23 
+depth 15/35/16.8  time 0.17s  value=-6  nodes 537495  2969kN/s  db 53% cut 96.2% pv  7-10 15-11 10-15 27-24 16-20 24-19 15x24 28x19 
+depth 17/39/19.1  time 0.45s  value=-18  nodes 1671687  3674kN/s  db 53% cut 95.8% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+depth 19/39/20.7  time 0.90s  value=-24  nodes 3371547  3692kN/s  db 51% cut 96.0% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+depth 21/40/22.7  time 1.91s  value=-26  nodes 7035128  3671kN/s  db 48% cut 96.4% pv 16-19 23x16 12x19 27-23 19-24 28x19  4- 8 21-17 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w w w 
+ - w - w
+w - w - 
+ b - b -
+- b - b 
+ b b b b
+b b b b 
+B62EF279 B2AC05BC not found in book
+
+depth 1/5/2.1  time 0.00s  value=-4  nodes 21  2kN/s  db 0% cut 100.0% pv  6-10 
+depth 3/10/5.2  time 0.00s  value=0  nodes 211  15kN/s  db 0% cut 95.0% pv  6-10 28-24  1- 6 24-19 
+depth 5/13/7.7  time 0.01s  value=-14  nodes 1925  96kN/s  db 0% cut 93.9% pv  6-10 28-24  1- 6 24-19  8-12 32-28  4- 8 
+depth 7/23/11.2  time 0.02s  value=-20  nodes 9836  364kN/s  db 0% cut 91.6% pv  6-10 28-24 10-15 32-28 15x22 26x10  7x14 24-19 
+depth 9/25/12.3  time 0.03s  value=-24  nodes 28113  720kN/s  db 0% cut 93.4% pv  8-12 28-24  9-13 18x 9  5x14 25-22  6- 9 24-19 
+depth 11/27/14.2  time 0.04s  value=-26  nodes 63552  1199kN/s  db 0% cut 94.9% pv 16-19 23x16 14x23 26x19  8-12 25-22 11-15 19x10 
+depth 13/31/17.3  time 0.10s  value=-22  nodes 267594  2454kN/s  db 33% cut 95.1% pv 16-19 23x16 14x23 26x19  8-12 25-22  9-13 22-18 
+depth 15/34/18.6  time 0.24s  value=-24  nodes 873277  3424kN/s  db 43% cut 95.5% pv 16-19 23x16 14x23 26x19  8-12 27-24  4- 8 32-27 
+depth 17/44/20.4  time 0.71s  value=-34  nodes 3018489  4192kN/s  db 53% cut 95.6% pv  6-10 25-22 16-19 23x16 14x23 26x19  8-12 29-25 
+
+
+ w w w w
+w w w w 
+ - w - w
+w - w - 
+ b - b -
+- b - b 
+ b b b b
+b b b b 
+B62EF279 B2AC05BC not found in book
+
+depth 1/5/2.1  time 0.00s  value=-4  nodes 21  2kN/s  db 0% cut 100.0% pv  6-10 
+depth 3/10/5.2  time 0.00s  value=0  nodes 211  16kN/s  db 0% cut 95.0% pv  6-10 28-24  1- 6 24-19 
+depth 5/13/7.7  time 0.01s  value=-14  nodes 1925  96kN/s  db 0% cut 93.9% pv  6-10 28-24  1- 6 24-19  8-12 32-28  4- 8 
+depth 7/23/11.2  time 0.02s  value=-20  nodes 9836  364kN/s  db 0% cut 91.6% pv  6-10 28-24 10-15 32-28 15x22 26x10  7x14 24-19 
+depth 9/25/12.3  time 0.03s  value=-24  nodes 28113  759kN/s  db 0% cut 93.4% pv  8-12 28-24  9-13 18x 9  5x14 25-22  6- 9 24-19 
+depth 11/27/14.2  time 0.04s  value=-26  nodes 63552  1199kN/s  db 0% cut 94.9% pv 16-19 23x16 14x23 26x19  8-12 25-22 11-15 19x10 
+depth 13/31/17.3  time 0.09s  value=-22  nodes 267594  2623kN/s  db 33% cut 95.1% pv 16-19 23x16 14x23 26x19  8-12 25-22  9-13 22-18 
+depth 15/34/18.6  time 0.24s  value=-24  nodes 873277  3465kN/s  db 43% cut 95.5% pv 16-19 23x16 14x23 26x19  8-12 27-24  4- 8 32-27 
+depth 17/44/20.4  time 0.74s  value=-34  nodes 3018489  4013kN/s  db 53% cut 95.6% pv  6-10 25-22 16-19 23x16 14x23 26x19  8-12 29-25 
+depth 19/44/22.5  time 2.14s  value=-44  nodes 9097432  4227kN/s  db 50% cut 95.6% pv  8-12 28-24  7-10 24-19  3- 7 25-22  9-13 18x 9 
+depth 21/47/24.2  time 4.78s  value=-50  nodes 20451972  4274kN/s  db 48% cut 95.8% pv  8-12 28-24  7-10 24-19  9-13 18x 9  5x14 25-22 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w - w 
+ w - w w
+- b b w 
+ - w - -
+b - - b 
+ b b b b
+b b b b 
+5F75A53C 32152238 not found in book
+
+depth 1/3/1.6  time 0.00s  value=14  nodes 36  3kN/s  db 0% cut 100.0% pv  9-13 
+depth 3/15/8.6  time 0.01s  value=8  nodes 1268  79kN/s  db 0% cut 92.3% pv  7-10 24-20  9-14 
+depth 5/21/10.3  time 0.01s  value=2  nodes 6333  287kN/s  db 0% cut 93.2% pv  7-10 17-13  3- 7 24-20 10-14 22-17 
+depth 7/31/12.6  time 0.02s  value=2  nodes 19275  621kN/s  db 0% cut 94.1% pv  7-10 17-13 12-16 24-20  9-14 20x11  3- 7 31-26 
+depth 9/31/13.3  time 0.04s  value=4  nodes 58706  1304kN/s  db 0% cut 94.7% pv  9-13 24-20  7-10 27-24  3- 7 17-14 10x26 30x14 
+depth 11/32/15.5  time 0.07s  value=0  nodes 177248  2332kN/s  db 47% cut 94.6% pv  9-14 17x10  7x14 22-17  5- 9 17x10 18-22 25x18 
+depth 13/35/16.9  time 0.14s  value=-2  nodes 513947  3315kN/s  db 47% cut 94.8% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 24-20 
+depth 15/35/18.7  time 0.30s  value=0  nodes 1204971  3849kN/s  db 47% cut 95.3% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 24-20 
+depth 17/42/20.1  time 0.81s  value=-6  nodes 3569009  4331kN/s  db 54% cut 95.4% pv  9-13 17-14  7-11 24-20 19-23 15-10  6x15 31-26 
+
+
+ w w w w
+w w - w 
+ w - w w
+- b b w 
+ - w - -
+b - - b 
+ b b b b
+b b b b 
+5F75A53C 32152238 not found in book
+
+depth 1/3/1.6  time 0.00s  value=14  nodes 36  3kN/s  db 0% cut 100.0% pv  9-13 
+depth 3/15/8.6  time 0.00s  value=8  nodes 1268  90kN/s  db 0% cut 92.3% pv  7-10 24-20  9-14 
+depth 5/21/10.3  time 0.01s  value=2  nodes 6333  287kN/s  db 0% cut 93.2% pv  7-10 17-13  3- 7 24-20 10-14 22-17 
+depth 7/31/12.6  time 0.02s  value=2  nodes 19275  642kN/s  db 0% cut 94.1% pv  7-10 17-13 12-16 24-20  9-14 20x11  3- 7 31-26 
+depth 9/31/13.3  time 0.04s  value=4  nodes 58706  1304kN/s  db 0% cut 94.7% pv  9-13 24-20  7-10 27-24  3- 7 17-14 10x26 30x14 
+depth 11/32/15.5  time 0.07s  value=0  nodes 177248  2085kN/s  db 47% cut 94.6% pv  9-14 17x10  7x14 22-17  5- 9 17x10 18-22 25x18 
+depth 13/35/16.9  time 0.16s  value=-2  nodes 513947  2988kN/s  db 47% cut 94.8% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 24-20 
+depth 15/35/18.7  time 0.34s  value=0  nodes 1204971  3452kN/s  db 47% cut 95.3% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 24-20 
+depth 17/42/20.1  time 0.86s  value=-6  nodes 3569009  4111kN/s  db 54% cut 95.4% pv  9-13 17-14  7-11 24-20 19-23 15-10  6x15 31-26 
+depth 19/45/22.1  time 2.10s  value=-4  nodes 8682279  4114kN/s  db 54% cut 95.7% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 31-26 
+depth 21/45/23.9  time 6.31s  value=-10  nodes 25862329  4090kN/s  db 53% cut 95.7% pv  9-14 17x10  7x14 22-17  2- 7 17x10  7x14 31-26 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w - w 
+ w w w -
+b - w - 
+ - b - w
+- b b b 
+ b b b b
+b - b b 
+338E61D4 A90EEDA8 not found in book
+
+depth 1/11/5.0  time 0.00s  value=8  nodes 90  9kN/s  db 0% cut 85.7% pv 24-19 15x24 
+depth 3/12/5.8  time 0.01s  value=4  nodes 220  14kN/s  db 0% cut 89.7% pv 25-21  9-14 18x 9  5x14 
+depth 5/14/8.5  time 0.01s  value=6  nodes 1044  52kN/s  db 0% cut 94.2% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9 
+depth 7/21/11.6  time 0.01s  value=10  nodes 4686  187kN/s  db 0% cut 94.7% pv 30-26 10-14 24-19 15x24 28x19 14-17 18-15 11x18 
+depth 9/25/13.7  time 0.02s  value=8  nodes 15269  449kN/s  db 0% cut 96.4% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 11/31/15.6  time 0.04s  value=8  nodes 42865  931kN/s  db 0% cut 96.8% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 13/35/17.0  time 0.06s  value=6  nodes 136823  1874kN/s  db 29% cut 96.3% pv 25-21  9-14 18x 9  5x14 22-17  1- 5 29-25  8-12 
+depth 15/38/19.6  time 0.13s  value=6  nodes 402594  2875kN/s  db 31% cut 96.2% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 17/43/21.3  time 0.36s  value=-2  nodes 1325492  3601kN/s  db 44% cut 95.9% pv 30-26  8-12 24-19 15x24 28x19 11-15 18x11  7x16 
+
+
+ w w w w
+w w - w 
+ w w w -
+b - w - 
+ - b - w
+- b b b 
+ b b b b
+b - b b 
+338E61D4 A90EEDA8 not found in book
+
+depth 1/11/5.0  time 0.00s  value=8  nodes 90  9kN/s  db 0% cut 85.7% pv 24-19 15x24 
+depth 3/12/5.8  time 0.01s  value=4  nodes 220  13kN/s  db 0% cut 89.7% pv 25-21  9-14 18x 9  5x14 
+depth 5/14/8.5  time 0.01s  value=6  nodes 1044  49kN/s  db 0% cut 94.2% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9 
+depth 7/21/11.6  time 0.02s  value=10  nodes 4686  167kN/s  db 0% cut 94.7% pv 30-26 10-14 24-19 15x24 28x19 14-17 18-15 11x18 
+depth 9/25/13.7  time 0.03s  value=8  nodes 15269  436kN/s  db 0% cut 96.4% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 11/31/15.6  time 0.04s  value=8  nodes 42865  912kN/s  db 0% cut 96.8% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 13/35/17.0  time 0.06s  value=6  nodes 136823  1900kN/s  db 29% cut 96.3% pv 25-21  9-14 18x 9  5x14 22-17  1- 5 29-25  8-12 
+depth 15/38/19.6  time 0.14s  value=6  nodes 402594  2776kN/s  db 31% cut 96.2% pv 30-26  8-12 24-19 15x24 28x19  9-14 18x 9  5x14 
+depth 17/43/21.3  time 0.37s  value=-2  nodes 1325492  3497kN/s  db 44% cut 95.9% pv 30-26  8-12 24-19 15x24 28x19 11-15 18x11  7x16 
+depth 19/43/22.7  time 0.99s  value=8  nodes 3679250  3675kN/s  db 47% cut 95.8% pv 25-21  9-14 18x 9  5x14 22-17  8-12 29-25  1- 5 
+depth 21/45/24.4  time 1.85s  value=32  nodes 7131315  3842kN/s  db 47% cut 95.6% pv 25-21  9-14 18x 9  5x14 22-17  8-12 29-25  1- 5 
+reallocating hashtable to 128 MB
+
+
+ w - w -
+w - - w 
+ w - w w
+- b - w 
+ b b b w
+- - b - 
+ - - b b
+- - b b 
+71F29B72 91E40A0C not found in book
+
+depth 1/7/3.1  time 0.00s  value=6  nodes 50  5kN/s  db 0% cut 89.5% pv  5- 9 
+depth 3/8/4.9  time 0.00s  value=12  nodes 199  15kN/s  db 0% cut 94.3% pv  2- 7 24-20  7-11 32-27 
+depth 5/16/8.7  time 0.01s  value=14  nodes 765  42kN/s  db 0% cut 91.9% pv  2- 7 24-20  7-11 32-27 14-18 30-26 19-23 
+depth 7/18/9.0  time 0.01s  value=-94  nodes 2579  112kN/s  db 0% cut 92.9% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 9/19/10.1  time 0.02s  value=-52  nodes 5556  191kN/s  db 75% cut 94.8% pv  6- 9 13x 6  2x 9 24-20  1- 6 20x11  9-13 11- 7 
+depth 11/22/11.5  time 0.03s  value=-60  nodes 11349  306kN/s  db 62% cut 96.0% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 13/25/14.3  time 0.04s  value=20  nodes 27363  570kN/s  db 42% cut 95.5% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 15/25/15.1  time 0.05s  value=24  nodes 41096  733kN/s  db 32% cut 96.0% pv  2- 7 24-20  7-11 32-27 14-18 27-24 18-23 22-18 
+depth 17/32/19.1  time 0.06s  value=28  nodes 81288  1113kN/s  db 30% cut 96.1% pv  2- 7 24-20  7-11 32-27 14-18 27-24 18-23 22-18 
+
+
+ w - w -
+w - - w 
+ w - w w
+- b - w 
+ b b b w
+- - b - 
+ - - b b
+- - b b 
+71F29B72 91E40A0C not found in book
+
+depth 1/7/3.1  time 0.00s  value=6  nodes 50  5kN/s  db 0% cut 89.5% pv  5- 9 
+depth 3/8/4.9  time 0.01s  value=12  nodes 199  13kN/s  db 0% cut 94.3% pv  2- 7 24-20  7-11 32-27 
+depth 5/16/8.7  time 0.01s  value=14  nodes 765  38kN/s  db 0% cut 91.9% pv  2- 7 24-20  7-11 32-27 14-18 30-26 19-23 
+depth 7/18/9.0  time 0.02s  value=-94  nodes 2579  85kN/s  db 0% cut 92.9% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 9/19/10.1  time 0.03s  value=-52  nodes 5556  142kN/s  db 75% cut 94.8% pv  6- 9 13x 6  2x 9 24-20  1- 6 20x11  9-13 11- 7 
+depth 11/22/11.5  time 0.04s  value=-60  nodes 11349  241kN/s  db 62% cut 96.0% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 13/25/14.3  time 0.05s  value=20  nodes 27363  488kN/s  db 42% cut 95.5% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+depth 15/25/15.1  time 0.06s  value=24  nodes 41096  613kN/s  db 32% cut 96.0% pv  2- 7 24-20  7-11 32-27 14-18 27-24 18-23 22-18 
+depth 17/32/19.1  time 0.07s  value=28  nodes 81203  955kN/s  db 30% cut 96.1% pv  2- 7 24-20  7-11 32-27 14-18 27-24 18-23 22-18 
+depth 19/34/21.4  time 0.10s  value=28  nodes 150560  1344kN/s  db 31% cut 96.3% pv  2- 7 24-20  7-11 32-27 14-18 27-24 18-23 22-18 
+depth 21/38/22.8  time 0.16s  value=26  nodes 333509  1939kN/s  db 30% cut 96.3% pv  2- 7 24-20  7-11 32-27 14-18 30-26  5- 9 17-14 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- - w w 
+ - - - w
+w - - - 
+ w b - -
+b b - - 
+ - b - b
+- b b b 
+344089CA 67E75320 not found in book
+
+depth 1/3/2.2  time 0.00s  value=-14  nodes 24  2kN/s  db 0% cut 100.0% pv 25-22 12x19 
+depth 3/7/4.7  time 0.01s  value=-16  nodes 187  12kN/s  db 0% cut 98.5% pv 25-22 12x19 29-25  1- 6 21-17 
+depth 5/13/7.3  time 0.01s  value=-8  nodes 1531  69kN/s  db 0% cut 96.3% pv 25-22 12x19 29-25 19-24 21-17  5- 9 25-21 
+depth 7/19/9.8  time 0.02s  value=0  nodes 9288  320kN/s  db 0% cut 94.9% pv 25-22 12x19 21-17 19-24 29-25  5- 9 25-21 15-19 
+depth 9/22/11.7  time 0.03s  value=-4  nodes 40935  951kN/s  db 63% cut 95.8% pv 25-22 12x19 21-17  5- 9 29-25  7-10 25-21  9-14 
+depth 11/24/13.6  time 0.07s  value=-10  nodes 176417  2125kN/s  db 62% cut 95.4% pv 25-22 12x19 21-17  5- 9 29-25  1- 6 25-21  7-10 
+depth 13/32/15.8  time 0.24s  value=0  nodes 751812  3007kN/s  db 54% cut 95.7% pv 26-22 12x19 22-18 15x22 25x18  1- 6 29-25  5- 9 
+depth 15/34/17.7  time 0.57s  value=-6  nodes 1957296  3374kN/s  db 55% cut 95.7% pv 26-22 12x19 22-18 15x22 25x18  1- 6 29-25  6- 9 
+depth 17/38/19.5  time 1.84s  value=-12  nodes 6863409  3701kN/s  db 55% cut 95.5% pv 26-22 12x19 22-18 15x22 25x18  5- 9 21-17  9-13 
+
+
+ w w w w
+- - w w 
+ - - - w
+w - - - 
+ w b - -
+b b - - 
+ - b - b
+- b b b 
+344089CA 67E75320 not found in book
+
+depth 1/3/2.2  time 0.00s  value=-14  nodes 24  2kN/s  db 0% cut 100.0% pv 25-22 12x19 
+depth 3/7/4.7  time 0.00s  value=-16  nodes 187  13kN/s  db 0% cut 98.5% pv 25-22 12x19 29-25  1- 6 21-17 
+depth 5/13/7.3  time 0.01s  value=-8  nodes 1531  72kN/s  db 0% cut 96.3% pv 25-22 12x19 29-25 19-24 21-17  5- 9 25-21 
+depth 7/19/9.8  time 0.02s  value=0  nodes 9288  343kN/s  db 0% cut 94.9% pv 25-22 12x19 21-17 19-24 29-25  5- 9 25-21 15-19 
+depth 9/22/11.7  time 0.03s  value=-4  nodes 40936  1023kN/s  db 66% cut 95.8% pv 25-22 12x19 21-17  5- 9 29-25  7-10 25-21  9-14 
+depth 11/24/13.6  time 0.07s  value=-10  nodes 176426  2321kN/s  db 64% cut 95.4% pv 25-22 12x19 21-17  5- 9 29-25  1- 6 25-21  7-10 
+depth 13/34/15.5  time 0.15s  value=-4  nodes 493603  3085kN/s  db 61% cut 95.7% pv 25-22 12x19 21-17  5- 9 29-25  7-10 17-14  9x18 
+depth 15/34/17.2  time 0.39s  value=-4  nodes 1464750  3689kN/s  db 55% cut 95.7% pv 21-17 12x19 26-22  1- 6 22-18 15x22 25x18  6-10 
+depth 17/36/19.3  time 1.31s  value=-6  nodes 4934056  3743kN/s  db 56% cut 95.6% pv 26-22 12x19 22-18 15x22 25x18  5- 9 29-25  9-13 
+depth 19/40/21.0  time 5.26s  value=-12  nodes 19358865  3672kN/s  db 55% cut 95.5% pv 21-17 12x19 17-14  1- 6 26-22  6-10 22-17  2- 6 
+depth 21/43/22.6  time 14.99s  value=-20  nodes 49758938  3317kN/s  db 53% cut 95.8% pv 21-17 12x19 25-21  5- 9 29-25  2- 6 25-22  7-10 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+w w - w 
+ w w - w
+b - - - 
+ - - b w
+b b b - 
+ - b - -
+b b b b 
+8FDC8055 4679BD08 not found in book
+
+depth 1/4/1.3  time 0.00s  value=4  nodes 24  2kN/s  db 0% cut 100.0% pv  4- 8 
+depth 3/10/4.5  time 0.01s  value=-2  nodes 470  31kN/s  db 0% cut 92.3% pv  4- 8 24-19 11-15 25-22 
+depth 5/18/7.8  time 0.01s  value=4  nodes 2707  135kN/s  db 0% cut 97.4% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 7/21/9.2  time 0.02s  value=10  nodes 9588  342kN/s  db 0% cut 97.4% pv  4- 8 25-22 14-17 21x14 10x26 31x22 11-15 23-19 
+depth 9/26/11.6  time 0.03s  value=-6  nodes 39888  972kN/s  db 40% cut 96.3% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 11/26/13.5  time 0.06s  value=-4  nodes 113243  1594kN/s  db 52% cut 95.9% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 13/35/15.4  time 0.16s  value=0  nodes 437385  2603kN/s  db 55% cut 95.6% pv  4- 8 24-19  2- 6 25-22 14-17 21x14 10x26 31x22 
+depth 15/37/17.2  time 0.37s  value=-4  nodes 1259913  3315kN/s  db 57% cut 95.6% pv  2- 6 24-19 14-17 21x14 10x17 25-21 17-22 19-15 
+depth 17/39/19.5  time 0.80s  value=0  nodes 2966421  3662kN/s  db 54% cut 95.8% pv  2- 6 24-19 11-15 30-26 15x24 28x19  4- 8 26-22 
+
+
+ w w w -
+w w - w 
+ w w - w
+b - - - 
+ - - b w
+b b b - 
+ - b - -
+b b b b 
+8FDC8055 4679BD08 not found in book
+
+depth 1/4/1.3  time 0.00s  value=4  nodes 24  2kN/s  db 0% cut 100.0% pv  4- 8 
+depth 3/10/4.5  time 0.00s  value=-2  nodes 470  33kN/s  db 0% cut 92.3% pv  4- 8 24-19 11-15 25-22 
+depth 5/18/7.8  time 0.01s  value=4  nodes 2707  128kN/s  db 0% cut 97.4% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 7/21/9.2  time 0.02s  value=10  nodes 9588  355kN/s  db 0% cut 97.4% pv  4- 8 25-22 14-17 21x14 10x26 31x22 11-15 23-19 
+depth 9/26/11.6  time 0.03s  value=-6  nodes 39888  997kN/s  db 40% cut 96.3% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 11/26/13.5  time 0.06s  value=-4  nodes 113243  1690kN/s  db 52% cut 95.9% pv  4- 8 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 13/35/15.4  time 0.15s  value=0  nodes 437385  2683kN/s  db 55% cut 95.6% pv  4- 8 24-19  2- 6 25-22 14-17 21x14 10x26 31x22 
+depth 15/37/16.9  time 0.43s  value=-4  nodes 1319000  2984kN/s  db 54% cut 95.6% pv  2- 6 24-19 14-17 21x14 10x17 25-21 17-22 19-15 
+depth 17/39/19.2  time 0.85s  value=0  nodes 2925379  3417kN/s  db 54% cut 95.9% pv  2- 6 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 19/40/21.1  time 3.02s  value=-6  nodes 11309193  3736kN/s  db 52% cut 95.7% pv  2- 6 24-19 11-15 25-22 15x24 28x19 14-17 21x14 
+depth 21/40/23.0  time 5.80s  value=0  nodes 21027709  3620kN/s  db 49% cut 96.0% pv  2- 6 24-19 11-15 30-26 15x24 28x19  4- 8 26-22 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w w w 
+ - w - w
+- w w - 
+ b - - -
+b b b b 
+ b - b b
+b b b b 
+79AD7A5B 3C06C314 not found in book
+
+depth 1/4/2.3  time 0.00s  value=-20  nodes 25  2kN/s  db 0% cut 100.0% pv 10-15 19x10 
+depth 3/7/4.3  time 0.00s  value=-16  nodes 147  10kN/s  db 0% cut 97.7% pv 10-15 19x10  6x22 25x18  1- 6 
+depth 5/13/7.2  time 0.01s  value=-16  nodes 1052  55kN/s  db 0% cut 97.9% pv  9-14 18x 9  6x13 25-22  1- 6 28-24 16-20 
+depth 7/20/10.3  time 0.01s  value=-20  nodes 5991  239kN/s  db 0% cut 97.3% pv  9-14 18x 9  5x14 25-22 11-15 29-25 15x24 28x19 
+depth 9/28/12.6  time 0.03s  value=-20  nodes 36954  901kN/s  db 0% cut 95.1% pv 10-14 25-22  6-10 22-17  9-13 18x 9 13x22 26x17 
+depth 11/32/14.5  time 0.06s  value=-20  nodes 113107  1713kN/s  db 50% cut 95.7% pv 10-14 25-22  6-10 28-24 16-20 22-17 11-15 18x11 
+depth 13/32/16.6  time 0.14s  value=-20  nodes 414661  2782kN/s  db 57% cut 95.6% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+depth 15/37/19.0  time 0.45s  value=-16  nodes 1595916  3454kN/s  db 66% cut 95.9% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+depth 17/43/21.1  time 1.20s  value=-14  nodes 4537339  3759kN/s  db 68% cut 96.0% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+
+
+ w w w w
+w w w w 
+ - w - w
+- w w - 
+ b - - -
+b b b b 
+ b - b b
+b b b b 
+79AD7A5B 3C06C314 not found in book
+
+depth 1/4/2.3  time 0.00s  value=-20  nodes 25  2kN/s  db 0% cut 100.0% pv 10-15 19x10 
+depth 3/7/4.3  time 0.00s  value=-16  nodes 147  10kN/s  db 0% cut 97.7% pv 10-15 19x10  6x22 25x18  1- 6 
+depth 5/13/7.2  time 0.01s  value=-16  nodes 1052  52kN/s  db 0% cut 97.9% pv  9-14 18x 9  6x13 25-22  1- 6 28-24 16-20 
+depth 7/20/10.3  time 0.02s  value=-20  nodes 5991  221kN/s  db 0% cut 97.3% pv  9-14 18x 9  5x14 25-22 11-15 29-25 15x24 28x19 
+depth 9/28/12.6  time 0.03s  value=-20  nodes 36954  947kN/s  db 0% cut 95.1% pv 10-14 25-22  6-10 22-17  9-13 18x 9 13x22 26x17 
+depth 11/32/14.5  time 0.06s  value=-20  nodes 113107  1688kN/s  db 50% cut 95.7% pv 10-14 25-22  6-10 28-24 16-20 22-17 11-15 18x11 
+depth 13/32/16.6  time 0.14s  value=-20  nodes 414661  2692kN/s  db 57% cut 95.6% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+depth 15/37/19.0  time 0.42s  value=-16  nodes 1595916  3720kN/s  db 66% cut 95.9% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+depth 17/43/21.1  time 1.15s  value=-14  nodes 4537339  3898kN/s  db 68% cut 96.0% pv 11-15 18x11  8x24 27x11  3- 7 25-22  7x16 22-18 
+depth 19/44/22.7  time 4.72s  value=-18  nodes 18106973  3830kN/s  db 65% cut 95.8% pv  3- 7 28-24 16-20 25-22 11-15 18x11  8x15 22-17 
+depth 21/45/24.4  time 9.54s  value=-18  nodes 35921150  3760kN/s  db 63% cut 95.9% pv  3- 7 25-22 11-15 18x11  8x24 28x19  4- 8 29-25 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- w - - 
+ - w w w
+b w w - 
+ - - b -
+- - b b 
+ b b - b
+- b b b 
+D11B51E5 39421B30 not found in book
+
+depth 1/3/1.5  time 0.00s  value=6  nodes 22  2kN/s  db 0% cut 100.0% pv  8-12 
+depth 3/11/5.4  time 0.00s  value=0  nodes 490  35kN/s  db 0% cut 94.1% pv  1- 6 29-25  8-11 
+depth 5/18/8.2  time 0.01s  value=-6  nodes 2690  134kN/s  db 0% cut 94.0% pv  1- 6 29-25  8-12 31-26  9-13 18x 9  5x14 
+depth 7/25/10.2  time 0.02s  value=-4  nodes 9006  333kN/s  db 0% cut 94.7% pv  1- 6 29-25  8-11 31-26  9-13 18x 9  5x14 22-18 
+depth 9/25/11.9  time 0.03s  value=-4  nodes 31606  770kN/s  db 20% cut 95.2% pv  1- 6 29-25  8-11 31-26  3- 8 19-15 10x19 23x16 
+depth 11/27/13.8  time 0.05s  value=-4  nodes 79331  1259kN/s  db 57% cut 95.4% pv  9-13 18x 9  5x14 22-18  1- 5 18x 9  5x14 29-25 
+depth 13/33/16.2  time 0.10s  value=-2  nodes 257441  2298kN/s  db 66% cut 95.6% pv  1- 6 29-25  8-12 31-26  3- 8 18-15  9-13 32-28 
+depth 15/34/17.9  time 0.28s  value=-8  nodes 933736  3165kN/s  db 62% cut 95.6% pv  8-11 22-17  9-13 18x 9  5x14 30-25 13x22 25x 9 
+depth 17/40/20.1  time 0.63s  value=-8  nodes 2133012  3312kN/s  db 57% cut 95.8% pv  8-11 22-17  9-13 18x 9  5x14 30-25 13x22 25x 9 
+
+
+ w w w w
+- w - - 
+ - w w w
+b w w - 
+ - - b -
+- - b b 
+ b b - b
+- b b b 
+D11B51E5 39421B30 not found in book
+
+depth 1/3/1.5  time 0.00s  value=6  nodes 22  2kN/s  db 0% cut 100.0% pv  8-12 
+depth 3/11/5.4  time 0.01s  value=0  nodes 490  32kN/s  db 0% cut 94.1% pv  1- 6 29-25  8-11 
+depth 5/18/8.2  time 0.01s  value=-6  nodes 2690  128kN/s  db 0% cut 94.0% pv  1- 6 29-25  8-12 31-26  9-13 18x 9  5x14 
+depth 7/25/10.2  time 0.02s  value=-4  nodes 9006  300kN/s  db 0% cut 94.7% pv  1- 6 29-25  8-11 31-26  9-13 18x 9  5x14 22-18 
+depth 9/25/11.9  time 0.03s  value=-4  nodes 31606  770kN/s  db 20% cut 95.2% pv  1- 6 29-25  8-11 31-26  3- 8 19-15 10x19 23x16 
+depth 11/27/13.8  time 0.05s  value=-4  nodes 79331  1322kN/s  db 57% cut 95.4% pv  9-13 18x 9  5x14 22-18  1- 5 18x 9  5x14 29-25 
+depth 13/33/16.2  time 0.10s  value=-2  nodes 257441  2361kN/s  db 66% cut 95.6% pv  1- 6 29-25  8-12 31-26  3- 8 18-15  9-13 32-28 
+depth 15/34/17.9  time 0.28s  value=-8  nodes 933736  3175kN/s  db 62% cut 95.6% pv  8-11 22-17  9-13 18x 9  5x14 30-25 13x22 25x 9 
+depth 17/40/20.1  time 0.63s  value=-8  nodes 2133012  3338kN/s  db 57% cut 95.8% pv  8-11 22-17  9-13 18x 9  5x14 30-25 13x22 25x 9 
+depth 19/40/22.5  time 2.54s  value=-6  nodes 8723413  3416kN/s  db 53% cut 95.7% pv  9-13 18x 9  5x14 22-18  1- 5 18x 9  5x14 29-25 
+depth 21/40/23.2  time 5.26s  value=-6  nodes 17955562  3407kN/s  db 52% cut 95.9% pv  1- 6 29-25  8-12 31-26  3- 8 18-15  9-13 22-18 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- w w w 
+ - w - b
+w - w - 
+ - - - b
+w b b b 
+ b b b -
+b b b - 
+523F425F FCEBAC04 not found in book
+
+depth 1/10/5.1  time 0.00s  value=16  nodes 118  11kN/s  db 0% cut 93.5% pv 25-22 10-15 
+depth 3/10/5.9  time 0.01s  value=18  nodes 491  32kN/s  db 0% cut 94.4% pv 32-28 11-15 18x11  8x15 25-22 
+depth 5/14/8.0  time 0.01s  value=18  nodes 1958  93kN/s  db 0% cut 95.7% pv 25-22 10-15 27-24  6-10 29-25 10-14 
+depth 7/17/9.6  time 0.02s  value=28  nodes 7804  278kN/s  db 0% cut 96.1% pv 25-22 11-16 20x11  7x16 27-24  8-11 24-19 16-20 
+depth 9/26/12.1  time 0.03s  value=32  nodes 26717  703kN/s  db 0% cut 96.5% pv 25-22 11-16 20x11  7x16 27-24  8-11 24-19  4- 8 
+depth 11/31/13.9  time 0.06s  value=14  nodes 110335  1671kN/s  db 0% cut 95.5% pv 18-15 10x19 23x16  6-10 27-23 10-15 25-22 15-19 
+depth 13/32/15.6  time 0.10s  value=18  nodes 259880  2259kN/s  db 31% cut 95.7% pv 18-15 10x19 23x16  6-10 27-23 10-15 25-22  9-14 
+depth 15/36/17.6  time 0.24s  value=10  nodes 755545  3034kN/s  db 40% cut 95.7% pv 18-15 10x19 23x16  6-10 27-23  9-14 26-22 14-17 
+depth 17/36/19.4  time 0.51s  value=8  nodes 1626860  3110kN/s  db 41% cut 95.9% pv 18-15 10x19 23x16  6-10 27-23  9-14 26-22 14-17 
+
+
+ w w w w
+- w w w 
+ - w - b
+w - w - 
+ - - - b
+w b b b 
+ b b b -
+b b b - 
+523F425F FCEBAC04 not found in book
+
+depth 1/10/5.1  time 0.00s  value=16  nodes 118  11kN/s  db 0% cut 93.5% pv 25-22 10-15 
+depth 3/10/5.9  time 0.01s  value=18  nodes 491  32kN/s  db 0% cut 94.4% pv 32-28 11-15 18x11  8x15 25-22 
+depth 5/14/8.0  time 0.01s  value=18  nodes 1958  93kN/s  db 0% cut 95.7% pv 25-22 10-15 27-24  6-10 29-25 10-14 
+depth 7/17/9.6  time 0.02s  value=28  nodes 7804  278kN/s  db 0% cut 96.1% pv 25-22 11-16 20x11  7x16 27-24  8-11 24-19 16-20 
+depth 9/26/12.1  time 0.03s  value=32  nodes 26717  685kN/s  db 0% cut 96.5% pv 25-22 11-16 20x11  7x16 27-24  8-11 24-19  4- 8 
+depth 11/31/13.9  time 0.06s  value=14  nodes 110335  1646kN/s  db 0% cut 95.5% pv 18-15 10x19 23x16  6-10 27-23 10-15 25-22 15-19 
+depth 13/32/15.6  time 0.10s  value=18  nodes 259880  2320kN/s  db 31% cut 95.7% pv 18-15 10x19 23x16  6-10 27-23 10-15 25-22  9-14 
+depth 15/36/17.6  time 0.24s  value=10  nodes 755545  2962kN/s  db 40% cut 95.7% pv 18-15 10x19 23x16  6-10 27-23  9-14 26-22 14-17 
+depth 17/36/19.4  time 0.53s  value=8  nodes 1626860  3023kN/s  db 41% cut 95.9% pv 18-15 10x19 23x16  6-10 27-23  9-14 26-22 14-17 
+depth 19/39/21.2  time 1.36s  value=28  nodes 4499826  3272kN/s  db 42% cut 96.1% pv 25-22 10-15 27-24  6-10 32-27 21-25 30x21 10-14 
+depth 21/41/22.9  time 3.03s  value=40  nodes 10270994  3383kN/s  db 42% cut 96.3% pv 25-22 11-16 20x11  8x15 18x11  7x16 27-24 16-20 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- - - w 
+ w w - w
+- - w - 
+ b - - b
+- b b - 
+ - b - -
+b b b b 
+1133029F 694C251C not found in book
+
+depth 1/7/3.6  time 0.00s  value=16  nodes 145  13kN/s  db 0% cut 91.7% pv  4- 8 
+depth 3/12/5.2  time 0.01s  value=18  nodes 855  57kN/s  db 0% cut 93.9% pv  4- 8 24-20  8-12 18-14 
+depth 5/12/6.7  time 0.01s  value=8  nodes 2831  134kN/s  db 0% cut 96.4% pv  4- 8 24-19 16-20 25-22 20-24 29-25 
+depth 7/21/9.3  time 0.02s  value=8  nodes 10465  360kN/s  db 82% cut 96.8% pv  4- 8 24-19 16-20 25-22 20-24 29-25  8-12 32-28 
+depth 9/21/10.9  time 0.03s  value=6  nodes 38536  917kN/s  db 79% cut 96.1% pv 16-20 24-19 20-24 25-22  4- 8 29-25  8-12 32-28 
+depth 11/24/13.4  time 0.08s  value=0  nodes 169350  1881kN/s  db 68% cut 95.8% pv 16-20 24-19  4- 8 18-14 10x17 21x14 13-17 31-26 
+depth 13/31/15.2  time 0.19s  value=-4  nodes 548047  2699kN/s  db 61% cut 95.9% pv 16-20 24-19  4- 8 18-14 10x17 21x14  8-12 25-22 
+depth 15/34/17.5  time 0.42s  value=-4  nodes 1344925  3157kN/s  db 60% cut 95.9% pv 16-20 24-19  4- 8 18-14 10x17 21x14  8-12 25-22 
+depth 17/36/19.1  time 1.34s  value=-8  nodes 4395423  3251kN/s  db 60% cut 95.6% pv 10-15 24-20 15x22 25x18  3- 8 18-14 16-19 23x16 
+
+
+ w w w w
+- - - w 
+ w w - w
+- - w - 
+ b - - b
+- b b - 
+ - b - -
+b b b b 
+1133029F 694C251C not found in book
+
+depth 1/7/3.6  time 0.00s  value=16  nodes 145  14kN/s  db 0% cut 91.7% pv  4- 8 
+depth 3/12/5.2  time 0.01s  value=18  nodes 855  57kN/s  db 0% cut 93.9% pv  4- 8 24-20  8-12 18-14 
+depth 5/12/6.7  time 0.01s  value=8  nodes 2831  123kN/s  db 0% cut 96.4% pv  4- 8 24-19 16-20 25-22 20-24 29-25 
+depth 7/21/9.3  time 0.02s  value=8  nodes 10465  337kN/s  db 82% cut 96.8% pv  4- 8 24-19 16-20 25-22 20-24 29-25  8-12 32-28 
+depth 9/21/10.9  time 0.04s  value=6  nodes 38536  837kN/s  db 79% cut 96.1% pv 16-20 24-19 20-24 25-22  4- 8 29-25  8-12 32-28 
+depth 11/24/13.4  time 0.08s  value=0  nodes 169350  1924kN/s  db 68% cut 95.8% pv 16-20 24-19  4- 8 18-14 10x17 21x14 13-17 31-26 
+depth 13/31/15.2  time 0.21s  value=-4  nodes 548047  2513kN/s  db 61% cut 95.9% pv 16-20 24-19  4- 8 18-14 10x17 21x14  8-12 25-22 
+depth 15/34/17.5  time 0.45s  value=-4  nodes 1344925  2955kN/s  db 60% cut 95.9% pv 16-20 24-19  4- 8 18-14 10x17 21x14  8-12 25-22 
+depth 17/36/19.1  time 1.39s  value=-8  nodes 4395423  3150kN/s  db 60% cut 95.6% pv 10-15 24-20 15x22 25x18  3- 8 18-14 16-19 23x16 
+depth 19/39/21.1  time 4.19s  value=-10  nodes 13753967  3276kN/s  db 58% cut 95.7% pv 10-15 32-27 15x22 25x18  4- 8 29-25  8-12 30-26 
+depth 21/40/23.3  time 11.20s  value=-14  nodes 34767162  3100kN/s  db 54% cut 95.9% pv 10-15 24-20 15x22 25x18  7-10 32-28  4- 8 28-24 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w - w - 
+ - - - w
+- - - - 
+ - b w -
+b b - - 
+ - b - -
+b b b b 
+5B720FA7 3676877C not found in book
+
+depth 1/3/1.1  time 0.00s  value=4  nodes 24  2kN/s  db 0% cut 100.0% pv  4- 8 
+depth 3/6/4.0  time 0.01s  value=-2  nodes 332  22kN/s  db 0% cut 98.6% pv  4- 8 32-27 12-16 14- 9 
+depth 5/13/6.5  time 0.01s  value=2  nodes 2714  108kN/s  db 0% cut 95.4% pv  4- 8 32-27 12-16 29-25 16-19 25-22 
+depth 7/16/8.8  time 0.02s  value=0  nodes 14470  438kN/s  db 0% cut 95.6% pv  4- 8 29-25 11-16 21-17 15-19 25-21 19-23 26x19 
+depth 9/21/10.9  time 0.04s  value=-8  nodes 64261  1168kN/s  db 71% cut 95.3% pv  4- 8 29-25 11-16 21-17 15-19 25-21  8-11 32-27 
+depth 11/22/12.8  time 0.10s  value=-6  nodes 219995  2095kN/s  db 70% cut 96.1% pv  4- 8 29-25 15-18 21-17 11-15 28-24  8-11 24-20 
+depth 13/36/14.8  time 0.26s  value=-4  nodes 821394  2997kN/s  db 69% cut 96.1% pv  4- 8 29-25 15-18 21-17 12-16 17-13 16-19 32-27 
+depth 15/36/16.5  time 1.16s  value=2  nodes 3774728  3237kN/s  db 66% cut 95.9% pv 12-16 29-25 15-18 32-27 11-15 21-17  1- 5 25-21 
+depth 17/39/18.5  time 2.92s  value=0  nodes 9514625  3245kN/s  db 61% cut 95.8% pv 12-16 29-25 15-18 31-27 16-19 21-17  2- 6 17-13 
+
+
+ w w w w
+w - w - 
+ - - - w
+- - - - 
+ - b w -
+b b - - 
+ - b - -
+b b b b 
+5B720FA7 3676877C not found in book
+
+depth 1/3/1.1  time 0.00s  value=4  nodes 24  2kN/s  db 0% cut 100.0% pv  4- 8 
+depth 3/6/4.0  time 0.01s  value=-2  nodes 332  20kN/s  db 0% cut 98.6% pv  4- 8 32-27 12-16 14- 9 
+depth 5/13/6.5  time 0.01s  value=2  nodes 2714  123kN/s  db 0% cut 95.4% pv  4- 8 32-27 12-16 29-25 16-19 25-22 
+depth 7/16/8.8  time 0.02s  value=0  nodes 14470  438kN/s  db 0% cut 95.6% pv  4- 8 29-25 11-16 21-17 15-19 25-21 19-23 26x19 
+depth 9/21/10.9  time 0.04s  value=-8  nodes 64261  1235kN/s  db 71% cut 95.3% pv  4- 8 29-25 11-16 21-17 15-19 25-21  8-11 32-27 
+depth 11/22/12.8  time 0.09s  value=-6  nodes 219995  2135kN/s  db 70% cut 96.1% pv  4- 8 29-25 15-18 21-17 11-15 28-24  8-11 24-20 
+depth 13/36/14.8  time 0.30s  value=-4  nodes 821394  2649kN/s  db 69% cut 96.1% pv  4- 8 29-25 15-18 21-17 12-16 17-13 16-19 32-27 
+depth 15/36/16.5  time 1.19s  value=2  nodes 3774728  3137kN/s  db 66% cut 95.9% pv 12-16 29-25 15-18 32-27 11-15 21-17  1- 5 25-21 
+depth 17/39/18.5  time 2.92s  value=0  nodes 9514625  3241kN/s  db 61% cut 95.8% pv 12-16 29-25 15-18 31-27 16-19 21-17  2- 6 17-13 
+depth 19/39/20.4  time 8.00s  value=0  nodes 25770958  3216kN/s  db 59% cut 95.7% pv 12-16 29-25 15-18 31-27 16-19 21-17  2- 6 17-13 
+depth 21/44/22.2  time 21.79s  value=0  nodes 69828042  3202kN/s  db 55% cut 95.8% pv 12-16 29-25 15-18 21-17  4- 8 14- 9  7-10  9- 6 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- w w - 
+ w w - w
+- - w - 
+ b b - -
+- b - b 
+ - - b b
+b b b b 
+B768816 CCD997D8 not found in book
+
+depth 1/6/3.8  time 0.00s  value=12  nodes 64  6kN/s  db 0% cut 95.2% pv 18-14  9x18 
+depth 3/10/5.4  time 0.01s  value=8  nodes 311  20kN/s  db 0% cut 94.0% pv 18-14  9x18 23x14  6- 9 14-10 
+depth 5/13/7.5  time 0.01s  value=2  nodes 1520  72kN/s  db 0% cut 92.5% pv 24-20 15x22 26x17  4- 8 29-25  6-10 
+depth 7/18/9.9  time 0.02s  value=8  nodes 9282  299kN/s  db 0% cut 95.5% pv 24-19 15x24 27x20  9-14 18x 9  6x13 29-25  1- 6 
+depth 9/23/12.4  time 0.04s  value=4  nodes 58132  1186kN/s  db 90% cut 95.5% pv 24-20 15x22 26x17  6-10 17-14 10x17 21x14  9x18 
+depth 11/29/14.5  time 0.09s  value=2  nodes 225568  2233kN/s  db 73% cut 95.2% pv 24-20 15x22 26x17  6-10 17-13  1- 6 29-25  4- 8 
+depth 13/33/16.3  time 0.24s  value=2  nodes 771173  3060kN/s  db 70% cut 95.2% pv 21-17 15x22 17-13  4- 8 26x17 16-20 29-25 11-15 
+depth 15/38/18.4  time 0.60s  value=0  nodes 2214623  3636kN/s  db 71% cut 95.3% pv 21-17 15x22 17-13  4- 8 26x17  2- 7 29-25 16-19 
+depth 17/40/20.5  time 2.56s  value=4  nodes 9724376  3777kN/s  db 67% cut 95.2% pv 24-20 15x22 26x17  4- 8 29-25  6-10 17-13  9-14 
+
+
+ w w w w
+- w w - 
+ w w - w
+- - w - 
+ b b - -
+- b - b 
+ - - b b
+b b b b 
+B768816 CCD997D8 not found in book
+
+depth 1/6/3.8  time 0.00s  value=12  nodes 64  6kN/s  db 0% cut 95.2% pv 18-14  9x18 
+depth 3/10/5.4  time 0.01s  value=8  nodes 311  20kN/s  db 0% cut 94.0% pv 18-14  9x18 23x14  6- 9 14-10 
+depth 5/13/7.5  time 0.01s  value=2  nodes 1520  60kN/s  db 0% cut 92.5% pv 24-20 15x22 26x17  4- 8 29-25  6-10 
+depth 7/18/9.9  time 0.02s  value=8  nodes 9282  273kN/s  db 0% cut 95.5% pv 24-19 15x24 27x20  9-14 18x 9  6x13 29-25  1- 6 
+depth 9/23/12.4  time 0.05s  value=4  nodes 58132  1019kN/s  db 90% cut 95.5% pv 24-20 15x22 26x17  6-10 17-14 10x17 21x14  9x18 
+depth 11/29/14.5  time 0.11s  value=2  nodes 225568  1944kN/s  db 73% cut 95.2% pv 24-20 15x22 26x17  6-10 17-13  1- 6 29-25  4- 8 
+depth 13/33/16.3  time 0.28s  value=2  nodes 771173  2696kN/s  db 70% cut 95.2% pv 21-17 15x22 17-13  4- 8 26x17 16-20 29-25 11-15 
+depth 15/38/18.4  time 0.66s  value=0  nodes 2214623  3300kN/s  db 71% cut 95.3% pv 21-17 15x22 17-13  4- 8 26x17  2- 7 29-25 16-19 
+depth 17/40/20.5  time 2.59s  value=4  nodes 9724376  3738kN/s  db 67% cut 95.2% pv 24-20 15x22 26x17  4- 8 29-25  6-10 17-13  9-14 
+depth 19/43/22.4  time 6.26s  value=10  nodes 22340642  3563kN/s  db 64% cut 95.3% pv 24-20 15x22 26x17  4- 8 29-25  8-12 27-24  9-14 
+depth 21/43/23.9  time 18.14s  value=4  nodes 63845793  3517kN/s  db 60% cut 95.4% pv 24-20 15x22 26x17  4- 8 29-25  6-10 17-13  9-14 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+- w w - 
+ w w w w
+b - - - 
+ - - b b
+w b b - 
+ b b - -
+- b b b 
+DA9876BC DAEF00B4 not found in book
+
+depth 1/5/2.8  time 0.00s  value=2  nodes 50  5kN/s  db 0% cut 94.4% pv 22-18 14-17 
+depth 3/9/5.1  time 0.01s  value=2  nodes 266  17kN/s  db 0% cut 97.1% pv 22-18 14-17 21x14 10x17 24-19 
+depth 5/13/6.9  time 0.01s  value=2  nodes 981  46kN/s  db 0% cut 96.5% pv 24-19 11-15 23-18 15x24 18x 9  1- 5 22-18 
+depth 7/21/11.0  time 0.02s  value=0  nodes 6088  225kN/s  db 0% cut 95.9% pv 22-18  1- 5 18x 9  5x14 24-19 11-15 19-16  8-11 
+depth 9/27/12.1  time 0.03s  value=-4  nodes 25965  618kN/s  db 33% cut 95.2% pv 22-18  1- 5 18x 9  5x14 23-18 14x23 27x18 20x27 
+depth 11/29/14.1  time 0.05s  value=-2  nodes 78238  1241kN/s  db 57% cut 95.6% pv 22-18 14-17 21x14 10x17 26-22 17x26 31x22 11-16 
+depth 13/29/15.7  time 0.12s  value=-10  nodes 331551  2530kN/s  db 47% cut 95.4% pv 24-19 11-15 23-18 15x24 18x 9  1- 5  9- 6  2x 9 
+depth 15/33/17.4  time 0.26s  value=-4  nodes 840401  3089kN/s  db 51% cut 95.6% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 26-22 14-17 
+depth 17/35/19.4  time 0.65s  value=0  nodes 1967830  2972kN/s  db 46% cut 95.9% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 23-18 14x23 
+
+
+ w w w -
+- w w - 
+ w w w w
+b - - - 
+ - - b b
+w b b - 
+ b b - -
+- b b b 
+DA9876BC DAEF00B4 not found in book
+
+depth 1/5/2.8  time 0.00s  value=2  nodes 50  5kN/s  db 0% cut 94.4% pv 22-18 14-17 
+depth 3/9/5.1  time 0.01s  value=2  nodes 266  16kN/s  db 0% cut 97.1% pv 22-18 14-17 21x14 10x17 24-19 
+depth 5/13/6.9  time 0.01s  value=2  nodes 981  46kN/s  db 0% cut 96.5% pv 24-19 11-15 23-18 15x24 18x 9  1- 5 22-18 
+depth 7/21/11.0  time 0.02s  value=0  nodes 6088  209kN/s  db 0% cut 95.9% pv 22-18  1- 5 18x 9  5x14 24-19 11-15 19-16  8-11 
+depth 9/27/12.1  time 0.03s  value=-4  nodes 25965  649kN/s  db 33% cut 95.2% pv 22-18  1- 5 18x 9  5x14 23-18 14x23 27x18 20x27 
+depth 11/29/14.1  time 0.05s  value=-2  nodes 78238  1241kN/s  db 57% cut 95.6% pv 22-18 14-17 21x14 10x17 26-22 17x26 31x22 11-16 
+depth 13/29/15.7  time 0.12s  value=-10  nodes 331551  2474kN/s  db 47% cut 95.4% pv 24-19 11-15 23-18 15x24 18x 9  1- 5  9- 6  2x 9 
+depth 15/33/17.4  time 0.27s  value=-4  nodes 840402  3056kN/s  db 51% cut 95.6% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 26-22 14-17 
+depth 17/35/19.4  time 0.60s  value=0  nodes 1967897  3210kN/s  db 46% cut 95.9% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 23-18 14x23 
+depth 19/36/21.1  time 1.23s  value=0  nodes 4227292  3409kN/s  db 45% cut 96.3% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 23-18 14x23 
+depth 21/39/22.9  time 2.90s  value=0  nodes 9584073  3291kN/s  db 44% cut 96.6% pv 24-19 11-16 22-18  1- 5 18x 9  5x14 23-18 14x23 
+reallocating hashtable to 128 MB
+
+
+ - w - w
+w w - w 
+ - - w -
+- - - - 
+ w b - -
+- - b - 
+ b - - b
+b - b b 
+AAF76BDF 5058782C not found in book
+
+depth 1/3/1.6  time 0.00s  value=2  nodes 19  1kN/s  db 0% cut 100.0% pv  1- 6 
+depth 3/6/4.3  time 0.01s  value=0  nodes 223  14kN/s  db 0% cut 98.8% pv  1- 6 16-12  8-11 12- 8 
+depth 5/13/6.1  time 0.01s  value=2  nodes 873  43kN/s  db 25% cut 97.3% pv  8-12 27-24 12x19 22-18 15x22 24x 6 
+depth 7/14/7.7  time 0.01s  value=0  nodes 2856  114kN/s  db 73% cut 97.3% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 9/14/9.8  time 0.02s  value=0  nodes 8435  255kN/s  db 88% cut 96.2% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 11/21/12.1  time 0.03s  value=0  nodes 30574  694kN/s  db 85% cut 95.4% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 13/26/14.1  time 0.06s  value=0  nodes 114702  1571kN/s  db 72% cut 94.6% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 15/31/16.0  time 0.17s  value=2  nodes 488619  2670kN/s  db 59% cut 95.6% pv  8-11 16x 7  2x11 27-23  5- 9 28-24  4- 8 31-27 
+depth 17/32/18.4  time 0.26s  value=0  nodes 786805  2882kN/s  db 55% cut 95.8% pv  8-11 16x 7  2x11 22-18 15x22 25x18  5- 9 29-25 
+
+
+ - w - w
+w w - w 
+ - - w -
+- - - - 
+ w b - -
+- - b - 
+ b - - b
+b - b b 
+AAF76BDF 5058782C not found in book
+
+depth 1/3/1.6  time 0.00s  value=2  nodes 19  1kN/s  db 0% cut 100.0% pv  1- 6 
+depth 3/6/4.3  time 0.01s  value=0  nodes 223  13kN/s  db 0% cut 98.8% pv  1- 6 16-12  8-11 12- 8 
+depth 5/9/5.8  time 0.01s  value=0  nodes 833  37kN/s  db 75% cut 97.4% pv  8-12 27-24 12x19 22-18 15x22 24x 6 
+depth 7/14/7.8  time 0.02s  value=0  nodes 2896  99kN/s  db 89% cut 97.6% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 9/14/9.7  time 0.03s  value=0  nodes 8267  223kN/s  db 96% cut 96.4% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 11/21/11.9  time 0.04s  value=0  nodes 28910  578kN/s  db 87% cut 95.5% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 13/26/14.0  time 0.07s  value=0  nodes 109877  1339kN/s  db 72% cut 94.8% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 15/31/15.7  time 0.18s  value=0  nodes 433757  2282kN/s  db 62% cut 95.4% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 17/32/17.4  time 0.31s  value=0  nodes 845882  2668kN/s  db 59% cut 95.9% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 19/36/19.2  time 0.60s  value=0  nodes 1716904  2833kN/s  db 56% cut 96.3% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+depth 21/36/21.0  time 1.08s  value=0  nodes 3093906  2838kN/s  db 54% cut 96.9% pv  8-12 27-24 12x19 22-18 15x22 24x 6  1x10 25x18 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+w w w - 
+ - - w w
+- - - w 
+ - - b -
+b b b - 
+ - - b -
+b b b b 
+D095BBC 90597BD4 not found in book
+
+depth 1/3/1.9  time 0.00s  value=12  nodes 20  2kN/s  db 0% cut 66.7% pv 22-18 14x23 
+depth 3/9/5.1  time 0.00s  value=10  nodes 256  18kN/s  db 0% cut 85.7% pv 22-18 14x23 27x18 10-15 18-14 
+depth 5/12/7.1  time 0.01s  value=2  nodes 1919  101kN/s  db 0% cut 91.0% pv 22-18 14x23 27x18 10-15 18-14  4- 8 32-27 
+depth 7/19/9.2  time 0.02s  value=2  nodes 12383  442kN/s  db 0% cut 93.1% pv 26-23 11-16 23-18 14x23 27x18  4- 8 18-14 10-15 
+depth 9/23/11.6  time 0.04s  value=2  nodes 56134  1220kN/s  db 80% cut 94.2% pv 26-23 11-16 27-24 16-19 23x16 12x19 24x15 10x19 
+depth 11/23/13.4  time 0.08s  value=-2  nodes 198660  2183kN/s  db 78% cut 94.9% pv 26-23 11-16 27-24 16-19 23x16 12x19 24x15 10x19 
+depth 13/33/15.4  time 0.22s  value=0  nodes 627398  2704kN/s  db 74% cut 95.5% pv 26-23 11-16 31-26  4- 8 28-24  1- 5 23-19 16x23 
+depth 15/35/17.5  time 0.55s  value=2  nodes 1863461  3304kN/s  db 72% cut 95.4% pv 26-23 11-16 31-26  4- 8 23-19 16x23 27x 9  6x13 
+depth 17/38/19.3  time 1.50s  value=2  nodes 5229040  3462kN/s  db 67% cut 95.4% pv 26-23 11-16 31-26  4- 8 23-19 16x23 27x 9  6x13 
+
+
+ w w w -
+w w w - 
+ - - w w
+- - - w 
+ - - b -
+b b b - 
+ - - b -
+b b b b 
+D095BBC 90597BD4 not found in book
+
+depth 1/3/1.9  time 0.00s  value=12  nodes 20  2kN/s  db 0% cut 66.7% pv 22-18 14x23 
+depth 3/9/5.1  time 0.00s  value=10  nodes 256  18kN/s  db 0% cut 85.7% pv 22-18 14x23 27x18 10-15 18-14 
+depth 5/12/7.1  time 0.01s  value=2  nodes 1919  95kN/s  db 0% cut 91.0% pv 22-18 14x23 27x18 10-15 18-14  4- 8 32-27 
+depth 7/19/9.2  time 0.02s  value=2  nodes 12383  458kN/s  db 0% cut 93.1% pv 26-23 11-16 23-18 14x23 27x18  4- 8 18-14 10-15 
+depth 9/23/11.6  time 0.04s  value=2  nodes 56134  1169kN/s  db 80% cut 94.2% pv 26-23 11-16 27-24 16-19 23x16 12x19 24x15 10x19 
+depth 11/23/13.3  time 0.07s  value=0  nodes 174207  2150kN/s  db 78% cut 95.3% pv 26-23 11-16 27-24 16-19 23x16 12x19 24x15 10x19 
+depth 13/33/15.3  time 0.18s  value=0  nodes 560362  2933kN/s  db 75% cut 95.6% pv 26-23 11-16 31-26  4- 8 28-24  1- 5 23-19 16x23 
+depth 15/35/17.4  time 0.54s  value=2  nodes 1805213  3270kN/s  db 73% cut 95.5% pv 26-23 11-16 31-26  4- 8 23-19 16x23 27x 9  6x13 
+depth 17/35/19.4  time 1.32s  value=0  nodes 4620567  3481kN/s  db 68% cut 95.5% pv 26-23 11-16 31-26  4- 8 23-19 16x23 27x 9  6x13 
+depth 19/39/21.2  time 3.97s  value=0  nodes 14680818  3689kN/s  db 64% cut 95.2% pv 26-23 11-15 23-18 14x23 27x11  3- 7 22-18  7x16 
+depth 21/42/23.2  time 11.67s  value=0  nodes 40677543  3483kN/s  db 59% cut 95.4% pv 26-23 11-15 23-18 14x23 27x11  3- 7 22-18  7x16 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w - w 
+ - - - -
+- w b w 
+ - - - -
+b - - - 
+ b - b b
+b b b b 
+5356339 EB6045B8 not found in book
+
+depth 1/2/1.2  time 0.00s  value=-4  nodes 18  1kN/s  db 0% cut 100.0% pv  5- 9 
+depth 3/8/4.1  time 0.00s  value=-6  nodes 255  18kN/s  db 0% cut 94.3% pv  8-11 25-22 18x25 29x22 
+depth 5/17/8.1  time 0.01s  value=-6  nodes 2792  139kN/s  db 0% cut 93.6% pv  8-11 25-22 18x25 29x22  4- 8 28-24 11-16 
+depth 7/18/9.9  time 0.02s  value=-4  nodes 14737  545kN/s  db 0% cut 94.1% pv  8-11 25-22 18x25 29x22  4- 8 17-14  6- 9 22-18 
+depth 9/23/11.9  time 0.04s  value=-4  nodes 58147  1211kN/s  db 0% cut 94.9% pv  8-11 25-22 18x25 29x22  4- 8 17-14 11-15 19x10 
+depth 11/28/13.6  time 0.10s  value=-4  nodes 324204  2974kN/s  db 75% cut 94.9% pv  8-11 28-24 11-16 19-15 16-19 24-20  4- 8 17-14 
+depth 13/36/15.4  time 0.29s  value=-6  nodes 1175692  3893kN/s  db 70% cut 95.2% pv  8-11 31-26  4- 8 28-24  5- 9 17-14  9-13 26-22 
+depth 15/36/17.4  time 1.07s  value=-4  nodes 4502410  4168kN/s  db 70% cut 95.3% pv  8-11 28-24  4- 8 24-20  6-10 30-26 11-15 26-23 
+depth 17/37/19.4  time 3.44s  value=0  nodes 13958900  4049kN/s  db 72% cut 95.5% pv  8-11 28-24  4- 8 17-14 11-15 19x10  6x15 31-26 
+
+
+ w w w w
+w w - w 
+ - - - -
+- w b w 
+ - - - -
+b - - - 
+ b - b b
+b b b b 
+5356339 EB6045B8 not found in book
+
+depth 1/2/1.2  time 0.00s  value=-4  nodes 18  1kN/s  db 0% cut 100.0% pv  5- 9 
+depth 3/8/4.1  time 0.00s  value=-6  nodes 255  18kN/s  db 0% cut 94.3% pv  8-11 25-22 18x25 29x22 
+depth 5/17/8.1  time 0.01s  value=-6  nodes 2792  132kN/s  db 0% cut 93.6% pv  8-11 25-22 18x25 29x22  4- 8 28-24 11-16 
+depth 7/18/9.9  time 0.02s  value=-4  nodes 14737  460kN/s  db 0% cut 94.1% pv  8-11 25-22 18x25 29x22  4- 8 17-14  6- 9 22-18 
+depth 9/23/11.9  time 0.04s  value=-4  nodes 58147  1076kN/s  db 0% cut 94.9% pv  8-11 25-22 18x25 29x22  4- 8 17-14 11-15 19x10 
+depth 11/28/13.6  time 0.12s  value=-4  nodes 324204  2513kN/s  db 75% cut 94.9% pv  8-11 28-24 11-16 19-15 16-19 24-20  4- 8 17-14 
+depth 13/36/15.4  time 0.35s  value=-6  nodes 1175692  3265kN/s  db 70% cut 95.2% pv  8-11 31-26  4- 8 28-24  5- 9 17-14  9-13 26-22 
+depth 15/36/17.4  time 1.22s  value=-4  nodes 4502410  3648kN/s  db 70% cut 95.3% pv  8-11 28-24  4- 8 24-20  6-10 30-26 11-15 26-23 
+depth 17/37/19.4  time 3.71s  value=0  nodes 13958900  3755kN/s  db 72% cut 95.5% pv  8-11 28-24  4- 8 17-14 11-15 19x10  6x15 31-26 
+depth 19/40/21.0  time 10.47s  value=0  nodes 39138776  3736kN/s  db 68% cut 95.7% pv  8-11 28-24  4- 8 17-14 11-15 19x10  6x15 32-28 
+depth 21/43/22.5  time 51.40s  value=-4  nodes 178769242  3477kN/s  db 64% cut 95.5% pv  8-11 25-21  4- 8 19-15 18-22 28-24 11x18 32-28 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- w w w 
+ w - - w
+w w - - 
+ - b b b
+b - b - 
+ - b b b
+b b b - 
+B37DC8AD B06464C8 not found in book
+
+depth 1/6/2.1  time 0.00s  value=-6  nodes 20  2kN/s  db 0% cut 75.0% pv 32-28 
+depth 3/15/6.2  time 0.01s  value=2  nodes 918  61kN/s  db 0% cut 93.0% pv 25-22  4- 8 29-25  8-11 
+depth 5/20/8.8  time 0.02s  value=4  nodes 4890  188kN/s  db 0% cut 93.5% pv 25-22  4- 8 26-23  7-11 29-25 15-18 
+depth 7/20/10.2  time 0.03s  value=0  nodes 14950  415kN/s  db 0% cut 94.2% pv 25-22  4- 8 22-17 13x22 26x17  8-11 29-25  5- 9 
+depth 9/26/12.1  time 0.04s  value=-2  nodes 42798  778kN/s  db 67% cut 95.0% pv 25-22  6- 9 29-25 14-18 32-28  4- 8 20-16  8-11 
+depth 11/31/13.1  time 0.08s  value=-2  nodes 107469  1221kN/s  db 27% cut 95.3% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+depth 13/33/15.2  time 0.13s  value=0  nodes 252987  1846kN/s  db 57% cut 95.7% pv 25-22  6- 9 22-17 13x22 26x17  9-13 30-25 13x22 
+depth 15/36/17.2  time 0.28s  value=2  nodes 756527  2573kN/s  db 62% cut 95.7% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+depth 17/36/18.9  time 0.58s  value=-2  nodes 1693054  2889kN/s  db 63% cut 95.9% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+
+
+ w w w w
+- w w w 
+ w - - w
+w w - - 
+ - b b b
+b - b - 
+ - b b b
+b b b - 
+B37DC8AD B06464C8 not found in book
+
+depth 1/6/2.1  time 0.00s  value=-6  nodes 20  2kN/s  db 0% cut 75.0% pv 32-28 
+depth 3/15/6.2  time 0.01s  value=2  nodes 918  57kN/s  db 0% cut 93.0% pv 25-22  4- 8 29-25  8-11 
+depth 5/20/8.8  time 0.01s  value=4  nodes 4890  212kN/s  db 0% cut 93.5% pv 25-22  4- 8 26-23  7-11 29-25 15-18 
+depth 7/20/10.2  time 0.03s  value=0  nodes 14950  427kN/s  db 0% cut 94.2% pv 25-22  4- 8 22-17 13x22 26x17  8-11 29-25  5- 9 
+depth 9/26/12.1  time 0.04s  value=-2  nodes 42798  823kN/s  db 67% cut 95.0% pv 25-22  6- 9 29-25 14-18 32-28  4- 8 20-16  8-11 
+depth 11/31/13.1  time 0.07s  value=-2  nodes 107469  1343kN/s  db 27% cut 95.3% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+depth 13/33/15.2  time 0.12s  value=0  nodes 252987  2023kN/s  db 57% cut 95.7% pv 25-22  6- 9 22-17 13x22 26x17  9-13 30-25 13x22 
+depth 15/36/17.2  time 0.29s  value=2  nodes 756527  2521kN/s  db 62% cut 95.7% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+depth 17/36/18.9  time 0.63s  value=-2  nodes 1693054  2662kN/s  db 63% cut 95.9% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+depth 19/39/20.8  time 1.26s  value=2  nodes 3760313  2960kN/s  db 57% cut 96.1% pv 25-22  6- 9 29-25  4- 8 26-23 14-18 23x14 10x26 
+depth 21/40/22.7  time 3.32s  value=-4  nodes 10335301  3102kN/s  db 56% cut 96.1% pv 25-22  6- 9 29-25  4- 8 26-23 14-17 21x14  9x18 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+w w - w 
+ - - - w
+- - b - 
+ b - - w
+- b - b 
+ - - b b
+- b b - 
+CF039AB 404C0048 not found in book
+
+depth 1/3/1.3  time 0.00s  value=4  nodes 19  1kN/s  db 0% cut 100.0% pv  9-14 
+depth 3/10/5.1  time 0.01s  value=8  nodes 527  30kN/s  db 0% cut 95.6% pv  9-14 28-24 16-20 24-19 
+depth 5/13/6.8  time 0.01s  value=6  nodes 2167  98kN/s  db 0% cut 95.6% pv  9-14 28-24 11-15 24-20 16-19 20-16 
+depth 7/19/8.9  time 0.02s  value=8  nodes 9821  327kN/s  db 50% cut 95.1% pv  9-14 31-26 11-15 26-23 15-19 21-17 14x21 23x14 
+depth 9/25/11.2  time 0.05s  value=-10  nodes 93900  1539kN/s  db 62% cut 94.2% pv  9-14 30-26 11-15 26-23 16-20 28-24  6-10 32-28 
+depth 11/26/12.6  time 0.11s  value=-8  nodes 214119  1830kN/s  db 55% cut 94.4% pv  3- 7 21-17 11-15 31-26  7-11 25-21 15-19 27-24 
+depth 13/29/14.4  time 0.22s  value=-6  nodes 539034  2313kN/s  db 55% cut 94.9% pv  9-14 28-24  6-10 24-20 10-15 30-26  5- 9 13x 6 
+depth 15/31/16.1  time 0.39s  value=0  nodes 1015214  2563kN/s  db 54% cut 95.4% pv  9-14 28-24  6-10 24-20 10-15 27-23 18x27 32x23 
+depth 17/33/17.7  time 0.80s  value=0  nodes 2187570  2704kN/s  db 50% cut 95.9% pv  9-14 28-24 11-15 30-26  3- 8 26-23 16-19 23x16 
+
+
+ w w w -
+w w - w 
+ - - - w
+- - b - 
+ b - - w
+- b - b 
+ - - b b
+- b b - 
+CF039AB 404C0048 not found in book
+
+depth 1/3/1.3  time 0.00s  value=4  nodes 19  1kN/s  db 0% cut 100.0% pv  9-14 
+depth 3/10/5.1  time 0.01s  value=8  nodes 527  32kN/s  db 0% cut 95.6% pv  9-14 28-24 16-20 24-19 
+depth 5/13/6.8  time 0.01s  value=6  nodes 2167  98kN/s  db 0% cut 95.6% pv  9-14 28-24 11-15 24-20 16-19 20-16 
+depth 7/17/8.7  time 0.02s  value=6  nodes 8310  259kN/s  db 40% cut 95.1% pv  9-14 27-23 18x27 32x23 11-15 25-22  3- 7 22-17 
+depth 9/25/11.2  time 0.06s  value=-10  nodes 85200  1290kN/s  db 60% cut 94.0% pv  9-14 30-26 11-15 26-23 16-20 28-24  6-10 32-28 
+depth 11/26/12.6  time 0.11s  value=-8  nodes 208012  1793kN/s  db 55% cut 94.2% pv  3- 7 21-17 11-15 31-26  7-11 25-21 15-19 27-24 
+depth 13/27/14.4  time 0.25s  value=-6  nodes 536206  2086kN/s  db 55% cut 94.8% pv  9-14 28-24  6-10 24-20 10-15 30-26  5- 9 13x 6 
+depth 15/31/16.2  time 0.44s  value=0  nodes 1029194  2276kN/s  db 55% cut 95.3% pv  9-14 28-24  6-10 24-20 10-15 27-23 18x27 32x23 
+depth 17/33/17.8  time 0.87s  value=0  nodes 2207176  2513kN/s  db 51% cut 95.9% pv  9-14 28-24 11-15 30-26  3- 8 26-23 16-19 23x16 
+depth 19/33/19.5  time 1.64s  value=0  nodes 4321755  2616kN/s  db 49% cut 96.3% pv  9-14 28-24 11-15 30-26  3- 8 26-23 16-19 23x16 
+depth 21/35/21.6  time 3.33s  value=0  nodes 8976086  2683kN/s  db 46% cut 96.7% pv  9-14 28-24  6-10 31-26 10-15 26-23  3- 7 30-26 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+- - w - 
+ - w - -
+- w w b 
+ - - - w
+b b - - 
+ - b b b
+b b - - 
+6A2417B9 4A7ABFDC not found in book
+
+depth 1/5/3.0  time 0.00s  value=38  nodes 114  11kN/s  db 0% cut 88.2% pv 19-15 12-16 
+depth 3/12/5.3  time 0.01s  value=36  nodes 482  30kN/s  db 0% cut 89.5% pv 18-14  4- 8 23-18 
+depth 5/17/7.5  time 0.01s  value=24  nodes 3626  151kN/s  db 33% cut 91.4% pv 32-28  4- 8 28-24  7-10 24-20 
+depth 7/20/9.6  time 0.03s  value=26  nodes 18121  489kN/s  db 72% cut 92.3% pv 19-15 12-16 15x 8  4x11 23-19 16x23 26x19  6-10 
+depth 9/24/11.7  time 0.05s  value=16  nodes 60046  1053kN/s  db 61% cut 92.7% pv 19-15  4- 8 23-19  5- 9 32-28 11-16 28-24 16x23 
+depth 11/24/12.8  time 0.09s  value=24  nodes 153757  1492kN/s  db 54% cut 94.0% pv 18-14 11-16 31-27  4- 8 23-18 16x23 26x19 17-22 
+depth 13/26/14.5  time 0.15s  value=38  nodes 314082  2013kN/s  db 50% cut 95.0% pv 18-14 11-16 31-27 17-21 27-24 16-20 23-18 20x27 
+depth 15/28/15.7  time 0.30s  value=52  nodes 745045  2380kN/s  db 46% cut 95.6% pv 18-14  6-10 13- 9 17-21  9- 6 10x17  6- 2  5- 9 
+depth 17/32/17.8  time 0.65s  value=42  nodes 1724812  2601kN/s  db 44% cut 96.0% pv 31-27 11-16 18-14 17-21 27-24 16-20 23-18 20x27 
+
+
+ w w w -
+- - w - 
+ - w - -
+- w w b 
+ - - - w
+b b - - 
+ - b b b
+b b - - 
+6A2417B9 4A7ABFDC not found in book
+
+depth 1/5/3.0  time 0.00s  value=38  nodes 114  11kN/s  db 0% cut 88.2% pv 19-15 12-16 
+depth 3/12/5.3  time 0.01s  value=36  nodes 482  32kN/s  db 0% cut 89.5% pv 18-14  4- 8 23-18 
+depth 5/17/7.5  time 0.01s  value=24  nodes 3626  164kN/s  db 33% cut 91.4% pv 32-28  4- 8 28-24  7-10 24-20 
+depth 7/20/9.6  time 0.02s  value=26  nodes 18121  566kN/s  db 73% cut 92.3% pv 19-15 12-16 15x 8  4x11 23-19 16x23 26x19  6-10 
+depth 9/24/11.7  time 0.04s  value=16  nodes 60046  1225kN/s  db 63% cut 92.7% pv 19-15  4- 8 23-19  5- 9 32-28 11-16 28-24 16x23 
+depth 11/24/12.8  time 0.07s  value=24  nodes 153657  1897kN/s  db 55% cut 94.0% pv 18-14 11-16 31-27  4- 8 23-18 16x23 26x19 17-22 
+depth 13/26/14.5  time 0.13s  value=38  nodes 313905  2242kN/s  db 50% cut 95.0% pv 18-14 11-16 31-27 17-21 27-24 16-20 23-18 20x27 
+depth 15/28/15.7  time 0.26s  value=52  nodes 744449  2726kN/s  db 47% cut 95.6% pv 18-14  6-10 13- 9 17-21  9- 6 10x17  6- 2  5- 9 
+depth 17/32/17.8  time 0.63s  value=42  nodes 1724203  2677kN/s  db 44% cut 96.0% pv 31-27 11-16 18-14 17-21 27-24 16-20 23-18 20x27 
+depth 19/34/19.6  time 1.21s  value=52  nodes 3477710  2857kN/s  db 42% cut 96.3% pv 31-27  4- 8 18-14 17-21 26-22  6-10 22-17 11-15 
+depth 21/37/21.8  time 2.74s  value=58  nodes 7887487  2865kN/s  db 39% cut 96.5% pv 31-27  4- 8 18-14 11-16 26-22 17x26 23-18 16x23 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+- w - w 
+ w - - -
+- - b w 
+ - - - -
+b b - - 
+ - - b b
+- b b b 
+9FEEAF1B F67A298C not found in book
+
+depth 1/2/1.1  time 0.00s  value=12  nodes 31  3kN/s  db 0% cut 100.0% pv  5- 9 
+depth 3/10/4.6  time 0.01s  value=2  nodes 696  46kN/s  db 0% cut 88.3% pv  5- 9 17-14  1- 5 32-28 
+depth 5/15/7.0  time 0.01s  value=0  nodes 3987  159kN/s  db 67% cut 91.6% pv  5- 9 17-14  1- 5 32-28 11-16 24-20 16-19 
+depth 7/17/8.5  time 0.03s  value=0  nodes 15010  428kN/s  db 53% cut 94.3% pv  6-10 17-14 10x17 25-22 18x25 29x13  1- 6 24-19 
+depth 9/23/10.9  time 0.06s  value=0  nodes 81743  1202kN/s  db 72% cut 94.1% pv  6-10 32-28 11-15 24-19 15x24 28x19  1- 6 25-22 
+depth 11/32/12.9  time 0.20s  value=-4  nodes 528348  2540kN/s  db 75% cut 94.4% pv  5- 9 17-14  9-13 25-22 18x25 29x22 11-15 24-19 
+depth 13/33/15.2  time 0.52s  value=0  nodes 1534836  2923kN/s  db 75% cut 94.6% pv  6-10 25-21 10-15 17-14  2- 6 30-26 11-16 24-20 
+depth 15/35/16.8  time 1.43s  value=0  nodes 4460306  3097kN/s  db 74% cut 94.9% pv  6-10 25-21 10-15 17-14 12-16 24-20  3- 7 21-17 
+depth 17/38/18.5  time 5.07s  value=-2  nodes 15542917  3059kN/s  db 68% cut 95.1% pv  6-10 30-26 10-15 26-23 18-22 25x18 15x22 32-28 
+
+
+ w w w w
+- w - w 
+ w - - -
+- - b w 
+ - - - -
+b b - - 
+ - - b b
+- b b b 
+9FEEAF1B F67A298C not found in book
+
+depth 1/2/1.1  time 0.00s  value=12  nodes 31  3kN/s  db 0% cut 100.0% pv  5- 9 
+depth 3/10/4.6  time 0.01s  value=2  nodes 696  40kN/s  db 0% cut 88.3% pv  5- 9 17-14  1- 5 32-28 
+depth 5/15/7.0  time 0.01s  value=0  nodes 3987  159kN/s  db 67% cut 91.6% pv  5- 9 17-14  1- 5 32-28 11-16 24-20 16-19 
+depth 7/17/8.5  time 0.03s  value=0  nodes 15010  416kN/s  db 65% cut 94.3% pv  6-10 17-14 10x17 25-22 18x25 29x13  1- 6 24-19 
+depth 9/23/10.9  time 0.06s  value=0  nodes 81743  1151kN/s  db 76% cut 94.1% pv  6-10 32-28 11-15 24-19 15x24 28x19  1- 6 25-22 
+depth 11/32/12.9  time 0.26s  value=-4  nodes 528347  1942kN/s  db 77% cut 94.4% pv  5- 9 17-14  9-13 25-22 18x25 29x22 11-15 24-19 
+depth 13/33/15.2  time 0.63s  value=0  nodes 1534822  2398kN/s  db 76% cut 94.6% pv  6-10 25-21 10-15 17-14  2- 6 30-26 11-16 24-20 
+depth 15/35/16.8  time 1.63s  value=0  nodes 4460265  2724kN/s  db 74% cut 94.9% pv  6-10 25-21 10-15 17-14 12-16 24-20  3- 7 21-17 
+depth 17/38/18.5  time 4.95s  value=-2  nodes 15542776  3135kN/s  db 68% cut 95.1% pv  6-10 30-26 10-15 26-23 18-22 25x18 15x22 32-28 
+depth 19/38/20.3  time 11.85s  value=-2  nodes 37034507  3122kN/s  db 63% cut 95.4% pv  6-10 30-26 10-15 32-28  1- 6 24-19 15x24 28x19 
+depth 21/42/21.8  time 33.05s  value=-4  nodes 100584247  3042kN/s  db 59% cut 95.8% pv  6-10 30-26 10-15 32-28  1- 6 24-19 15x24 28x19 
+reallocating hashtable to 128 MB
+
+
+ w w - w
+- - w w 
+ - - - w
+- b - - 
+ - b - -
+- - - b 
+ - - - -
+b - b b 
+7A5638CC 3052C4A8 not found in book
+
+depth 1/3/1.2  time 0.00s  value=-6  nodes 16  1kN/s  db 0% cut 100.0% pv 25-22 
+depth 3/9/4.6  time 0.01s  value=-2  nodes 359  23kN/s  db 0% cut 93.1% pv 25-22  9-14 22-17 14-18 
+depth 5/11/6.8  time 0.01s  value=-2  nodes 2181  103kN/s  db 72% cut 93.3% pv 21-17  4- 8 17-13  9-14 25-22  8-12 
+depth 7/16/8.7  time 0.02s  value=-2  nodes 11707  390kN/s  db 79% cut 92.2% pv 21-17  4- 8 26-22  8-11 22-18 15x22 25x18  9-13 
+depth 9/22/10.7  time 0.03s  value=-2  nodes 34859  810kN/s  db 76% cut 92.8% pv 21-17  4- 8 26-22  1- 6 22-18 15x22 25x18  6-10 
+depth 11/26/12.2  time 0.07s  value=-4  nodes 128340  1604kN/s  db 69% cut 93.8% pv 21-17  4- 8 25-22  8-12 31-27  9-13 27-23 19-24 
+depth 13/30/14.2  time 0.16s  value=-10  nodes 385151  2213kN/s  db 63% cut 94.3% pv 21-17  4- 8 25-22  8-12 29-25 12-16 25-21 16-20 
+depth 15/30/15.6  time 0.33s  value=-10  nodes 846284  2526kN/s  db 59% cut 94.9% pv 25-22  4- 8 32-27  9-13 21-17  8-12 17-14 12-16 
+depth 17/30/17.3  time 0.60s  value=-2  nodes 1483664  2428kN/s  db 55% cut 95.7% pv 25-22  4- 8 32-27  9-13 21-17  8-12 17-14 12-16 
+
+
+ w w - w
+- - w w 
+ - - - w
+- b - - 
+ - b - -
+- - - b 
+ - - - -
+b - b b 
+7A5638CC 3052C4A8 not found in book
+
+depth 1/3/1.2  time 0.00s  value=-6  nodes 16  1kN/s  db 0% cut 100.0% pv 25-22 
+depth 3/9/4.6  time 0.01s  value=-2  nodes 359  23kN/s  db 0% cut 93.1% pv 25-22  9-14 22-17 14-18 
+depth 5/11/6.8  time 0.01s  value=-2  nodes 2181  103kN/s  db 72% cut 93.3% pv 21-17  4- 8 17-13  9-14 25-22  8-12 
+depth 7/15/8.7  time 0.03s  value=-2  nodes 11643  332kN/s  db 82% cut 92.2% pv 21-17  4- 8 26-22  8-11 22-18 15x22 25x18  9-13 
+depth 9/22/10.7  time 0.04s  value=-2  nodes 34663  641kN/s  db 83% cut 92.7% pv 21-17  4- 8 26-22  1- 6 22-18 15x22 25x18  6-10 
+depth 11/26/12.2  time 0.08s  value=-4  nodes 127736  1358kN/s  db 74% cut 93.7% pv 21-17  4- 8 25-22  8-12 31-27  9-13 27-23 19-24 
+depth 13/29/14.3  time 0.17s  value=0  nodes 335407  1916kN/s  db 65% cut 94.4% pv 21-17  4- 8 25-22  8-12 29-25 12-16 31-27 16-20 
+depth 15/29/15.4  time 0.38s  value=0  nodes 904547  2307kN/s  db 59% cut 95.1% pv 25-22  4- 8 32-27  9-13 21-17  8-12 17-14 12-16 
+depth 17/32/17.1  time 0.85s  value=-2  nodes 2016879  2347kN/s  db 54% cut 95.7% pv 25-22  4- 8 32-27  2- 7 22-18 15x22 26x17  7-11 
+depth 19/32/18.8  time 1.22s  value=0  nodes 2981688  2420kN/s  db 52% cut 96.3% pv 25-22  4- 8 32-27  2- 7 22-18 15x22 26x17  7-11 
+depth 21/33/20.6  time 2.06s  value=0  nodes 5092800  2465kN/s  db 50% cut 96.8% pv 25-22  4- 8 32-27  2- 7 22-18 15x22 26x17  7-11 
+reallocating hashtable to 128 MB
+
+
+ - w - w
+- w w w 
+ w - w w
+w - b - 
+ - b - b
+b b - - 
+ b - - b
+b b - - 
+7ECBB931 AC0B9464 not found in book
+
+depth 1/10/5.6  time 0.00s  value=-16  nodes 220  22kN/s  db 0% cut 85.1% pv  5- 9 26-23 
+depth 3/12/7.1  time 0.01s  value=-108  nodes 927  57kN/s  db 0% cut 89.5% pv 15-19 24x15 12-16 
+depth 5/16/8.4  time 0.01s  value=-4  nodes 2067  93kN/s  db 0% cut 92.4% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 22-18 
+depth 7/16/9.0  time 0.02s  value=0  nodes 3122  104kN/s  db 0% cut 94.0% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 9/17/10.9  time 0.03s  value=-4  nodes 5719  150kN/s  db 0% cut 96.0% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 11/23/13.8  time 0.04s  value=0  nodes 14594  304kN/s  db 0% cut 96.1% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 13/27/16.3  time 0.05s  value=-8  nodes 44419  694kN/s  db 39% cut 96.3% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 15/30/17.9  time 0.08s  value=-16  nodes 108559  1167kN/s  db 41% cut 96.3% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 17/30/19.9  time 0.14s  value=-14  nodes 241383  1642kN/s  db 37% cut 96.6% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+
+
+ - w - w
+- w w w 
+ w - w w
+w - b - 
+ - b - b
+b b - - 
+ b - - b
+b b - - 
+7ECBB931 AC0B9464 not found in book
+
+depth 1/10/5.6  time 0.00s  value=-16  nodes 220  22kN/s  db 0% cut 85.1% pv  5- 9 26-23 
+depth 3/12/7.1  time 0.01s  value=-108  nodes 927  61kN/s  db 0% cut 89.5% pv 15-19 24x15 12-16 
+depth 5/16/8.4  time 0.01s  value=-4  nodes 2067  93kN/s  db 0% cut 92.4% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 22-18 
+depth 7/16/9.0  time 0.02s  value=0  nodes 3122  107kN/s  db 0% cut 94.0% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 9/17/10.9  time 0.03s  value=-4  nodes 5719  150kN/s  db 0% cut 96.0% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 11/23/13.8  time 0.04s  value=0  nodes 14594  310kN/s  db 0% cut 96.1% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 13/27/16.3  time 0.05s  value=-8  nodes 44419  705kN/s  db 39% cut 96.3% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 15/30/17.9  time 0.08s  value=-16  nodes 108559  1192kN/s  db 41% cut 96.3% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 17/30/19.9  time 0.14s  value=-14  nodes 241383  1620kN/s  db 37% cut 96.6% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 19/34/22.2  time 0.30s  value=-18  nodes 616312  1981kN/s  db 37% cut 96.4% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+depth 21/38/24.3  time 0.73s  value=-14  nodes 1659687  2236kN/s  db 35% cut 96.4% pv 12-16 26-23  8-12 23x14 16-19 14-10 19x28 27-23 
+reallocating hashtable to 128 MB
+
+
+ w w w -
+w - w - 
+ - - w w
+- b - - 
+ - b b -
+- - - - 
+ - - - -
+b b b b 
+C2977E20 39C80A2C not found in book
+
+depth 1/4/2.5  time 0.00s  value=18  nodes 56  5kN/s  db 0% cut 94.7% pv 22-17  2- 7 
+depth 3/7/4.2  time 0.01s  value=16  nodes 243  16kN/s  db 0% cut 93.4% pv 22-17  2- 7 17x10  7x14 32-27 
+depth 5/10/6.7  time 0.01s  value=8  nodes 1377  65kN/s  db 94% cut 94.2% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 26-22  8-12 
+depth 7/13/8.3  time 0.02s  value=8  nodes 3688  127kN/s  db 96% cut 95.3% pv 22-18 14x23 31-27 19-24 28x10  2- 6 26x19  6x31 
+depth 9/19/10.7  time 0.03s  value=4  nodes 14499  371kN/s  db 89% cut 95.8% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-24  8-11 
+depth 11/23/12.5  time 0.06s  value=0  nodes 47998  685kN/s  db 82% cut 95.6% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 13/24/14.3  time 0.10s  value=0  nodes 126699  1173kN/s  db 76% cut 96.0% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 15/29/16.1  time 0.19s  value=0  nodes 354846  1739kN/s  db 68% cut 95.9% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 17/32/17.8  time 0.38s  value=0  nodes 842462  2138kN/s  db 61% cut 96.1% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+
+
+ w w w -
+w - w - 
+ - - w w
+- b - - 
+ - b b -
+- - - - 
+ - - - -
+b b b b 
+C2977E20 39C80A2C not found in book
+
+depth 1/4/2.5  time 0.00s  value=18  nodes 56  5kN/s  db 0% cut 94.7% pv 22-17  2- 7 
+depth 3/7/4.2  time 0.01s  value=16  nodes 243  15kN/s  db 0% cut 93.4% pv 22-17  2- 7 17x10  7x14 32-27 
+depth 5/10/6.7  time 0.01s  value=8  nodes 1377  57kN/s  db 94% cut 94.2% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 26-22  8-12 
+depth 7/13/8.3  time 0.02s  value=8  nodes 3688  122kN/s  db 98% cut 95.3% pv 22-18 14x23 31-27 19-24 28x10  2- 6 26x19  6x31 
+depth 9/19/10.7  time 0.03s  value=4  nodes 14498  371kN/s  db 93% cut 95.8% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-24  8-11 
+depth 11/23/12.5  time 0.05s  value=0  nodes 48060  828kN/s  db 86% cut 95.6% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 13/24/14.3  time 0.09s  value=0  nodes 126709  1267kN/s  db 79% cut 96.0% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 15/29/16.1  time 0.17s  value=0  nodes 354450  1947kN/s  db 70% cut 95.9% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 17/32/17.8  time 0.35s  value=0  nodes 841866  2325kN/s  db 62% cut 96.1% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 19/35/19.5  time 0.84s  value=0  nodes 2322223  2722kN/s  db 57% cut 96.3% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+depth 21/35/21.3  time 1.86s  value=0  nodes 5043458  2699kN/s  db 54% cut 96.8% pv 22-17  2- 7 17x10  7x14 32-27  4- 8 27-23  8-12 
+reallocating hashtable to 128 MB
+
+
+ w - w w
+w - - - 
+ - w w w
+- - - - 
+ - - - b
+b - b - 
+ b - b b
+- - b - 
+4FF75572 C9552F38 not found in book
+
+depth 1/2/1.1  time 0.00s  value=2  nodes 17  1kN/s  db 0% cut 100.0% pv 22-18 
+depth 3/8/4.2  time 0.01s  value=2  nodes 288  19kN/s  db 0% cut 96.6% pv 22-18  8-11 18-14 10x17 21x14 
+depth 5/11/6.5  time 0.01s  value=4  nodes 1790  89kN/s  db 0% cut 95.4% pv 22-18  8-11 29-25 11-16 25-22 16-19 
+depth 7/16/8.5  time 0.02s  value=4  nodes 6481  249kN/s  db 80% cut 96.0% pv 22-18  8-11 29-25 11-16 25-22 16-19 23x16 12x19 
+depth 9/19/10.2  time 0.03s  value=6  nodes 43072  1025kN/s  db 77% cut 95.4% pv 28-24 10-14 22-18  8-11 18x 9  5x14 29-25 13-17 
+depth 11/26/12.8  time 0.06s  value=2  nodes 121472  1710kN/s  db 77% cut 94.8% pv 22-18  6- 9 29-25 12-16 25-22 16-20 32-27  9-14 
+depth 13/29/14.4  time 0.12s  value=2  nodes 270379  2128kN/s  db 73% cut 95.0% pv 22-18  8-11 29-25 11-16 32-27  6- 9 25-22 16-19 
+depth 15/29/15.8  time 0.24s  value=0  nodes 604662  2448kN/s  db 68% cut 95.5% pv 22-18  8-11 29-25 11-16 32-27  6- 9 25-22 16-19 
+depth 17/29/17.6  time 0.51s  value=0  nodes 1327866  2578kN/s  db 62% cut 96.3% pv 22-18  8-11 29-25 11-16 32-27  6- 9 25-22 16-19 
+
+
+ w - w w
+w - - - 
+ - w w w
+- - - - 
+ - - - b
+b - b - 
+ b - b b
+- - b - 
+4FF75572 C9552F38 not found in book
+
+depth 1/2/1.1  time 0.00s  value=2  nodes 17  1kN/s  db 0% cut 100.0% pv 22-18 
+depth 3/8/4.2  time 0.01s  value=2  nodes 288  19kN/s  db 0% cut 96.6% pv 22-18  8-11 18-14 10x17 21x14 
+depth 5/11/6.5  time 0.01s  value=4  nodes 1790  89kN/s  db 0% cut 95.4% pv 22-18  8-11 29-25 11-16 25-22 16-19 
+depth 7/16/8.5  time 0.02s  value=4  nodes 6481  209kN/s  db 80% cut 96.0% pv 22-18  8-11 29-25 11-16 25-22 16-19 23x16 12x19 
+depth 9/19/10.2  time 0.04s  value=6  nodes 43072  844kN/s  db 77% cut 95.4% pv 28-24 10-14 22-18  8-11 18x 9  5x14 29-25 13-17 
+depth 11/26/12.8  time 0.07s  value=2  nodes 121424  1537kN/s  db 77% cut 94.8% pv 22-18  6- 9 29-25 12-16 25-22 16-20 32-27  9-14 
+depth 13/28/14.4  time 0.13s  value=0  nodes 302762  2226kN/s  db 72% cut 94.9% pv 22-18  8-11 18-14 10x17 21x14 11-16 23-18 16-19 
+depth 15/28/16.1  time 0.27s  value=0  nodes 734954  2662kN/s  db 67% cut 95.4% pv 22-18  8-11 18-14 10x17 21x14 13-17 29-25 11-16 
+depth 17/31/17.5  time 0.52s  value=0  nodes 1539136  2898kN/s  db 62% cut 96.1% pv 22-18  8-11 18-14 10x17 21x14 13-17 29-25 11-16 
+depth 19/33/19.3  time 0.99s  value=0  nodes 2826438  2837kN/s  db 57% cut 96.9% pv 22-18  8-11 18-14 10x17 21x14 13-17 29-25 11-16 
+depth 21/34/21.1  time 1.84s  value=0  nodes 5346442  2896kN/s  db 52% cut 97.4% pv 22-18  8-11 18-14 10x17 21x14 13-17 29-25 11-16 
+reallocating hashtable to 128 MB
+
+
+ w w w w
+w w w w 
+ w w - -
+- - - - 
+ b - w b
+b - - - 
+ b b b b
+b b b b 
+960038F5 85044674 not found in book
+
+depth 1/5/3.1  time 0.00s  value=-10  nodes 64  6kN/s  db 0% cut 96.2% pv  6-10 25-21 
+depth 3/8/4.9  time 0.01s  value=-6  nodes 457  30kN/s  db 0% cut 94.0% pv  6-10 25-21 10x17 21x14  1- 6 
+depth 5/14/6.9  time 0.01s  value=-6  nodes 1990  79kN/s  db 0% cut 95.2% pv  6-10 25-21 10x17 21x14  8-11 29-25  1- 6 25-22 
+depth 7/24/10.2  time 0.03s  value=-6  nodes 13611  388kN/s  db 0% cut 95.9% pv  8-11 23-18  6-10 25-21 10x17 21x14  1- 6 29-25 
+depth 9/24/12.2  time 0.05s  value=-12  nodes 74752  1245kN/s  db 0% cut 95.6% pv  8-11 23-18  6- 9 24-20  1- 6 28-24 13-17 25-22 
+depth 11/28/13.9  time 0.10s  value=-12  nodes 218139  1930kN/s  db 0% cut 96.3% pv  8-11 23-18  6- 9 24-20  1- 6 28-24  3- 8 32-28 
+depth 13/36/15.8  time 0.28s  value=-12  nodes 891648  3074kN/s  db 71% cut 96.1% pv  6- 9 23-18  7-11 26-23 11-15 18x11  8x15 23-18 
+depth 15/37/18.1  time 0.93s  value=-18  nodes 3660910  3878kN/s  db 78% cut 96.0% pv  8-11 23-18 16-20 24-19  6- 9 25-21  1- 6 29-25 
+depth 17/41/20.2  time 2.46s  value=-20  nodes 9374382  3787kN/s  db 78% cut 96.1% pv  6- 9 26-22  9x18 23x14  8-11 27-23  2- 6 22-18 
+
+
+ w w w w
+w w w w 
+ w w - -
+- - - - 
+ b - w b
+b - - - 
+ b b b b
+b b b b 
+960038F5 85044674 not found in book
+
+depth 1/5/3.1  time 0.00s  value=-10  nodes 64  6kN/s  db 0% cut 96.2% pv  6-10 25-21 
+depth 3/8/4.9  time 0.01s  value=-6  nodes 457  30kN/s  db 0% cut 94.0% pv  6-10 25-21 10x17 21x14  1- 6 
+depth 5/14/6.9  time 0.01s  value=-6  nodes 1990  86kN/s  db 0% cut 95.2% pv  6-10 25-21 10x17 21x14  8-11 29-25  1- 6 25-22 
+depth 7/24/10.2  time 0.03s  value=-6  nodes 13611  388kN/s  db 0% cut 95.9% pv  8-11 23-18  6-10 25-21 10x17 21x14  1- 6 29-25 
+depth 9/24/12.2  time 0.06s  value=-12  nodes 74752  1132kN/s  db 0% cut 95.6% pv  8-11 23-18  6- 9 24-20  1- 6 28-24 13-17 25-22 
+depth 11/28/13.9  time 0.10s  value=-12  nodes 218139  1930kN/s  db 0% cut 96.3% pv  8-11 23-18  6- 9 24-20  1- 6 28-24  3- 8 32-28 
+depth 13/36/15.8  time 0.28s  value=-12  nodes 891648  3085kN/s  db 71% cut 96.1% pv  6- 9 23-18  7-11 26-23 11-15 18x11  8x15 23-18 
+depth 15/37/18.1  time 1.02s  value=-18  nodes 3660910  3557kN/s  db 78% cut 96.0% pv  8-11 23-18 16-20 24-19  6- 9 25-21  1- 6 29-25 
+depth 17/41/20.2  time 2.49s  value=-20  nodes 9374382  3746kN/s  db 78% cut 96.1% pv  6- 9 26-22  9x18 23x14  8-11 27-23  2- 6 22-18 
+depth 19/44/21.7  time 6.64s  value=-22  nodes 24827447  3735kN/s  db 79% cut 96.0% pv 16-20 24-19  6-10 25-21 10x17 21x14  1- 6 29-25 
+depth 21/48/23.7  time 15.88s  value=-20  nodes 58765814  3698kN/s  db 77% cut 96.0% pv 16-20 24-19  6-10 25-21 10x17 21x14  1- 6 29-25 
+reallocating hashtable to 128 MB

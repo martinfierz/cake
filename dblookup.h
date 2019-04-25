@@ -2,7 +2,9 @@
 
 // include 
 #include "switches.h"
+#include "boolean.h"
 
+#define DBPREFIX "db"
 
 #define THREADSAFEDB
 // choose which db you want to use
@@ -37,7 +39,6 @@
 
 #define MINCACHESIZE 65536
 
-//int initdblookup(char str[256]);
 int db_init(int suggestedMB, char str[256]);
 int db_exit(void);
 int dblookup(POSITION *p,int cl, MATERIALCOUNT * matcount);

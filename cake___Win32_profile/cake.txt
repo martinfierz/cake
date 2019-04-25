@@ -1,0 +1,87 @@
+Profile: Function timing, sorted by name
+Date:    Mon Nov 20 23:32:06 2000
+
+
+Programmstatistik
+-----------------
+    2000 Nov 20 19:47 Befehlszeile: checkerboard     
+    Gesamtzeit: 1.835 Millisekunden
+    Zeit ausserhalb von Funktionen: 1.705 Millisekunden
+    Aufruftiefe: 1
+    Gesamtfunktionen: 61
+    Gesamtaufrufe: 2
+    Funktionsabdeckung: 1.6%
+    Berechneter Verwaltungsaufwand: 5
+    Durchschnittlicher Aufwand: 5
+
+Modulstatistik fuer cake.dll
+----------------------------
+    Zeit innerhalb des Moduls: 0.130 Millisekunden
+    100.0% Prozent im Modul
+    61 Funktionen im Modul
+    Aufrufe im Modul: 2 
+    Modulfunktionsabdeckung: 1.6%
+
+Abgedeckte Funktionen
+---------------------
+    .    _DBInit (db.obj)
+    .    _DBLookup (db.obj)
+    .    _DBindex (db.obj)
+    .    _DBrevindex (db.obj)
+    .    _DllEntryPoint@12 (cakedll.obj)
+    .    _InitIndex (db.obj)
+    .    _LoadIndex (db.obj)
+    .    _NextIndex (db.obj)
+    .    _Nsq (db.obj)
+    .    _SaveIndex (db.obj)
+    .    __real@8@00000000000000000000 (cakepp.obj)
+    .    __real@8@3ff583126e978d4fe000 (cakepp.obj)
+    .    __real@8@3ffe8000000000000000 (cakepp.obj)
+    .    __real@8@40018000000000000000 (cakepp.obj)
+    .    __real@8@4008fa00000000000000 (cakepp.obj)
+    .    _absolutehashkey (cakepp.obj)
+    .    _bitboardtoboard (cakedll.obj)
+    .    _bitcount (cakepp.obj)
+    .    _blackkingcapture1 (movegen.obj)
+    .    _blackkingcapture2 (movegen.obj)
+    .    _blackmancapture1 (movegen.obj)
+    .    _blackmancapture2 (movegen.obj)
+    .    _blackorderevaluation (movegen.obj)
+    .    _boardtobitboard (cakedll.obj)
+    .    _cake_getmove (cakepp.obj)
+    .    _countmaterial (cakepp.obj)
+    .    _dbCreate (db.obj)
+    .    _dbLocbvToSubIdx (db.obj)
+    .    _dbValInit (db.obj)
+    .    _dblosseval (cakepp.obj)
+    .    _dbwineval (cakepp.obj)
+    .    _engineabout@4 (cakedll.obj)
+    .    _enginehelp@4 (cakedll.obj)
+    *    _enginename@4 (cakedll.obj)
+    .    _engineoptions@4 (cakedll.obj)
+    .    _evaluation (cakepp.obj)
+    .    _exitcake (cakepp.obj)
+    .    _fineevaluation (cakepp.obj)
+    .    _firstnegamax (cakepp.obj)
+    .    _getmove@32 (cakedll.obj)
+    .    _getpv (cakepp.obj)
+    .    _hashlookup (cakepp.obj)
+    .    _hashstore (cakepp.obj)
+    .    _initcake (cakepp.obj)
+    .    _lastbit (cakepp.obj)
+    .    _makecapturelist (movegen.obj)
+    .    _makemovelist (movegen.obj)
+    .    _movetonotation (cakepp.obj)
+    .    _negamax (cakepp.obj)
+    .    _printboard (cakepp.obj)
+    .    _printboardtofile (cakepp.obj)
+    .    _recbitcount (cakepp.obj)
+    .    _sidxCreate (db.obj)
+    .    _staticevaluation@12 (cakedll.obj)
+    .    _testcapture (cakepp.obj)
+    .    _updatehashkey (cakepp.obj)
+    .    _whitekingcapture1 (movegen.obj)
+    .    _whitekingcapture2 (movegen.obj)
+    .    _whitemancapture1 (movegen.obj)
+    .    _whitemancapture2 (movegen.obj)
+    .    _whiteorderevaluation (movegen.obj)

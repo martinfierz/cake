@@ -1,0 +1,33 @@
+
+dark square bitmap is null
+bmp dark is null
+hdc is null in printboard
+dark square bitmap is null
+bmp dark is null
+hdc is null in printboard
+language is 0
+dark square bitmap is null
+bmp dark is null
+hdc is null in printboard
+dark square bitmap is null
+bmp dark is null
+hdc is null in printboard
+current directory is...
+C:\Programme\CheckerBoard\bmp
+bitmap dir is 
+standard
+loading bitmaps...
+standard\manmask.bmp
+standard\kingmask.bmp
+standard\bm.bmp
+standard\bk.bmp
+standard\wm.bmp
+standard\wk.bmp
+standard\light.bmp
+standard\dark.bmp
+dark square bitmap is null
+hdc is null in printboard
+dark square bitmap is null
+hdc is null in printboard
+handle = 0 (primary engine)
+secondaryhandle = 0 (secondary engine)

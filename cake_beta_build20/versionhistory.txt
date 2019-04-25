@@ -1,0 +1,630 @@
+
+
+working towards Cake 2.0 in July/August 2007
+
+			sanity check on core duo for cake 2.0beta build 18 against kr 1.16c, with mocache
+			turned off, on AMD 64 3000+ with 512MB db cache, 64MB hash
+			note: this version does not avoid repetitions!
+			
+			15s/move: +11-18 WOW, this is just so inconsistent!
+			5s/move : +25-12
+			2s/move : +38-23 
+			
+			next, i try running the same with qsearch version:
+			
+			15s/move: +15-22
+			5s/move:  +24-15
+			2s/move:  +39-25
+			
+			finally, non-QS but LMR:
+			
+			15s/move  +15-21
+			5s/move
+			2s/move   +34-23
+			
+			reminder: on AMD XP 3000+ cake pre-beta won 24-11 against kr 1.16c without mocache. check
+			AMD results of cake beta build 18 at home! even if it's not quite as good, i want to keep
+			this, because i cleaned up the code so much, and fixed some bugs.
+			also play a sanity check match against cake pre-beta and maybe cakeM.
+
+ TODO:		-> produce working 64-bit version (crash reported with 5-piece database, not with 4pc?!)
+			-> clean up code massively - no more BITX, no more huge functions, more files,
+			   clearer code
+
+		    -> incremental move generation?
+			-> make cake more configurable
+			-> move representation could be one single 32-bit int with all affected pieces.
+			   that makes domove more complicated, but since domove is called only for a few moves...
+			-> instrument cutoff stats and use them for static move ordering
+
+		    -> priority -110 opening book
+
+		    -> look at runaway code and think about improving it
+			-> double-doghole penalty - maybe plus bridgehead?
+			-> men on edge are no longer bad when kings come on, rather the opposite, then men in
+			   the center are bad?
+			-> opposition of grounded and ungrounded piece is good for grounded piece. this is a sort
+			   of generalized cramp recognition, and perhaps i could throw out all the bad structures
+			   and use this?
+			-> remove "blackhasbridge" code, because the bridge piece will be penalized anyway?
+			   (as ungrounded man with kings of opp side on the board, close by - but only if i let
+			   ungrounded men go up to 6th rank and be !runaways).
+			-> nonlinear eval: count "defects" in a position and give a penalty proportional to (delta-defect)^2.
+			-> multi-stage lazy eval
+
+
+	DONE:	-> checked new bookgen, saw clear speed improvement in search (~20%), and some early breaks
+			-> rewrote qsearch properly, checked it, it seems to be no improvement. but at least
+			   i have a clean implementation of it again.
+			-> increased oreo value from 5 to 8, helps in engine matches
+			-> removed penalty for king-on-edge if he's tailhooking
+			-> created versionhistory.txt (this document) from the notes in cakepp.c
+			-> created new source files: initcake.c/.h and cake_misc.c/.h
+				this speeds up cake by nearly 2% in testcake, presumably because code
+				which is only used once now can drop out of the cache. 
+			-> created new source file: cake_eval.c/.h which contains all evaluation stuff.
+			-> bookgen returns early if 5 or more zero evals in a row have been found
+			   and search depth > 20
+			-> bookgen checks for negative time and resets time to zero if it finds negative time
+			-> made some changes to safemoves, replacing leftforward(leftforward(x)) with twoleftforward,
+			   and leftforward(leftbackward(x)) with left(x) - this also fixes a small error in safemoves.
+			   also changes node count in testcake by a tiny bit.
+			-> stuffed all globals in SEARCHINFO structure
+			-> made Cake thread-safe with #define THREADSAFE - which turns on critical sections
+			   around dblookup and within hashstore/hashlookup. however, this costs about 10% speed!	
+			-> put movelist for firstnegamax into cake_getmove, so that i don't need static variables in
+			   Cake - these will mess up multi-threading. This changed the node counts a little, i don't
+			   quite know why.
+			-> Verified that I can run two calls to analyze() simultaneously on my Core Duo laptop,
+			   and that there processor usage goes up to 100% *IF* i do not make Cake thread-safe.
+			   With Cake thread-safe, the two searches slow down to a crawl, something like 10% of
+			   the regular speed. 
+			-> BUGFIX found something looking like a bug in the dblookup, where the last block
+			   to be loaded wasn't actually loaded.
+			-> added color to POSITION structure, removed all color references in function calls
+			-> removed some safety checks in the search ("if blah then printf("...")), improved some
+			   details if if if -> if else if else if in the move generator
+			   collected "if kings" and "if not kings" in eval
+			   ordered "if a && b" so that a is less likely than b.
+			-> REPETITION struct for repcheck array which uses two members: hash.key to detect a
+			   repetition, and irreversible which is move.bm|move.wm which tells the repetition search
+			   to stop searching for a repetition if it encounters irreversible != 0.
+			-> tried compiling with arch:sse2 (brings a tiny improvement, but no more)
+			-> vamped up opening book generator function: reverted to old oplib function call, so that
+			   it can be used, and allow it to return early in case of many zero evals in a row.
+			-> tried double-byte-coded RLE, but saw no improvement in dblookup speed - and scrapped it again
+			-> improved static move ordering by using backrankeval arrays to get that part of the eval
+			   for back rank moves.
+			-> switched to ed's endgame db driver to be able to use db10, but saw quite a speed hit and
+			   switched back. i kept a copy of that version so that i can go back there any time. 
+			-> checked LMR once again, in a new formulation: only on non-capture moves, and do LMR
+			   if orderevaluation of the move is <128 (128 corresponds to 0, everything below that is
+			   negative). in testcake and in testset this rocks. in matches still not. but why?	
+			-> cleaned up logging to file with a single logtofile-function which tests whether it can write
+			   or not.	also, lookup in registry is now clean with check to see if regkey could be opened.	
+			-> BUGFIX: dbwineval / dblosseval were not perfectly symmetric, i fixed that and threw out
+			   dblosseval entirely, because dblosseval(p) = -dbwineval(p') where p' is p, but opposite side to move.
+			-> bookgen now keeps ordered firstnegamax-movelists for every move that it looks at. that
+			   should improve the bookgen search quite a bit! - check that against an old version when
+			   at home.
+		   	-> cleaned up evaluation code a bit, separating things into different components, like
+		   	   men, kings, runaways, man-king-interaction, holds, cramps, compensation. 
+		   	   static evaluation in CB will now show this in detail. the idea is that this will help
+		   	   improve the evaluation in the future. 
+		   	   during this cleanup, i made some changes to order of things, so that now freebk/freewk
+		   	   are evaluated before they are used at one point, this changes the node count in testcake a bit.
+
+
+ ideas:	-> 5,6,10,14 vs 13,17,21,23 is bad for red
+			-> increase ungrounded man penalty, modify by opp-has-king
+			-> increase apex piece value
+			-> rewrite/test current runaway code
+			-> test LMR
+			-> freebk / freewk can be negative because of stupid code of mine, that needs
+			   to be fixed!
+
+
+
+ Cake Manchester  1.09d  (AKA Cake 1.7)
+	->	changed lots of evaluation details
+	->	added "FEW" extension
+	->  added SAFE extension
+	->  written entirely new shot detection code, but on inspection i removed
+		it again, as it wasn't working in engine matches.
+
+
+ 104a: -> improved iidnegamax code: it now returns an index in ETClookup instead of a value, that was wrong.
+										also, negamax now doesnt call iidnegamax if there are <= maxNdb pieces on the board.
+		TAKEN OUT AGAIN -> added runaway detection for bm 2,5, wm 13, 10, free 1,6,9.
+		-> added bonus for pot-king if opponent has no potking and side with potking has backrankpower.
+		-> no more cl if ispvnode is set.
+
+ more ideas after silbertal session: 
+		-> SPA - have to work towards this!
+		-> gang up on pivot men if NK-NK+M
+		PARTIALLY DONE -> overhaul runaway stuff - there is also a serious problem with runaways 
+			into SC where they are trapped, refine all this!
+		DONE -> add isextend to eval with which the eval can try to trigger extensions
+		-> no cl if ispvnode! perhaps also use a counter to produce "remoteness" from pv
+		-> double doghole is more bad than two times single doghole! one doghole in ending is not so bad
+		-> once kings come on, add penalty for loose men all over the board
+		-> do not overwrite ispvnodes in hashtable
+		-> retry increasing bad struct number of pieces max
+		-> a single man on 30 is quite powerful against men in 5-14-21, specially when combined with a king
+		-> when one side has a runaway, and the other has none, and only men on board, and side with runaway has backrankpower -> bonus
+		DONE -> detect runaway in situation bm 2, wm 13,10; free 1,6,9
+
+
+ some ideas for further improvements:
+ this ispv and XPV stuff is rather arbitrary right now. it depends on the fact that the
+ hashtable pv nodes are present at the next iteration. it makes for all kinds of ugly 
+ effects like non-repeatability in many forms. perhaps this can be improved by making
+ ispv nodes in the hashtable non-overwriteable, or by keeping them in a list and
+ restoring them. another question is whether old pvs of earlier iterations should have
+ the pv flag removed. finally, if ispv, perhaps cl should be turned off?
+
+// evaluation ideas: 
+//		-> detect immobile men&~EDGE && presence of roaming king as in one vegas game,
+//			bm 2,5, wm 10,14 and black king coming up from behind
+//		-> formations which are not backed by a man on edge -> bad when kings come on
+//		-> backward man on 25 with 21 can often get lost see above, special case.
+//		-> precursor to 4-3 cramp like bm 12,16,20, wm 19,23,27,28 is also bad for
+// 			white.
+//		-> better runaway detection
+//		-> principle of "no weaknesses": define weaknesses in position (like weak
+//			back rank etc., most is probably already in eval). it is better to
+//			have 0 vs 1 weakness than 1 vs 2!
+//		-> self-cramp in double corner: black 24,27,28,32, white 31 => super-bad.
+
+// time management: if search is aborted, but has failed high in an MTD, keep the newest
+// best move.
+
+// sans souci 1.04: some search ideas
+// -> 	tried recapture extension by 1 ply instead of capture extension. didnt work. perhaps because
+// 	my recapture was defined as bm+bk==wm+wk, and not as a real recapture (in man-down, this won't work!)
+// ->	try capture extension (if stmcapture do....) instead of single extension (if n==1 do...)
+// ->	add shot tables as in cake sils
+// -> 	try extending only shot-moves (i.e. moves upon which other side has a capture) in shot frame
+// -> 	if this all works, add more shot tables & make them specific - right now there is only one template
+ 
+
+
+// sans souci 1.03: some evaluation ideas (9th may 2003)
+// ->	added likely draw code to evaluation: if the endgame seems drawish, i.e.
+//		if kings+potential kings of weak side >= pieces-1, the eval is halved.
+// ->	add skewness evaluation
+// ->	checked "grounding" evaluation, but was no good
+// ->	added a 3-3 pattern to bad structures, bm 5,9,13 vs wm 17,21,22 is good for black
+// match result 8pc 5s/move XP1600+ vs kr 1.13i: +45-9 !!!
+
+// sans souci 1.02
+// added position learning
+// removed one dangerous 3-2 cramp from eval, the 2-side could easily be
+// trapped in a squeeze
+// qualified another dangerous 3-2 cramp further
+// match result 8pc 5s/move XP1600+ vs kr 1.13i: +38-16
+
+// sans souci 1.01 // cake 1.61:
+// fixed a bug in endgame db
+// added eval term for absurd self trapping in DC
+// added error checking in db code
+
+
+// sans souci aka 1.60:
+//		- added an ispv flag to hashentry. now, cake will not prune when the current position is
+//		  flagged as pv node. the pv flags are set after every iteration
+//		- reverted to index=key&(hashsize-1) instead of key%hashsize. gives me 2% speed
+//		- make dblookup more flexible: it accepts any db configuration now 
+//		- changed book to display all moves in the position
+//		- made dbsize flexible - user can set it in CB now
+//		- introduce IID, internal iterative deepening
+//		- introduce XPV, pv extensions (1/4 ply per ply of pv)
+
+
+// 1.51e: used ed gilberts parseindexfile code to improve speed with which cake loads dramatically.
+//		also changed that cake will not prune any more in db positions. f
+//		broke something somewhere which makes cake 151e see 16-19 in the white doctore 2 at d27
+//		instead of d25 as 1.51d :-(
+
+// 1.51d: fixed a problem in the 2-level-pruning code: 
+//		i was doing truncationdepth += delta/truncdivsoft
+//		but depth -= delta/truncdivhard. so i was pruning more than i would restore... this fixes
+//		the problem with the gemini test position where 16-20 draws. damn! so many errors! this
+//		one was because of TRUNCDIV and TRUNCDIV2 which were too similar. i renamed them to 
+//		TRUNCDIVSOFT and TRUNCDIVHARD...													
+
+/* 1.51c made noprunewindow 100: now it has no more problems with the chinook-lafferty position. not true!
+
+/* 1.51b made qlevel window asymmetric 60/200 instead of 60/60. costs ~5% in op/mid, 2% in endgame
+
+/* 1.51a fixed a bug in the eval which made a runaway running into being a trapped/dominated king
+		seem like a great idea.
+
+
+/* 1.51	found a couple of interesting things in las vegas. in the game cake lost to nemesis, 
+		it played 11-15? with a big score and lost. this seemed to be a pruning problem. solution:
+		get the evaluation to return a value 'delta' which the search uses for the pruning. normally,
+		soft pruning starts at +-30 outside the window, hard pruning at +-100. however, now the eval
+		returns a delta which is added to these limits. i have made delta=NOPRUNEWINDOW=50
+		for all man-down positions,
+		with or without kings.
+
+		
+
+
+/* 1.50 aka 'las vegas'
+		is the version used at the tournament in las vegas.
+		except: added an eval for a weird smother position shown in las vegas
+		by vic habgood (whilter smother).
+
+		Cake las Vegas 6-piece - Cake++ 1.41
+		+:45 =:212 -:24 unknown:7 +B:13 -B:19
+		athlon 1.4GHz, 5s/move, 16MB hash each.
+
+/* 1.43 uses my own database now.
+		improvements: newtruncation scheme streamlined, reusing the evaluation we got for
+		the truncation to return, makes cake++ with newtruncation about same fast as old
+		cake++ with old truncation and about 20-25% faster than old new truncation.
+
+		have to test a few things: what is good Qlevel?
+
+		fixed a bug in the eval of two 4-3 cramps.
+
+		reversed preload list, so that now 2-pc db is at the head of the list when
+		it is loaded, and 8-piece db is at the end. probably a todo is to throw out
+		the 7-piece db from the preload.
+
+		changed time management:
+			1) maxtime is the nominal search time
+			2) aborttime is the time where the search is aborted
+			
+/* 1.42 ("las vegas") todo: evaluation:	-> get positional compensation for man down to work
+							-> better king eval generalized mobility
+							-> better man eval in endgame generalized mobility
+			  
+				-> introduce new variables in fineevaluation: untrappedbk, untrappedwk.
+					they are the kings xored with all special cases of trapped kings.
+					on these untrapped kings, i do a mobility evaluation.
+
+				-> more todo: change book file format!
+				-> add conditional db lookup!
+				-> change db read to 32K
+
+		-> done: new truncation scheme which uses the evaluation at a node instead
+				 of the material evaluation.
+				 saw good results while truncating when off by only a value of 30. 
+				 (great match results, particularly in deeper searches, i.e. 5s/move
+				 on the duron900 instead of 2s search on the P3 450.) however, also
+				 saw awful misevaluations in ladder match against tom canning. this
+				 means that this version was not useful. turned up the value on which
+				 truncation starts to 80, and made cutoff more aggressive - still get
+				 good match results (but not quite as good), but the evaluation problems
+				 are gone/smaller. 
+				 -> trying: a double truncation scheme: if it's off by 30-80, use truncationdepth2
+				    to cut search depth a bit, if it's off by more than 80, use truncationdepth.
+					if eval comes back in +-80 window, reset truncationdepth, if it comes back in
+					+-30 reset truncationdepth2. why? i think problems with evaluation errors 
+					came from the fact that large truncations were not reset because they never
+					returned in the +-30 range. this new scheme should combine the best of
+					both worlds.
+				-> settings for 1.423 - which is quite good: newtruncation on, TRUNCLEVELHARD 80,
+					TRUNCDIVHARD 16. no second truncation.
+
+/* 1.41 (26th january ff 2002 - 11th february 2002)
+		"the knowledge revolution"
+
+		Cake++ 1.41 - KingsRow 1.12l by Ed Gilbert
+		+:49 =:190 -:38 unknown:2 +B:17 -B:34
+	
+		Cake++ 1.41 NT - Nemesis Beta 0.1 by Murray Cash
+		+:49 =:183 -:56 unknown:0 +B:18 -B:39
+
+		-> implemented:	-> 4th position 
+
+						-> key formations P 168/169
+
+						-> dynamically trapped white king on square 3 by men on 8,12
+
+						-> new code for back rank when saccing a man requires that
+						   all three squares 1,2,3 are occupied
+ 
+						-> new code for saccing a man for positional compensation does
+						   not work - yet, keep that for later.
+
+/*   version history
+	1.402 (19th december 2001)
+			new king proximity evaluation - good if there is a king close to opponent's men which are
+			not on the edge - they may be in danger. +42-42 -> +43-40 vs. Kingsrow 1.12f
+
+	1.401 (12th december 2001)
+			cake++ now saves its state in the registry (in cakedll.c)
+			node counter is a double, so that large node numbers can be processed correctly.
+
+	1.4 lots of changes in evaluation function, with versions 1.35 etc, new release on internet
+		as version 1.4. this version of cake is much better than 1.3!
+
+
+  1.35 (28th september ff)
+		a match nemesis-cake shows me some glaring mistakes in eval - try to fix!
+			ENDINGS
+			-> self-trapping in double corner	(done)
+
+			-> dominated king in single corner	(done)
+				+63 -45 (laptop) instead of +58 -46 (cake1.3, a +6 here!)
+				  -> make this true only if dominated king is alone (or maybe one other?).
+
+			OPENING
+			-> increase value of squares 6,7 (black)
+			-> make back rank 2,3,6 equally strong as 2,3,5.
+			
+			-> work on cramping squares 13,20:
+				-> for white, it is good to have a man on 20 if there is a black man on 16. 
+					it is indifferent if there is a black man on 12. 
+					it is bad if there is neither
+				-> for white, it is good to have a man on 13 if there is a black man on 9
+					it is indifferent if there is one on 5
+					it is bad if there is none of the two
+			-> cramped single corner = too many men in single corner 
+				-> penalty for men on 4, 8
+				-> penalty for too #men on 3,4,8,11,12,16>=5.
+			
+			MIDGAME
+			-> make man sac weak if not king & CENTER.
+
+		general: -> make a complete PV possible with triangle array
+					-> analyze hashtable deep to see if it's really always open
+					-> make 64 bit counters.
+
+	1.3:			lots of evaluation tuning:
+					-> the move is of no use, even if calculated only in 8piece endings
+					-> the a-line attack was counterproductive!
+					-> changed criterium for roaming king from &CENTER to 
+						&ROAMINGBLACK/WHITEKING, which is a larger part of the
+						board
+					->	increased dogholeval
+					-> added dogholemandownval
+					-> and lots more which i dont remember!
+					-> added flexible book size
+
+
+	1.3beta2:	->	stop relying on global variable p (at least most of the time...)
+					->	found serious bug in eval in the kingsacrifice code,
+						roamingking was bk&CENTER instead of p->bk :-(
+					->	add eval for bridge stone which can be a weakness if
+						opponent has kings
+					-> change move to if(wk+wm==bk+bm)
+
+	1.3beta (22nd may ff 2001)
+		-> changes struct hashentry to 8 bytes
+			strange, for some reason this doesnt work quite as well as before :-(
+		
+		-> worked on eval: 
+			->changed back rank eval, 
+			->increased single king eval, so sacs more easily
+			->added an king center monopoly to eval
+
+			this was a HUGE improvement: engine match results:
+				cake++1.3 cake++ 1.21b	+64=182-35u7 (2s/K7-600)
+				cake++1.3 kr 1.10c		+48=187-51u2 (2s/PIV1.4)
+
+		->  adds new stuff to evaluation function:
+			-> men at sides of board running against good back rank on one side
+			->maybe: ->king center monopoly (KCM) only if both sides have a king
+						-> higher value for KCM?
+						->sac less probable if less men on board
+						->influence of king?
+						->8piece eval?
+						->one king holding two men in endgame?  OKOK
+						->check for doghole stones before calculating the move? OKOK
+						->keep men on 6 & 7 if there are men on 2&3 or 1&2 respectively OKOK
+						->bridge stone on 10/23 may be weak!
+		-> :
+		-> add book really this time
+		-> clean up extension management (keep track of original depth and save that?)
+		-> check move generator for pointer use instead of pass by value
+
+	1.22 (13th may 2001)
+		-> cake++ can use a book of tom lincke now
+		-> fixed a bug with MOSTATIC and MOTESTCAPT
+		
+	1.21 (17th february 2001)
+		-> removed terrible bug in hashtable XOR values: only
+			half the entries were being used
+		-> tested ed gilbert's xref array method, with a bubblesort,
+			but it was slower than berni's linear search method
+		-> tested ETC depth: 2* frac was best, 3* frac close, 1*frac
+			definitely worse, no ETC very much worse
+
+		-> Cake++ 1.21 - KingsRow 1.09e by Ed Gilbert
+			+:44 =:173 -:64 unknown:1
+			best result so far against 1.09e which is a huge improvement over
+			1.09.
+	
+	1.2 (22nd december 2000)
+		lots of ideas.
+		->	tested MOSTATIC - no good! taken it out => ~5-10% speed 
+			Cake++ 1.193 - KingsRow 1.09 by Ed Gilbert
+			+:54 =:167 -:61 unknown:0
+		->	improve hashtable size
+			to start with i replace old mask-stuff with bitfields, so the hashentry
+			struct gets more transparent anyway now, with valuetype, depth and color.
+	
+	1.2 beta (18th november 2000)
+
+		cakepp now doesnt need a db.ini file any more. it autodetects
+		either db6 or db4 or no database.
+
+		added effective depth: globals 'leafs' and 'leafdepth', where
+		leafs is the number of leaf nodes searched and leafdepth = sum of depth over
+		all leaf nodes -> average depth = leafdepth/leafs.
+
+		... NEVER DONE!
+		  try new stuff in eval: 'under the influence of a king' tries to 
+		estimate how dangerous a king is by defining a few squares around
+		every king as being under the influence - if there is a man of the
+		opposite color on these squares, this gives a bonus for the side with
+		the king.
+	
+	1.193 (ed has doubled the speed of his program! i try:
+
+    -->  change material eval once more to more sensible values:
+    		Cake++ 1.192b - KingsRow 1.08j by Ed Gilbert
+			+:72 =:163 -:41 unknown:6
+    --> change re-extension only if n==0 and fineevalwindow 140 instead
+    		of 150 -> +72-50 damn.
+    -->  changed fineevalwindow to 140
+         Cake++ 1.192b - KingsRow 1.08j by Ed Gilbert
+			+:69 =:164 -:42 unknown:7     ->back to 150
+    --> turned off coarsegraining the same result as with!:
+    		Cake++ 1.192b - KingsRow 1.08j by Ed Gilbert
+			+:75 =:154 -:44 unknown:9
+    --> tried a higher value for tempo for 10,9,8,7 pieces (+1) to no avail
+    		Cake++ 1.192b - KingsRow 1.08j by Ed Gilbert
+			+:68 =:165 -:48 unknown:1
+    --> tried a cramped single corner feature :-(
+    		+:71 =:159 -:48 unknown:4
+    --> cramped single corner only if no kings:
+    		+:68 =:158 -:49 unknown:7
+    --> tried real dyke = bonus for piece on 19:
+    		+:72 =:163 -:42 unknown:5  => indifferent.
+	--> compiled the thing with visualC++ 6.0 pro instead of borlandC 5.5
+			+:73 =:170 -:33 unknown:6
+        wow! quite a difference!
+		it's only 10% speed difference...
+	--> another 10% after finding some more optimizations gives
+			+:74 =:168 -:32 unknown:8
+		not such a big improvement :-(
+		theory: it's just in cake's low winlevel and draw code - turn it off...
+			put up winlevel to 1600 and remove draw code:
+			+:77 =:165 -:33 unknown:7
+
+    -->	inlining the updatehashkey function in negamax.
+    -->	repetition check using the hash key instead of the whole position.
+         nope - didnt do this...
+
+	 1.192  (8th october 2000)
+    --> 	table-lookup for material evaluation, new global static int
+    		materialeval[bm][bk][wm][wk] holds the material evaluation
+         for this material distribution. approx. 5% speed increase!
+
+         switched to kingsrow 1.08j as sparring partner
+         baseline:
+         Cake++ 1.192 - KingsRow 1.08j by Ed Gilbert
+			+:65 =:173 -:42 unknown:2 (checked, = draws)
+         PVS on:
+         +:76 =:156 -:45 unknown:5 (checked, = draws)  YES! this seems to work!
+         SE on:
+
+         changing DSE window to alpha,beta+QLEVEL:  50%
+         						  to alpha-QLEVEL: +:74 =:156 -:47 unknown:5
+
+         QLEVEL 70: +:75 =:165 -:37 unknown:5 = best result ever!
+         this will also be very much needed - ed has a factor 2 in speed coming!
+    1.191  (6th october 2000)
+	 -->  complete fail-soft introduced - up to now, (first)negamax would return
+    		value on fail-high, but alpha on fail-low. now it returns the best
+         value anyway.
+         new logic in these routines: alpha and beta are fix, what comes
+         in from the caller, but can be changed by hashlookups and ETC. but
+         in the main recursion loop alpha&beta are here to stay, Lalpha is
+         the increasing value of the position. bestvalue starts at -5000 and
+         goes up to whatever the best value is and is the value which is returned
+         using standards: PVSoff SEoff ETCon: overall 92.8% geometric 95.9%
+         using PVSon                          overall 78.9% geometric 80.95%  time2181s
+         PVSon results in small differences in cakelog.txt in the testcake
+         program - i believe it's ok, because more lines may be truncated
+         with smaller windows -> it sometimes misses some lines which could
+         cause the value of the position to change.
+
+         baseline (PVS off, SE off) result:
+         Cake++ 1.191 - KingsRow 1.08 by Ed Gilbert
+			+:80 =:150 -:42 unknown:10
+
+    1.19   (1st october 2000)
+
+    -->  singular extensions with switch SINGULAREXTENSIONS, use another
+    		switch, SEDEPTH to know how far to extend. at the moment SE works
+         like this: if a node has a value inside the alpha-beta-window, and
+         all other siblings are worse than value-SELEVEL, SE kicks in.
+         SE *only* in non-capturing nodes. could be changed to SE in capturing
+         nodes too, but of course n>1, so that would just be n>1 instead of
+         capture==0.
+         @the moment: 6.10^-5 nodes of all get an SE
+
+         current settings: SEDEPTH=20 and SELEVEL=50 take very few more
+         nodes than no SE (overall 2.1%, geometric 8%, but this is mostly because
+         of one 436% node), but take more time - the sefailed-test
+         needs to re-search many times -> less nodes/sec (390  compared to 420 or so)
+
+    -->  new compile switch PVS turns PVS on or off.
+
+         new PVS re-search code
+         overall 86%, geometric 87.5% of nodes searched compared to without PVS
+         
+    		(there still seems to be a problem with PVS! returns odd values
+         even though coarsegraining is on, and maybe plays worse?!
+         @ the moment: PVS off ->11 % more nodes, but stable. probably it's
+         a bug with the re-search code of PVS. )
+
+    -->  changed from windowed alphabeta to windowed PVS-style alphabeta.
+         result in test: 81.7% overall nodes, 85.0% logratio nodes compared
+         with no PVS.
+
+    -->  changed hashlookup call: instead of
+    		hashlookup(&value, &alpha, &beta, depth, &best, color)
+         it is
+         hashlookup(&value, &valuetype, depth, &best, color)
+         this means that the shifting of bounds has to be done (and is done) in
+         negamax now, but also that the valuetype information is transparent
+         for the ETC code.
+
+    1.181 (17th september 2000)
+    --> 	changed moveordering code: only first move is ordered in
+        	movelist. all other sorting will be done in negamax if
+        	necessary. a few % speed increase (2%? 3%?)
+    -->  new compile switch TRUNCATIONTEST: when a final position will be examined
+    		because of d<=0 and truncationdepth is larger than a threshold (20),
+         evaluation is called, and if this value is NOT outside truncation bounds,
+         the truncated line will be reexpanded. this is more 'correct' than a
+         mere material test and can recognize positional compensation. probably
+         this would deserve an own, lower truncation window test because the result
+         is more accurate.
+
+    1.18 (16th september 2000)
+
+    --> after some testing with values for truncation depth
+    	  and singleextend parameters i now use 15 for TD, 5 for SE.
+    --> added some more knowledge to evaluation function:
+    	  -> runaways in two are detected as runaways now if the have
+        	  a clear run left or right ahead, instead of both sides.
+        -> more trapped king code: kings trapped in double corner
+        	  by two men are recognized, and kings trapped in single corner
+           by two men are recognized too.
+        -> and a new cramp formation is recognized.
+           result:
+        		Cake++ 1.18 - KingsRow 1.08 by Ed Gilbert
+				+:71 =:171 -:36 unknown:4
+    1.17 (5th september 2000)
+    --> saw crashes because MAXMOVES = 24 was too small - is 28 now
+    --> fixed one more bug (man center value) in eval
+    --> fixed a bug in truncation code which made much
+        too much truncations and didn't reexpand correctly
+ 	 --> moved truncation decision before (d<0) test
+
+    1.16 (31st august 2000)
+    --> fixed quite a number of bugs in evaluation function.
+    --> added some knowledge to evaluation
+
+    1.15 (12th august 2000)
+    --> window size reduced to 10 -> 10% less nodes
+    --> implemented ETC -> 10% less nodes
+        (there is a switch #define ETC to turn this on/off)
+        
+ 	 1.14 (27th june 2000)
+    improvements over 1.13:
+    --> cramp evaluation
+    --> additional info for database wins/losses
+    --> static evaluation implemented
+
+    
+

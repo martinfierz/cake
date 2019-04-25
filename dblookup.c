@@ -159,6 +159,7 @@
 
 typedef __int64 int64;
 #define int32 unsigned int
+//#define bitcount(a) __popcnt((a))
 
 
 typedef struct 
@@ -203,10 +204,10 @@ typedef struct compresseddatabase
 
 static int64 getdatabasesize(int bm, int bk, int wm, int wk, int bmrank, int wmrank);
 static int choose(int n, int k);
-static int LSB(unsigned int x);
-static int MSB(unsigned int  x);
-static int recbitcount(unsigned int n);
-static int bitcount(unsigned int n);
+//static int LSB(unsigned int x);
+//static int MSB(unsigned int  x);
+//static int recbitcount(unsigned int n);
+//static int bitcount(unsigned int n);
 static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount);
 #ifdef PRELOAD
 static void preload(char out[256]);
@@ -239,9 +240,6 @@ static const int skip[SKIPS]={5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,2
 static int runlength[256]; // holds the run length for every byte
 static int value[256];		// holds the value for every byte
 static int bicoef[33][33]; // binomial coefficients
-
-// duplicate data also in cake but possibly not in other engines...
-static char bitsinword[65536];
 static int32 revword[65536];
 static int maxblockid = 0;  // maximal unique block id, set by initlookup after checking what files are here
 
@@ -260,7 +258,7 @@ static int maxpieces;
 static int maxpiece;
 static int cachesize;
 static int bytesallocated = 0;
-static char dbinfo[1024] = "";
+static char dbinfo[4096] = "";		// increased buffer size to 4096 from 1024 due to overwrite in cake 1.85
 
 int db_getcachesize(void)
 	{
@@ -292,30 +290,21 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	int memsize = 0;
 	unsigned char *diskblock;
 	int newhead,prev, next;
-	int n;
+	unsigned int n;
 	int n1,n2,n3;
 	int *idx;
 	unsigned char byte;
 	POSITION revpos;
 	POSITION p;
 	cprsubdb *dbpointer;
-	FILE *errorlogfp;
 	
-	// get a copy of the board, because we may have to invert the board for a 
-	// lookup.
+	// get a copy of the board, because we may have to invert the board for a lookup.
 	p=*q;
 
 	// adjust color for different definition in dblookup
 	p.color = q->color & 1;
 
-	// set bm, bk, wm, wk, and ranks - bitcount is in bool.c
-	// TODO: bm,bk,wm,wk are already known from cakepp.c - why are they being recomputed here??
-	// add a MATERIALCOUNT structure to the call...
-	/*bm = bitcount(p.bm);
-	bk = bitcount(p.bk);
-	wm = bitcount(p.wm);
-	wk = bitcount(p.wk);*/
-
+	// set bm, bk, wm, wk: this was done earlier by bitcount, but checkers engine has it ready
 	bm = matcount->bm;
 	bk = matcount->bk;
 	wm = matcount->wm;
@@ -334,9 +323,6 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		return p.color==DB_WHITE?DB_LOSS:DB_WIN;
 	*/
 
-	// assert for debugging stuff.
-	//assert(bm+bk>0);
-	//assert(wm+wk>0);
 
 	if( (bm+wm+wk+bk>maxpieces) || (bm+bk>maxpiece) || (wm+wk>maxpiece))
 		return DB_UNKNOWN;	
@@ -485,7 +471,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	
 	// TODO: check if the n<8 is of any use - probably not. it would simplify the code
 	// if it was not here.
-	if(n<8)
+	/*if(n<8)
 		{
 		// now the array idx[] contains the index number at the start of every block.
 		// we do a stupid linear search to find the block:
@@ -498,7 +484,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		// we overshot our target - blocknumber is now the first larger idx.
 		blocknumber--;
 		}
-	else
+	else */
 		{
 		// try for a better search: binary division search
 		n1=0;n2=n;
@@ -516,9 +502,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 
 	// we now have the blocknumber inside the database slice in which the position is located.
 	// get the unique number which identifies this block
-	uniqueblockid = dbpointer->blockoffset+
-					dbpointer->firstblock +
-					blocknumber;
+	uniqueblockid = dbpointer->blockoffset + dbpointer->firstblock + blocknumber;
 
 
 #ifdef THREADSAFEDB
@@ -645,7 +629,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		{
 		n=idx[blocknumber+1];
 		i=1023;
-		while((unsigned int)n>index /*&& i>=0*/)
+		while(n > index /*&& i>=0*/)
 			{
 			n-=runlength[diskblock[i]];
 			i--;
@@ -666,15 +650,12 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		// LOOKUP LOOP - executes about 500 times on average
 		// this could be speeded up by storing the index of the first 512 loops
 
-		while((unsigned int)n<=index /*&& i<1024*/)
+		while( n <= index)
 			{
 			n+=runlength[diskblock[i]];
 			i++;
 			}
 		
-
-		//printf("\n%i",i);
-
 		// once we are out here, n>index
 		// assert(n>index);
 		// we overshot again, move back:
@@ -685,7 +666,8 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		//TODO: make this only in debug version - hope that the load of the last block
 		// has solved the dberr problem. ehm, not hope, but check if we ever see dberr.txt
 		// again!
-		if(i>=1024)
+		assert(i<1024); 
+		/*if(i>=1024)
 			{
 			// log error:
 			errorlogfp = fopen("dberr.txt","a");
@@ -694,7 +676,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 				fprintf(errorlogfp,"db index overflow in bm %u bk %u wm %u wk %u bmrank %u wmrank %u index %u\n",bm,bk,wm,wk,bmrank,wmrank,index);
 				fclose(errorlogfp);
 				}
-			}
+			}*/
 		}
 		// finally, we have found the byte which describes the position we
 	// wish to look up. it is diskblock[i].
@@ -772,75 +754,6 @@ int64 getdatabasesize(int bm, int bk, int wm, int wk, int bmrank, int wmrank)
 
 
 //------------------------------------------------------------------
-// boolean stuff below
-
-
-// table-lookup bitcount - newer CPUs are going to have a popcount instruction soon, would be
-// much more efficient.
-int bitcount(int32 n)
-	// returns the number of bits set in the 32-bit integer n 
-	{
-	return (bitsinword[n&0x0000FFFF]+bitsinword[(n>>16)&0x0000FFFF]);
-	}
-
-int LSB(int32 x)
-	{
-	//-----------------------------------------------------------------------------------------------------
-	// returns the position of the least significant bit in a 32-bit word x 
-	// or -1 if not found, if x=0.
-	// LSB uses "intrinsics" for an efficient implementation
-	//-----------------------------------------------------------------------------------------------------
-
-	int returnvalue;
-
-	if(_BitScanForward(&returnvalue,x))
-		return returnvalue;
-	else
-		return -1;
-	
-	
-	/*
-	old, non-intrinsic code - if you cannot use assembly, use this instead
-	if(x&0x000000FF)
-		return(LSBarray[x&0x000000FF]);
-	if(x&0x0000FF00)
-		return(LSBarray[(x>>8)&0x000000FF]+8);
-	if(x&0x00FF0000)
-		return(LSBarray[(x>>16)&0x000000FF]+16);
-	if(x&0xFF000000)
-		return(LSBarray[(x>>24)&0x000000FF]+24);
-	return -1;*/
-	
-	}
-
-
-int MSB(int32 x)
-	{
-	//-----------------------------------------------------------------------------------------------------
-	// returns the position of the most significant bit in a 32-bit word x 
-	// or -1 if not found, if x=0.
-	// LSB can maybe be implemented more efficiently on other CPU's which have a 
-	// this operation.
-	//-----------------------------------------------------------------------------------------------------
-int returnvalue;
-
-	if(_BitScanReverse(&returnvalue,x))
-		return returnvalue;
-	else
-		return -1;
-	
-
-/* old non-intrinsic and portable code	- if you cannot use assembly, use this instead
-	if(x&0xFF000000)
-		return(MSBarray[(x>>24)&0xFF]+24);
-	if(x&0x00FF0000)
-		return(MSBarray[(x>>16)&0xFF]+16);
-	if(x&0x0000FF00)
-		return(MSBarray[(x>>8)&0xFF]+8);
-	return(MSBarray[x&0xFF]);
-	//if x==0 return MSBarray[0], that's ok. 
-*/
-	}
 
 int revert(int32 n)
 	// reverses a 4-byte integer
@@ -850,19 +763,7 @@ int revert(int32 n)
 	}
 
 
-int recbitcount(int32 n)
-	// counts & returns the number of bits which are set in a 32-bit integer
-	//	slower than a table-based bitcount if many bits are
-	//	set. used to make the table for the table-based bitcount on initialization
-	{
-	int r=0;
-	while(n)
-		{
-		n=n&(n-1);
-		r++;
-		}
-	return r;
-	}
+
 
 
 int choose(int n, int k)
@@ -942,9 +843,6 @@ int db_init(int suggestedMB, char out[256])
 	InitializeCriticalSection(&db_access);
 #endif 
 	
-	// initialize bitsinword, the number of bits in a word
-	for(i=0;i<65536;i++)
-		bitsinword[i]=recbitcount((int32)i);
 	
 	// initialize revword, the reverse of a word.
 	for(i=0;i<65536;i++)
@@ -998,7 +896,8 @@ int db_init(int suggestedMB, char out[256])
 	// detect largest present database and put the number of pieces in variable pieces:
 	for(n=2;n<SPLITSIZE;n++)
 		{
-		sprintf(dbname,"%s\\db%i.idx",DBpath,n);
+		//sprintf(dbname,"%s\\db%i.idx",DBpath,n);
+		sprintf(dbname,"%s\\%s%i.idx",DBpath,DBPREFIX, n);
 		
 		fp = fopen(dbname,"rb");
 		if(fp)
@@ -1028,7 +927,7 @@ int db_init(int suggestedMB, char out[256])
 					wm=nw-wk;
 					if(bm+bk==wm+wk && wk>bk)
 						continue;
-					sprintf(dbname,"%s\\db%i_%i%i%i%i.cpr",DBpath,bm+bk+wm+wk,bm,bk,wm,wk);
+					sprintf(dbname,"%s\\%s%i_%i%i%i%i.cpr", DBpath,DBPREFIX, bm+bk+wm+wk,bm,bk,wm,wk);
 					fp = fopen(dbname,"rb");
 					if(fp)
 						{
@@ -1100,7 +999,7 @@ int db_init(int suggestedMB, char out[256])
 		{
 		if(n>=8)
 			continue;
-		sprintf(dbname,"%s\\db%i.idx",DBpath,n);
+		sprintf(dbname,"%s\\%s%i.idx",DBpath,DBPREFIX, n);
 		sprintf(out,"parsing %s",dbname);
 		fp = fopen(dbname,"rb");
 		// another new change 
@@ -1108,9 +1007,12 @@ int db_init(int suggestedMB, char out[256])
 			{
 			strcat(dbinfo,dbname);
 			strcat(dbinfo,"\n");
+			logtofile("found an index file:"); 
 			logtofile(out);
 			fclose(fp);
-			}
+		}
+		else
+			logtofile("could not find the expected index file!"); 
 		// parse next index file
 		pifreturnvalue = parseindexfile(dbname,blockoffset,fpcount);
 		
@@ -1142,16 +1044,25 @@ int db_init(int suggestedMB, char out[256])
 					if(bm+bk==wm+wk && wk>bk)
 						continue;
 					// ok, found a valid db, now do the do: 
-					sprintf(dbname,"%s\\db%i_%i%i%i%i.idx",DBpath,bm+bk+wm+wk,bm,bk,wm,wk);
+					sprintf(dbname,"%s\\%s%i_%i%i%i%i.idx",DBpath,DBPREFIX,bm+bk+wm+wk,bm,bk,wm,wk);
 					sprintf(out,"parsing %s",dbname);
+					logtofile("trying to parse:"); 
+					logtofile(dbname); 
 					fp = fopen(dbname,"rb");
-					if(fp != NULL)
+					if(fp != NULL)				// TODO: what happens if fp = null??
 						{
-						strcat(dbinfo,dbname);
+						logtofile("found an index file:"); 
+						strcat(dbinfo,dbname);		// TODO: is there a problem here? what is dbinfo anyway??
 						strcat(dbinfo,"\n");
+						//strcat_s(dbinfo,1024,dbname);		// TODO: is there a problem here? what is dbinfo anyway??
+						//strcat_s(dbinfo,1024,"\n");
+						
 						logtofile(out);
 						fclose(fp);
 						}
+					else
+						logtofile("could not find the expected index file!"); 
+		
 					pifreturnvalue = parseindexfile(dbname,blockoffset,fpcount);
 					if(pifreturnvalue >= 0)
 						{
@@ -1212,14 +1123,14 @@ int db_init(int suggestedMB, char out[256])
 	blockinfo = VirtualAlloc(0,memsize, MEM_RESERVE|MEM_COMMIT|MEM_TOP_DOWN, PAGE_READWRITE);
 	if(blockinfo == NULL && memsize!=0)
 		{	
-		sprintf(str,"\ncould not allocate LRU list (%i KB)",(cachesize)*sizeof(struct bi)/1024);
+		sprintf(str,"\ncould not allocate LRU list (%zi KB)",(cachesize)*sizeof(struct bi)/1024);
 		logtofile(str);
 		error = GetLastError();
 		sprintf(str,"\nerror code %i",error);
 		logtofile(str);
 		exit(0);
 		}
-	sprintf(str,"\nallocated %i KB for LRU linked list",(cachesize)*sizeof(struct bi)/1024);
+	sprintf(str,"\nallocated %zi KB for LRU linked list",(cachesize)*sizeof(struct bi)/1024);
 	logtofile(str);
 
 #ifdef PRELOAD
@@ -1243,14 +1154,19 @@ int db_init(int suggestedMB, char out[256])
 	fpcount=0;
 	for(n=2;n<SPLITSIZE;n++)
 		{
-		sprintf(dbname, "%s\\db%i.cpr",DBpath,n);
+		sprintf(dbname, "%s\\%s%i.cpr",DBpath,DBPREFIX, n);
 		dbfp[fpcount] = fopen(dbname,"rb");
 		sprintf(dbnames[fpcount],"%s",dbname);
 		if(dbfp[fpcount]==NULL)
 			{
-			sprintf(str,"\ndbfp[%i] is null!",fpcount);
+			sprintf(str,"\ndbfp[%i] is null! (%s)",fpcount, dbname);
 			logtofile(str);
 			}
+		else
+			{
+			logtofile("database found:"); 
+			logtofile(dbname);
+		}
 		fpcount++;
 		}
 
@@ -1269,7 +1185,7 @@ int db_init(int suggestedMB, char out[256])
 					wm=nw-wk;
 					if(bm+bk==wm+wk && wk>bk)
 						continue;
-					sprintf(dbname,"%s\\db%i_%i%i%i%i.cpr",DBpath,bm+bk+wm+wk,bm,bk,wm,wk);
+					sprintf(dbname,"%s\\%s%i_%i%i%i%i.cpr",DBpath,DBPREFIX,bm+bk+wm+wk,bm,bk,wm,wk);
 					dbfp[fpcount] = fopen(dbname, "rb");
 					sprintf(dbnames[fpcount],"%s",dbname);
 					if(dbfp[fpcount]==NULL)
@@ -1298,7 +1214,7 @@ static void preload(char out[256])
 
 	for(n=2;n<SPLITSIZE;n++)
 		{
-		sprintf(dbname, "%s\\db%i.cpr",DBpath,n);
+		sprintf(dbname, "%s\\%s%i.cpr",DBpath,DBPREFIX,n);
 		fp = fopen(dbname,"rb");
 		if(fp==NULL)
 			break;
@@ -1345,7 +1261,7 @@ static void preload(char out[256])
 					wm=nw-wk;
 					if(bm+bk==wm+wk && wk>bk)
 						continue;
-					sprintf(dbname,"%s\\db%i_%i%i%i%i.cpr",DBpath,bm+bk+wm+wk,bm,bk,wm,wk);
+					sprintf(dbname,"%s\\%s%i_%i%i%i%i.cpr",DBpath,DBPREFIX, bm+bk+wm+wk,bm,bk,wm,wk);
 					printf("\npreloading %s",dbname);
 					fp = fopen(dbname,"rb");
 					if(fp==NULL)
@@ -1397,12 +1313,13 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 	char str[256];
 
 	sprintf(str,"parsing index file %s",idxfilename);
-	//logtofile(str);
+	logtofile(str);
 
 	fp = fopen(idxfilename,"r");
 	if(fp==0)
 		{
-		printf("\ncannot open index file %s",idxfilename);
+		sprintf(str,"cannot open index file %s",idxfilename);
+		logtofile(str); 
 		return -1;
 		}
 
@@ -1415,7 +1332,8 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 		if (stat <= 0)
 			break;
 		else if (stat < 7) {
-			printf("Error parsing!\n");
+			sprintf(str, "Error parsing!\n");
+			logtofile(str); 
 			return -2;
 		}
 
@@ -1434,7 +1352,8 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 			if (stat0 < 2) {
 				stat = fscanf(fp, "%c", &c);
 				if (stat < 1) {
-					printf("Bad line\n");
+					sprintf(str, "Bad line");
+					logtofile(str); 
 					return -2;
 				}
 			}
@@ -1455,7 +1374,8 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 
 				// Check for too many indices.
 				if (num == maxidx) {
-					printf("reached maxidx\n");
+					sprintf(str, "reached maxidx\n");
+					logtofile(str); 
 					return -2;
 				}
 			}
@@ -1465,7 +1385,8 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 			dbpointer->idx = malloc(num * sizeof(int));
 			bytesallocated += num*sizeof(int);
 			if (dbpointer->idx == NULL) {
-				printf("malloc error for idx array!\n");
+				sprintf(str, "malloc error for idx array!");
+				logtofile(str); 
 				return -2;
 			}
 			memcpy(dbpointer->idx, idx, num * sizeof(int));
@@ -1482,7 +1403,8 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 				singlevalue = DB_LOSS;
 				break;
 			default:
-				printf("Bad singlevalue line \n");
+				sprintf(str, "Bad singlevalue line");
+				logtofile(str); 
 				return(0);
 			}
 			dbpointer = &cprsubdatabase[bm][bk][wm][wk][bmrank][wmrank][color];

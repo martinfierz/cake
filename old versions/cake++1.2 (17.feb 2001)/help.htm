@@ -1,0 +1,142 @@
+<html>
+
+<head>
+<title>CheckerBoard Help</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="0"
+leftmargin="0">
+
+<table border="0" cellpadding="20" cellspacing="0" width="100%"
+bgcolor="#000000">
+<tr>
+<td>
+<font color="#BBBBBB" size="6" face="Ventura"><b>
+CheckerBoard for Windows<font color="#FF0000" size="6" face="Ventura"> help</b> </font>
+</td>
+</tr>
+</table>
+
+<table border="0" cellpadding="20" cellspacing="0" width="100%"
+bgcolor="#FFFFFF">
+<tr>
+<td>       
+<br>
+<font color="#000000" size="3" face="Ventura">
+CheckerBoard is updated frequently. The newest version of CheckerBoard can be found <a href="http://www.fierz.ch/checkers.htm">here</a>.
+<H3>What is CheckerBoard?</H3>
+CheckerBoard is an <b>interface to a checkers engine</b>. CheckerBoard allows you to load and save games, enter positions and moves etc. But CheckerBoard alone <b>cannot</b> play checkers. To play checkers, it needs a checkers engine.<br>
+CheckerBoard comes with two engines: Cake++, the strongest free checkers program for the win32 platform and simple checkers 1.12. CheckerBoard plays the english/american variation of checkers.  At the end of this document there is documentation on how CheckerBoard interfaces to checkers engines, so you can easily write your own engine if you want to. In the title bar of its window, CheckerBoard displays the name of the checkers engine it is using. <P>
+Cake++ is the default engine. If you want to use simple checkers instead, you have to edit the file 'engines.ini'. Just put 'simplech.dll' on the
+first line and 'cake++.dll' on the second.
+<p>
+CheckerBoard is free.
+	<H3>Rules of the game</H3>
+	The rules of checkers are simple, but there are many different variations of these rules.
+	CheckerBoard plays the english version of the game. This means, you play on a 8-by-8
+	board, and the kings can only move one square.
+	There are two kinds of stones in checkers: men and kings. At the beginning of the game,
+	you only have 12 men. Both kinds of pieces can only move diagonally and only one square, 
+	however, men can only move forward, whereas kings can also move backward. Besides
+	making normal moves, you can also capture other pieces: if the piece of the opponent is in
+	front of your piece, and the square behind the opponent's piece is free, you can jump onto 
+	this free square and remove the opponent's piece. Multiple jumps are also possible. The
+	most important rule in checkers is that <b>if you can jump, you must.</b> This leads to many
+	tactical possibilities.
+	
+	<H3>Making a move</H3>
+	To make a move, click on the piece you want to move. The piece will turn red. Then, click on
+	the final square which this piece will go to. If you are making a multiple jump, do <b>not</b>
+	click on any intermediate squares! If you tried to make an impossible move, CheckerBoard
+	will indicate this in its status bar.
+	
+	<H3>Menu commands</H3>
+<h4>game</h4>
+<UL>
+<LI><b>New</b> starts a new game. You will not be asked if you want to save the current game! If you choose new, the current game will be lost.
+<LI><b>Load</b> opens a open file dialog from which you can choose a game to open. Games should have a .pdn extension. The game is actually saved as a text file, so you can open it in notepad for instance and just read the notation of the game. Although I use .pdn (<b>P</b>ortable <b>D</b>raughts <b>N</b>otation) as extension, I am not quite sure that my format complies with the PDN standard. CheckerBoard also loads a file which is dropped into its window. Running CheckerBoard with a filename as parameter, as in <i>checkerboard.exe game.pdn</i> also loads a game. 
+<LI><b>Save</b> saves the current game. Again, you get a save file dialog. You have to explicitly add the .pdn extension if you want it to be there.
+<LI><b>Analyze</b> moves throught the current game move by move. In every position, CheckerBoard will call it's checkers engine to get an evaluation
+of the position. The current level determines how long the engine will calculate on average. When CheckerBoard is finished it writes the analysis to a
+file called 'analysis.txt' and opens this file with the default .txt-viewer - that's notepad by default.
+<LI><b>Print to Clipboard</b> prints the notation of the current game to the clipboard. I don't plan to have a direct printing feature in CheckerBoard - there are programs better suited to do this kind of thing. So you can choose print to clipboard and then use "paste" in word for example and then print the game.
+<LI><b>Exit</b> exits the program - of course...
+</UL>
+<h4>Moves</h4>
+<UL>
+<LI><b>Play</b> sends a "play now" command to the checkers engine if it is currently calculating it's next move. If the engine does not support the "play now" command, nothing might happen. If it is your turn to move, and you choose "play", the computer will start calculating. If you are having CheckerBoard analyze a game, or play a game between two engines, choosing "play" will stop the analysis or the game in progress.
+<LI><b>Back</b> (or the left arrow key) takes back one move.
+<LI><b>Back all</b> (or the up arrow key) takes back all moves and goes back to the start of the game.
+<LI><b>Forward</b> (or the right arrow key) moves one move forward in the game.
+<LI><b>Forward all</b> (or the down arrow key) goes to the end of the game.
+</UL>
+<h4>Options</h4>
+<UL>
+<LI><b>Level</b> sets the time the computer will think about its move. Choose instant for a weak opponent. 
+<LI><b>Display</b>: here you can invert the board and toggle board number display on and off.
+<LI><b>Play mode</b>: Choose analysis if you want to enter moves without the computer playing. The engine will still display moves and search information in the status bar, but it wont play. Choose 'Engine match' to watch the two engines fight against each other or 'Autoplay' to let the
+current engine play a game against itself.
+<LI><b>Colors</b> allows you to configure the colors of the squares and pieces.
+<LI><b>Engine Options</b> calls the options function of the engine. It will depend on the engine what kind of options you have here.
+</UL>
+<h4>Setup</h4>
+<UL>
+<LI><b>Setup Mode</b> enters and exits the setup mode. In setup mode, you can left-click on squares to cycle through black pieces, and you can right-click to cycle through the white pieces. The first click turns a free square into a man, the second click into a king and the third click makes an empty square again. Don't forget to exit the setup mode before playing!
+<LI><b>Clear Board</b> clears the board.
+<LI><b>Black moves</b> makes it black's turn to move.
+<LI><b>White moves</b> makes it white's turn to move.
+<LI><b>Change Color</b> changes the side to move. You can also access this in the toolbar.
+</UL>
+<h4>Help</h4>
+<UL>
+<LI><b>About CheckerBoard</b> displays an about box with the version number of CheckerBoard.
+<LI><b>CheckerBoard help</b> displays this file.
+<LI><b>CheckerBoard homepage</b> goes to the CheckerBoard homepage in the internet.
+<LI><b>About Engine</b> tells the engine to display an about box with it's version number.
+<LI><b>Engine Help</b> tells the engine to display some help. Both engine help and about engine are imported functions, which the engine provides. 
+</UL> 
+Comments, questions, suggestions or whatever are welcome <a href="mailto:checkers@fierz.ch">here</A>. If something is not working properly, <b>please include the version number</b> when asking for help.
+<HR>
+<H3>For Developers</H3>
+CheckerBoard is explicitly only designed as an interface. And it is free and will always remain free. If you would like to program an engine for CheckerBoard or if you have already written a checkers program and want to adapt it to run as engine in CheckerBoard, here is some documentation: CheckerBoard expects your engine to compiled as a dll and to be in the working directory of checkerboard.exe - or in the path. Your dll must provide the following 2 routines: 
+<P><code>
+int WINAPI getmove(int b[8][8], int color, double maxtime, char str[255], int *playnow);<br>
+int WINAPI enginename(char str[255]);
+</code><p>
+You can also support the following three routines, but you don't have to:
+<p><code>
+int WINAPI engineoptions(HWND hwnd);<br>
+int WINAPI engineabout(HWND hwnd);<br>
+int WINAPI enginehelp(char str[255]);<br>
+</code>
+<P>
+The important one is the first one: <code>getmove()</code> receives the current board position in b[8][8]. The side to move is in color, and maxtime is the time your program should think on average for its move. The board position and the side to move use the conventions:
+<P>
+<code>
+#define WHITE 1<br>
+#define BLACK 2<br>
+#define MAN 4<br>
+#define KING 8<br>
+#define FREE 16
+</code><P>
+so for instance if an array entry is 10 that means it is a black king. You can use statements like <code>if b[i][j]==BLACK|KING...</code> to find out if there is a certain piece on a square. The parameter color is either BLACK or WHITE. You also get two pointers: one is to a string. This string is displayed in the status bar of CheckerBoard. You can use this to display search information. Just write something like <code>sprintf(str,"i am winning");</code> and "i am winning" will be displayed in the status bar. The second pointer is to playnow. You should monitor playnow and immediately return if it is nonzero. This means that the user has chosen "Play" in the CheckerBoard menu.
+<P>
+The other 4 functions are not so important - engine options is called if the user chooses engine options in the CheckerBoard menu. You can use this to display a dialog box (thats why you get hwnd) with options for your engine. Enginename should print the name of your engine in str. This name is displayed in the title bar of CheckerBoard. Engineabout should display a message box with the name and version of your engine. And your name too. Enginehelp should print the filename of a .html-file into str. CheckerBoard will attempt to open this file with the default htmlviewer of the system. 
+<P>
+In case that this is not clear enough, study the code of simple checkers, which is included in the CheckerBoard installation.
+<P>
+Once you have a dll for CheckerBoard ready, you still have to tell CheckerBoard about it. This is done with the 'engines.ini' file. By default it
+looks like this:
+<p>
+<code>
+cake++.dll<br>
+simplech.dll
+</code>
+<p>
+which means that cake++ is the primary engine, and that in case of an engine match, cake++ will be pitted against simple checkers. So if
+you write an engine called 'checkers.dll' you will have to replace one of the two engines in the engine.ini file with checkers.dll.
+<p>
+
+Of course I would love to hear from you if you do write an engine for CheckerBoard. If you do, please <a href="mailto:checkers@fierz.ch">send me a mail</a>. I would like to link to your page, or, if you don't have one, I would put your engine on my server.
+<HR>
+<address>Created by Martin Fierz on Tuesday, June 27, 2000</Address>

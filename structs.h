@@ -1,12 +1,15 @@
 /* structs.h: data structures for cake++ */
 
 /*definitions for platform-independence*/
+// aaargh, int is not in32 any more!
 #define int32 unsigned int
 #define int16 unsigned short
 #define int8  unsigned char
 #define sint32 signed int
 #define sint16 signed short
 #define sint8  signed char
+
+
 
 
 struct coor					/* coordinate structure for board coordinates */

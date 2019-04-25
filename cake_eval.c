@@ -18,10 +18,22 @@ char  blackbackrankeval[256],whitebackrankeval[256];			// not static because it'
 static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man down situations
 
 
-#ifdef THREADSAFEDB
-extern CRITICAL_SECTION db_access;
-#endif
+// tiny decider functions what no move, no material means (used so that cake can easily be 
+// configured to play different versions (kingscourt, suicide))
+int evaluation_nomaterial_black(POSITION *p, int depth) 
+	{
+	return (p->color == BLACK) ? (-MATE+depth):(MATE-depth);
+	}
+	
+int evaluation_nomaterial_white(POSITION *p, int depth) 
+	{
+	return (p->color == WHITE) ? (-MATE+depth):(MATE-depth); 
+	}
 
+int evaluation_nomove(int depth)
+	{
+		return -MATE+depth;
+	}
 // some helper functions
 
 int initeval(void)
@@ -59,6 +71,37 @@ int staticevaluation(SEARCHINFO *si, EVALUATION *e, POSITION *q, int *total, int
 	*delta = noprune;
 	return *total;
 	}
+
+
+/* check for mobile black men, however, not all - only those
+		on rows 3 or more */
+
+/* how to use this stuff: like this! */
+	/*tmp=p->bm & 0xFFFFF000;
+	while(tmp) //while black men
+		{
+		m= (tmp & (tmp-1))^tmp; // m is the least significant bit of tmp
+		tmp = tmp&(tmp-1);		// and we peel it away. 
+
+		// determine the white attack board without this man on:
+		free = ~(p->bk|(p->bm^m)|p->wk|p->wm);
+		wattack=backwardjump((p->wk|p->wm), free) | forwardjump(p->wk, free);
+	
+		// move this black man forward until he's on the last row,
+		//	look if there is a way for it to get there 
+		mobile = 20;
+		while (m)
+			{
+			m=forward(m) & (~(p->wk | p->wm)) & (~wattack);
+			if(m&0xF0000000)
+				{
+				mobileblackmen+=mobile;
+				break;
+				}
+			mobile-=4;
+			}
+		}
+	// only check for rows 2-6 */
 
 int32 attack_forwardjump(int32 x, int32 free)
 	{
@@ -600,7 +643,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int ending=0;
 	int equal=0;
 	int tempo=0;
-	int crampval=4, nocrampval=1; 
+	int crampval = 4; // optimized? 4;
+	int nocrampval = 1; // optimized 1;
 	int badstructureval = 2;
 	//int blackcramps,whitecramps,newcrampval=10;
 	int index;
@@ -683,7 +727,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	 * 19)likely draw detection
 	 */
 
-	/* big TODO: clean up the above stuff, group eval in lumps, namels:
+	/* big TODO: clean up the above stuff, group eval in lumps, namely:
 	 * 1a) man evaluation
 	 * 1b) back rank evaluation
 	 * 2) cramp evaluation
@@ -725,7 +769,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		m |= (forward(m)&p->bm);
 		// m now contains all "grounded men"
 		// we don't want to penalize ungrounded men that are runaways:
-		ungrounded_black = (~m)&p->bm; //&0x000FFFFF;
+		ungrounded_black = (~m)&p->bm & 0x00FFFFFF;
 		
 		// TODO: maybe add penalty for two ungrounded men - in particular if
 		// they have "contact"
@@ -741,6 +785,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		else
 			e->men -= ungroundedpenalty[bitcount(ungrounded_black)];
 		
+		// 	static int ungroundedpenalty[13] = {0,0,0,2,5,8,11,14,17,20,24,28,32};
 		
 		// get ungrounded white men
 		m = p->wm&EDGE;
@@ -748,7 +793,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		m |= (backward(m)&p->wm); 
 		m |= (backward(m)&p->wm);
 		m |= (backward(m)&p->wm);
-		ungrounded_white = (~m)&p->wm; 
+		ungrounded_white = (~m)&p->wm&0xFFFFFF00;
 
 		
 		if(p->bk & ROAMINGBLACKKING)
@@ -782,10 +827,29 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		immobile_black = p->bm & ~(backward(free|white));
 		immobile_white = p->wm & ~(forward(free|black));
 
+		// new immobile definition 22.4.2019 1.85g without free was a bit worse:
+		//immobile_black = p->bm & ~(backward(free));
+		//immobile_white = p->wm & ~(forward(free));
+
+
 		e->men += bitcount(immobile_white);
 		e->men -= bitcount(immobile_black);
 
-		// try same with ungrounded
+		// try same with ungrounded  (// new in Cake 1.85g2) didn't work
+		//e->men += bitcount(immobile_white & ungrounded_white);
+		//e->men -= bitcount(immobile_black & ungrounded_black); 
+		
+		/*tmp = (immobile_black & ungrounded_black); 
+		if (bitcount(tmp) > 3) {
+			printboard(p);
+			printint32(tmp);
+			/*printf("immobile\n"); 
+			printint32(immobile_black); 
+			printf("ungrounded\n"); 
+			printint32(ungrounded_black); 
+			getch(); 
+		}*/
+
 
 		// find immobile ungrounded men: that means that they have no safe
 		// squares to go to. safe squares are free but not under attack by
@@ -1031,15 +1095,11 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				e->men -= greatdykeval;
 			}
 		
-
-
 		//
 		// done with man evaluation
 		//
 
 		eval += e->men;
-
-
 		//
 		// now for cramps and bad structures:
 		// 
@@ -1064,15 +1124,19 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 
 		if(p->bm&SQ13)
 			{
+			//if (p->wm & SQ17)
+			//	e->cramp++; 
 			if( (p->wm&(SQ17|SQ21/*|SQ22*/))==(SQ17|SQ21/*|SQ22*/) )
-	   			e->cramp += crampval;
+	   			e->cramp += (crampval);
 			if((free&(SQ17|SQ21))==(SQ17|SQ21))
 				e->cramp -= nocrampval; // cramping nothing - discourage a little
 			}
 		if(p->wm&SQ20) 
 			{
+			//if (p->bm & SQ16)
+			//	e->cramp--; 
 			if( (p->bm&(/*SQ11|*/SQ12|SQ16))==(/*SQ11|*/SQ12|SQ16) ) 
-				e->cramp -= crampval;
+				e->cramp -= (crampval);
 			if((free&(SQ12|SQ16))==(SQ12|SQ16))
 				e->cramp += nocrampval; // cramping nothing - discourage a little
 			}
@@ -1166,7 +1230,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(match3(p->bm, p->wm, free, (SQ10|SQ12|SQ16|SQ20), (SQ19|SQ23|SQ27|SQ28), (SQ15|SQ24|SQ31|SQ32)))
 			eval += badstructureval;*/
 		//if(stones<=14) 
-		if(stones<=10) 
+		if(stones<=12)
 			{
 			// increases in importance with less men.
 			// todo: maybe make more sophisticated by including knowledge about kings here - 
@@ -1227,162 +1291,6 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				e->hold -= badstructureval;
 			if(match2(p->bm, p->wm, (SQ7|SQ12), (SQ16|SQ19|SQ20)))
 				e->hold += badstructureval;
-
-		
-			// cramped original double corner
-   			//   28  29  30  31
-			// 24  25  26  27
-			//   20  21  22  23
-			// 16  17   w  19
-			//   12  13   F   w
-			//  8   9  10   b
-			//    4   5   b   b
-			//  0   1   F   b
-			/*
-			appears to be bad in match x8
-			if(match3(p->bm, p->wm, free, (SQ1|SQ5|SQ6|SQ9), (SQ13|SQ18), (SQ2|SQ14)))
-				e->hold -= badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ15|SQ20), (SQ24|SQ27|SQ28|SQ32), (SQ19|SQ31)))
-				e->hold += badstructureval;*/
-			
-			
-
-			// 3-2 cramps
-
-			// DEO p. 169 (A)
-   			//   28  29  30  31
-			// 24  25  26  27
-			//   20  21  22  23
-			// 16  17  18   w
-			//   12  13   w   w
-			//  8   9  10   F
-			//    4   5   b   b
-			//  0   1   2   F
-			// asking for trouble because with a man on 23 white has a two-for-one
-			// old
-			//if(match3(p->bm, p->wm, free, (SQ5|SQ6), (SQ13|SQ14|SQ17), (SQ1|SQ9)))
-			//	eval+=badstructureval;
-			//if(match3(p->bm, p->wm, free, (SQ16|SQ19|SQ20), (SQ27|SQ28), (SQ24|SQ32)))
-			//	eval-=badstructureval;
-			
-
-			// new, more free squares necessary
-			// cake ss 101b
-			/*if(match3(p->bm, p->wm, free, (SQ5|SQ6), (SQ13|SQ14|SQ17), (SQ1|SQ9|SQ21|SQ25|SQ29|SQ30)))
-				e->hold += badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ16|SQ19|SQ20), (SQ27|SQ28), (SQ24|SQ32|SQ12|SQ8|SQ4|SQ3)))
-				e->hold -= badstructureval;
-*/
-			
-		  // DEO p. 169 (B) - needs "free" additionally
-   			//   28  29  30  31
-			// 24  25  26  27
-			//   20  21  22   w
-			// 16  17  18   w
-			//   12  13  14   w
-			//  8   9  10   b
-			//    4   5   b   F
-			//  0   1   2   F
-			// this is asking for trouble. black man on 9 may be squeezed and lost
-			// if a piece appears on 18
-			
-			// removed this. match result vs kr 113i changed from +37-13 to +39-14.
-			// is this better? i don't know!!
-			// anyway, i keep it out.
-			// cake ss 101a
-			//if(match3(p->bm, p->wm, free, (SQ6|SQ9), (SQ13|SQ17|SQ21), (SQ1|SQ5)))
-			//	eval+=badstructureval;
-			//if(match3(p->bm, p->wm, free, (SQ12|SQ16|SQ20), (SQ24|SQ27), (SQ28|SQ32)))
-			//	eval-=badstructureval;
-			
-			// DEO p. 169 (C)
-   			//   28  29  30  31
-			// 24  25  26   F
-			//   20  21   w   w
-			// 16  17  18   w
-			//   12  13  14   b
-			//  8   9  10   b
-			//    4   5   6   F
-			//  0   1   2   3
-			// this bad structure may be similar! asking for a squeeze on man on 9
-			/*if(match3(p->bm, p->wm, free, (SQ9|SQ13), (SQ17|SQ21|SQ22), (SQ5|SQ25)))
-				e->hold += badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ11|SQ12|SQ16), (SQ20|SQ24), (SQ8|SQ28)))
-				e->hold -= badstructureval;*/
-
-			
-			// more holds for versions >= 1.426
-
-			// DEO p. 168 (B)
-   			//   28  29  30  31
-			// 24  25  26  27
-			//   20  21  22  23
-			//  w  17  18  19
-			//    w   F  14  15
-			//  w   9  10  11
-			//    b   5   6   7
-			//  F   b   2   3
-		/*	if(match3(p->bm, p->wm, free, (SQ3|SQ8), (SQ12|SQ16|SQ20), (SQ4|SQ15)))
-				e->hold += badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ13|SQ17|SQ21), (SQ25|SQ30), (SQ18|SQ29)))
-				e->hold -= badstructureval;*/
-
-			// DEO p. 168 (D)
-   			//   28  29  30  31
-			// 24  25  26  27
-			//    w  21  22  23
-			//  w   w   F  19
-			//    F  13  14  15
-			//  b   b  10  11
-			//    F   5   6   7
-			//  F   1   2   3
-			// this bad structure is asking for trouble too: if white has a man on 
-			// sq 28, he has a two-for-one
-			// old
-			//if(match3(p->bm, p->wm, free, (SQ11|SQ12), (SQ19|SQ20|SQ24),(SQ4|SQ8|SQ16|SQ18)))
-			//	eval+=badstructureval;
-			//if(match3(p->bm, p->wm, free, (SQ9|SQ13|SQ14), (SQ21|SQ22), (SQ29|SQ25|SQ17|SQ15)))
-			//	eval-=badstructureval;
-			
-			// new: add more free squares
-			// cake ss 101b
-			
-			/* stopped testing here
-			if(match3(p->bm, p->wm, free, (SQ11|SQ12), (SQ19|SQ20|SQ24),(SQ4|SQ8|SQ16|SQ18|SQ28|SQ32)))
-				e->hold += badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ9|SQ13|SQ14), (SQ21|SQ22), (SQ29|SQ25|SQ17|SQ15|SQ5|SQ1)))
-				e->hold -= badstructureval;
-*/
-			// DEO p. 169 (D)
-   			//   28  29  30  31
-			//  f  25  26   w
-			//    f   F   w   w
-			//  w   w  18   F
-			//    f  13   b   b
-			//  b   b   f   F
-			//    b   5   6   F
-			//  0   1   2   3
-			// old: asking for trouble again
-			//
-			//if(match3(p->bm, p->wm, free, (SQ13|SQ14), (SQ21|SQ22|SQ25), (SQ5|SQ9|SQ17|SQ23)))
-			//	eval+=badstructureval;
-			//if(match3(p->bm, p->wm, free, (SQ8|SQ11|SQ12), (SQ19|SQ20), (SQ28|SQ24|SQ16|SQ10)))
-			//	eval-=badstructureval;
-			//
-			// new add more free squares
-			// cake ss 101b
-			/*if(match3(p->bm, p->wm, free, (SQ13|SQ14), (SQ21|SQ22|SQ25), (SQ5|SQ9|SQ17|SQ23|SQ29)))
-				e->hold += badstructureval;
-			if(match3(p->bm, p->wm, free, (SQ8|SQ11|SQ12), (SQ19|SQ20), (SQ28|SQ24|SQ16|SQ10|SQ4)))
-				e->hold -= badstructureval;
-
-			// an idea of my own: a 3-3 hold, but bad for one side
-			if(match2(p->bm, p->wm, (SQ5|SQ9|SQ13), (SQ17|SQ21|SQ22)))
-				e->hold += badstructureval;
-			if(match2(p->bm, p->wm, (SQ11|SQ12|SQ16), (SQ20|SQ24|SQ28)))
-				e->hold -= badstructureval;
-
-				*/
 			} 
 
 		// 
@@ -1390,9 +1298,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		//
 
 		eval += e->hold;
- 
-
-	
+ 	
 		// 
 		// runaway evaluation
 		//
@@ -2461,10 +2367,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 					}
 				}
 			}
-
-			// 
 			// end of compensation eval
-			// 
 			eval += e->compensation;
 		}
 

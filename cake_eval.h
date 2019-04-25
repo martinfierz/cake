@@ -1,3 +1,7 @@
+int evaluation_nomaterial_black(POSITION *p, int depth);
+int evaluation_nomaterial_white(POSITION *p, int depth);
+int evaluation_nomove(int depth);
+
 int evaluation(POSITION *p, MATERIALCOUNT *mc, int alpha, int *delta, int capture, int maxNdb);
 int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, int *noprune, int*likelydraw);
 int selftrapeval(POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, int *delta);

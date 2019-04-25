@@ -7,27 +7,32 @@
 
 static char bitsinword[65536];
 
+/*
 void initbool()
 {
 	int i; 
 	// initialize bitsinword, the number of bits in a word
 	for(i=0;i<65536;i++)
 		bitsinword[i]=recbitcount((int32)i);
-}
+}*/
 
 
 
 // table-lookup bitcount - newer CPUs are going to have a popcount instruction soon, would be
 // much more efficient.
-int bitcount(int32 n)
+
+
+
+/*int bitcount(int32 n)
 	// returns the number of bits set in the 32-bit integer n 
 	{
-	//return __popcnt(n);
+	return __popcnt(n);
 
-	return (bitsinword[n&0x0000FFFF]+bitsinword[(n>>16)&0x0000FFFF]);
-	}
+	//return (bitsinword[n&0x0000FFFF]+bitsinword[(n>>16)&0x0000FFFF]);
+	}*/
 
 
+/*
 int recbitcount(int32 n)
 	// counts & returns the number of bits which are set in a 32-bit integer
 	//	slower than a table-based bitcount if many bits are
@@ -41,6 +46,7 @@ int recbitcount(int32 n)
 		}
 	return r;
 	}
+	*/
 
 int LSB(int32 x)
 	{

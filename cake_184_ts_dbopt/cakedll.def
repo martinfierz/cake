@@ -1,0 +1,5 @@
+EXPORTS 	getmove
+			enginecommand
+			bookgen
+			analyze
+			DllMain

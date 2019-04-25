@@ -9,14 +9,15 @@
 #include "cakepp.h"
 #include "consts.h"
 #include "cake_misc.h"
+#include "boolean.h"
 #define BLACK 2
 #define WHITE 1
 #define MAN   4
 #define KING  8
 #define FREE 16
 #define CC 3
-#define DEPTH1 17
-#define DEPTH2 21
+#define DEPTH1 17	//17
+#define DEPTH2 21	//21
 
 #undef TESTBOOKGEN
 
@@ -41,8 +42,8 @@ main()
 	FILE *testfile;
 	char FEN[256];
 	
-	int newnodes[80][2];
-	int oldnodes[80][2];
+	int newnodes[MAXTESTPOS][2];
+	int oldnodes[MAXTESTPOS][2];
 	int nodes17=0,allnodes17=0;
 	int nodes23=0,allnodes23=0;
 	double r17 = 1;
@@ -56,11 +57,11 @@ main()
 
 	SEARCHINFO si;
 
-	char dirname[256];
+	char dirname[512];
 
-	GetCurrentDirectory(256, dirname);
+	GetCurrentDirectory(512, dirname);
 	sprintf(DBpath, "%s\\db", dirname);
-	sprintf(DBpath, "c:\\checkers\\cake\\db");
+	sprintf(DBpath, "C:\\Program Files\\CheckerBoard64\\db");
 	/*
 	[11 Man Ballot #1]
 [FEN "B:W19,21,22,23,25,26,27,29,30,31,32:B1,2,3,4,5,6,7,9,10,11,12"]
@@ -105,12 +106,17 @@ main()
 	resetsearchinfo(&si);
 
 	// turn off book
-	usethebook = 0;
+	usethebook = 1;
 
-	printf("\ntestcake 2.1");
-	printf("\n31st july 2007");
+	printf("\ntestcake 2.11");
+	printf("\n20th April 2019");
 	fflush(stdout);
-	testfile = fopen("testcake.txt","r");
+
+	// if you want to use testcake to evaluate tagged positions then use this
+	//evaluate_tagged_positions(); 
+
+
+	testfile = fopen("C:\\code\\checkersdata\\testcake.txt","r");
 	if(testfile == NULL)
 	{
 		printf("\nCould not open testcake.txt");
@@ -130,7 +136,7 @@ main()
 #ifdef TESTBOOKGEN
 	fp2=fopen("booknodes.txt","r");
 #else
-	fp2=fopen("nodes.txt","r");
+	fp2=fopen("C:\\code\\checkersdata\\nodes.txt","r");
 #endif
 	
 	if(fp2!=NULL)
@@ -150,13 +156,13 @@ main()
 #ifdef TESTBOOKGEN
 	fp2=fopen("newbooktest.txt","w");
 #else
-	fp2=fopen("newtest.txt","w");
+	fp2=fopen("C:\\code\\checkersdata\\newtest.txt","w");
 #endif
 	
-	fprintf(fp2,"\npos\tratio17\tratio23");
+	fprintf(fp2,"\npos\tratio17\tratio21");
 
 	
-	fp3=fopen("output.txt","w");
+	fp3=fopen("C:\\code\\checkersdata\\output.txt","w");
 	
 	////////////////////////////////////////////////////////////////////////
 	//
@@ -173,6 +179,7 @@ main()
 		if(feof(testfile))
 			break;
 		printf("\nPosition %i: %s",n,FEN);
+		//sprintf(FEN, "B:W9,19,21,29,32:B7,10,11,12");
 		FENtoPosition(FEN, &p);
 
 
@@ -191,6 +198,8 @@ main()
 		//getch();
 #else
 		cake_getmove(&si, &p,1,1,DEPTH1,10000,str,&play,3,1);
+		//FENtoPosition(FEN, &p);
+		//cake_getmove(&si, &p, 1, 1, DEPTH2, 10000, str, &play, 3, 1);
 		//getch();
 #endif
 		time1 += (clock()-start);
@@ -231,6 +240,8 @@ main()
 		
 		r17*=((double)newnodes[n][0]/(double)oldnodes[n][0]);
 		r21*=((double)newnodes[n][1]/(double)oldnodes[n][1]);
+
+		hashreallocate(128); 
 		}
 
 	printf("\n n is %i",n);
@@ -257,9 +268,9 @@ main()
 	
 	fclose(fp2);
 	
-	SetCurrentDirectory(dirname);
+	//SetCurrentDirectory(dirname);
 	
-	fp2 = fopen("newnodes.txt","w");
+	fp2 = fopen("C:\\code\\checkersdata\\newnodes.txt","w");
 	
 	for(i=0; i<n; i++)
 		fprintf(fp2,"\n%i,%i",newnodes[i][0],newnodes[i][1]);
@@ -269,6 +280,84 @@ main()
 	getch();
 	exitcake();
 	return 1;
+	}
+
+	int evaluate_tagged_positions(void) {
+		FILE* fp, *fpout; 
+		int32 bm, bk, wm, wk; 
+		int color, eval;
+		POSITION p; 
+		int play = 0; 
+		char str[512];
+		SEARCHINFO si;
+		MATERIALCOUNT mc; 
+		int n = 0; 
+		int v0, v1, v3, v5; 
+		int delta; 
+		
+
+		fp = fopen("c:\\code\\checkersdata\\taggedpositions.txt", "r");
+		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "w");
+		printf("\nloading...");
+		while (!feof(fp)) {
+			// load a position from file
+			fscanf(fp, "%u %u %u %u %i %i\n", &bm, &bk, &wm, &wk, &color, &eval);
+
+			// check that it is quiet = no captures
+			p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
+			if (testcapture(&p))
+				continue; 
+			p.color ^= CC; 
+			if (testcapture(&p))
+				continue; 
+			p.color ^= CC; 
+
+			// arriving here, we have a quiet position, evaluate!
+			resetsearchinfo(&si);
+
+			mc.bm = bitcount(p.bm);
+			mc.bk = bitcount(p.bk);
+			mc.wm = bitcount(p.wm);
+			mc.wk = bitcount(p.wk);
+			v0 = evaluation(&p, &mc, 0, &delta, 0, 0);
+			cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 1, 1);
+
+			v1 = si.spasuccess; 
+			printf("\nd1 %s", si.out);
+
+			p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
+			resetsearchinfo(&si);
+			cake_getmove(&si, &p, 1, 1, 3, 10000, str, &play, 1, 1);
+			v3 = si.spasuccess;
+			printf("\nd3 %s", si.out);
+
+			p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
+			resetsearchinfo(&si);
+			cake_getmove(&si, &p, 1, 1, 5, 10000, str, &play, 1, 1);
+			v5 = si.spasuccess; 
+			printf("\nd5 %s", si.out);
+
+			//printf("\n%s", str);
+			printf("\n(%i) eval is %i %i %i %i", n, v0,v1,v3,v5);
+			/*if (eval == WIN)
+				printf(" (black won)");
+			if (eval == DRAW)
+				printf(" (draw)");
+			if (eval == LOSS)
+				printf(" (white won)");*/
+			fprintf(fpout, "%u %u %u %u %i %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3, v5);
+			if (abs(v0 - v1) > 50) {
+				p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
+				printboard(&p);
+				getch(); 
+			}
+			n++; 
+
+		}
+		fclose(fp); 
+		fclose(fpout); 
+		getch();
+		return 0; 
 	}
 
 	int FENtoPosition( char *FEN, POSITION *p)

@@ -8,11 +8,14 @@
 #define MANCAPT 10
 
 #include <assert.h>
+#include <stdio.h>
 #include "structs.h"
 #include "consts.h"
 #include "move_gen.h"
 #include "cakepp.h"
 #include "switches.h"
+#include "cake_misc.h"
+#include "boolean.h"
 
 /* values used for dynamic move ordering */
 #define HASHMOVE 1<<30
@@ -25,7 +28,7 @@
 #define PROM 30     /*20*/    /* a promotion */
 #define PROM1 8   /*18 */    /* far down the board */
 #define PROM2 3   /*16 */
-#define GIVEUPBACK 12 /*12*/
+//#define GIVEUPBACK 12 /*12*/
 #define MANC3VAL 2
 #define MANC4VAL 4
 #define KINGC3VAL 5
@@ -54,9 +57,6 @@ int getorderedmovelist(POSITION *p, MOVE movelist[MAXMOVES])
 	int bestindex; 
 
 	resetsearchinfo(&si);
-
-	//for(i=0;i<MAXMOVES;i++)
-	//	values[i] = (p->color==BLACK) ? -MATE:MATE;
 
 	n = makecapturelist(p, movelist, values, forcefirst);
 	if(n == 0)
@@ -596,13 +596,6 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 	int32 black;
 	int i;
 	extern char blackbackrankeval[256];
-	//	eval += (blackbackrankeval[p->bm & 0xFF] - whitebackrankeval[p->wm >> 24]); //2!!
-
-
-#ifdef MOHISTORY
-	//extern int32 history[32][32]; /*has entries for how often a move was good */
-	//extern SEARCHINFO si;        /* is the number of entries in history list */
-#endif
 	
 	black = p->bm|p->bk;
 
@@ -664,8 +657,6 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 			if(from & 0xFF)
 				{
 				/* man giving up back rank */
-				//if(from&0x0000000E)
-         		//	eval -= GIVEUPBACK;
 				eval -= blackbackrankeval[p->bm & 0xFF];
 				eval += blackbackrankeval[ (p->bm ^ ml[i].bm) & 0xFF];
 				}
@@ -745,10 +736,8 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 	int32 white;
 	int i;
 
-	//extern int32 history[32][32];
 	extern char whitebackrankeval[256];
 	
-
 	white = p->wm|p->wk;
 
 	for(i=0;i<n;i++)
@@ -793,8 +782,6 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 					eval -= whitebackrankeval[p->wm >> 24];
 					eval += whitebackrankeval[ (p->wm ^ ml[i].wm) >> 24];
 					}
-				//if(from&0x70000000)
-         		//	eval -= GIVEUPBACK;
 				else if(from&C4)
       				eval -= MANC4VAL;
 				}
@@ -1225,144 +1212,6 @@ int makeQSmovelist(POSITION *p, MOVE movelist[MAXMOVES])
 	}
 
 
-/* old version pre cakeM 1.07, but improved in version cakeM 1.06
-int makeQSmovelist(POSITION *p, MOVE movelist[MAXMOVES])
-	{
-	int32 n=0,free;
-	int32 m,tmp;
-	int32 captures, safe;
-   
-   //
-	//     WHITE
-	//  28  29  30  31
-	//24  25  26  27
-	//  20  21  22  23
-	//16  17  18  19
-	//  12  13  14  15
-	// 8   9  10  11
-	//   4   5   6   7
-	// 0   1   2   3
-	//     BLACK
-
-   free=~(p->bm|p->bk|p->wm|p->wk);
-  
-   if(color==BLACK)
-   		{
-		// find pieces which can potentially move leading to captures
-		// for either side.
-		// find all black men for which a right-forward move will lead to a capture
-		// mark all black men that can move right forward
-		safe = p->bm & leftbackward(free);
-		captures = safe;
-		// remove those that walk into a white man that can capture them
-		tmp = safe & leftbackward(leftbackward(p->wm));
-		safe ^= tmp;
-		// remove those running into a white man that can capture them "diagonally"
-		tmp = safe & twobackward(p->wm) & leftforward(leftbackward(free));
-		safe ^= tmp;
-		// remove those protecting another man
-		tmp = safe & rightbackward(p->bm) & rightbackward(rightbackward(p->wm));
-		safe ^= tmp;
-		captures ^= safe;
-
-		// captures now contains all black men which will lead to a capture when
-		// moving right forward
-		// moves with black stones:
-		while(captures)
-			{
-			tmp = (captures&-captures);
-			captures ^= tmp;
-			tmp |= rightforward(tmp);
-			movelist[n].bm = tmp&NWBR;
-			movelist[n].bk = tmp&WBR;
-			movelist[n].wm = 0;
-			movelist[n].wk = 0;
-			n++;
-			}
-
-		// the same for left forward moves:
-		safe = p->bm & rightbackward(free);
-		captures = safe;
-		tmp = safe & rightbackward(rightbackward(p->wm));
-		safe ^= tmp;
-		tmp = safe & twobackward(p->wm) & rightforward(rightbackward(free));
-		safe ^= tmp;
-		tmp = safe & leftbackward(p->bm) & leftbackward(leftbackward(p->wm));
-		safe ^= tmp;
-
-		captures ^= safe;
-
-		while(captures)
-			{
-			tmp = (captures&-captures);
-			captures ^= tmp;
-			tmp |= leftforward(tmp);
-			movelist[n].bm = tmp&NWBR;
-			movelist[n].bk = tmp&WBR;
-			movelist[n].wm = 0;
-			movelist[n].wk = 0;
-			n++;
-			}
-
-		return n;
-		}	
-            // ***************************************************************
-   else     // color is WHITE 
-            //****************************************************************
-   		{
-		// moves with white stones:
-		// mark all white men that can move right backward
-		safe = p->wm & leftforward(free);
-		captures = safe;
-		// remove those that walk into a black man that can capture them
-		tmp = safe & leftforward(leftforward(p->bm));
-		safe ^= tmp;
-		// remove those running into a black man that can capture them "diagonally"
-		tmp = safe & twoforward(p->bm) & leftforward(leftbackward(free));
-		safe ^= tmp;
-		// remove those protecting another man
-		tmp = safe & rightforward(p->wm) & rightforward(rightforward(p->bm));
-		safe ^= tmp;
-		captures ^= safe;
-		while(captures)
-			{
-			tmp = (captures&-captures);
-			captures ^= tmp;
-			tmp |= rightbackward(tmp);
-			movelist[n].bm = 0;
-			movelist[n].bk = 0;
-			movelist[n].wm = tmp&NBBR;
-			movelist[n].wk = tmp&BBR;
-			n++;
-			}
-
-		
-		// other direction
-		safe = p->wm & rightforward(free);
-		captures = safe;
-		tmp = safe & rightforward(rightforward(p->bm));
-		safe ^= tmp;
-		tmp = safe & twoforward(p->bm) & rightforward(rightbackward(free));
-		safe ^= tmp;
-		tmp = safe & leftforward(p->wm) & leftforward(leftforward(p->bm));
-		safe ^= tmp;
-		captures ^= safe;
-
-		while(captures)
-			{
-			tmp = (captures&-captures);
-			captures ^= tmp;
-			tmp |= leftbackward(tmp);
-			movelist[n].bm = 0;
-			movelist[n].bk = 0;
-			movelist[n].wm = tmp&NBBR;
-			movelist[n].wk = tmp&BBR;
-			n++;
-			}
-
-		return n;
-		}
-	}*/
 #endif // QSEARCH
 
 

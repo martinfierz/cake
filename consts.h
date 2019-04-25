@@ -246,7 +246,7 @@
 
 
 #define togglemove(p,m) p->bm^=m.bm;p->bk^=m.bk; p->wm^=m.wm;p->wk^=m.wk;p->color^=CC;
-#define domove(q,p,m) q.bm=p->bm^m.bm; q.bk=p->bk^m.bk; q.wm=p->wm^m.wm; q.wk=p->wk^m.wk;
+#define domove(q,p,m) q.bm=p->bm^m.bm; q.bk=p->bk^m.bk; q.wm=p->wm^m.wm; q.wk=p->wk^m.wk;q.color=p->color^CC; 
 
 	//     WHITE
 	//  28  29  30  31

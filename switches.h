@@ -4,19 +4,18 @@
 #pragma warning( once : 4133 )  // once instead of disable is maybe better
 
 #ifdef _WIN64 
-#define VERSION "1.84 (x64)"
+#define VERSION "1.85g unopt (x64)"
 #else
-#define VERSION "1.84ts-norep"
+#define VERSION "1.85"
 #endif
 
 //#define FIXEDDEPTH 3
-#undef THREADSAFEHT					// locks access to dblookup, hashlookup and hashstore if set.
-#undef THREADSAFEDB
-
+#undef THREADSAFEHT				// locks access to hashlookup and hashstore if set.
 #include "consts.h"
 
-
 #define SAFE
+
+#undef FASTUPDATE
 
 #undef QSEARCH
 #define MAXQS 1
@@ -66,8 +65,8 @@
 #define MAXTRUNC 3*FRAC				//2*FRAC	// maximum truncation per ply 
 #define TRUNCLEVELHARD 120			//100			// TRUNCLEVEL was 30 for 1.42
 #define TRUNCLEVELSOFT 30			// new double truncation scheme!
-#define TRUNCDIVHARD 16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
-#define TRUNCDIVSOFT 32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
+#define TRUNCDIVHARD 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
+#define TRUNCDIVSOFT 32 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
 
 #define ETC							// use enhanced transposition cutoffs 
 #define ETCDEPTH FRAC*2				//maybe 3 is better.	if depth>etcdepth do ETC 
@@ -87,7 +86,6 @@
 
 #define ALWAYSSTORE					// overwrite hashentries even if the new one has less depth? 
 									// if yes, define this
-
 									// book settings, also for book builder 
 #define TMPBOOKSIZE (1048576L<<1)	// size of the temporary book 
 #define HASHSIZEBOOK 400000			// size of the final book 
@@ -121,13 +119,12 @@
 
 #define MARKPV						// mark pv in hashtable and don't prune
 
+
 #define IITERD						// use internal iterative deepening
 #define IIDDEPTH 6*FRAC				// only use it when the remaining depth is > this
 #define IIDREDUCE 4*FRAC			// and reduce by this amount for IID search 
 
 #undef LATEMOVEREDUCTION			// use late move reduction
-#define LATEMOVEMINDEPTH 3*FRAC		// minimal remaining search depth to use LMR
-#define LATEMOVEDEPTH FRAC/2		// reduce late moves by half a ply
-
-#define PLAYNOW
-
+#undef LATEMOVEREDUCTIONROOT
+#define LATEMOVEMINDEPTH 2*FRAC		// minimal remaining search depth to use LMR
+#define LATEMOVEDEPTH 2				// reduce late moves by 1/4 a ply times this
