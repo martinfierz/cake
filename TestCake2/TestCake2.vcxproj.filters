@@ -27,9 +27,6 @@
     <ClCompile Include="..\cake_book.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\cake_eval.c">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="..\cake_learn.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="..\spa.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cake_eval_parametrized.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

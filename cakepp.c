@@ -51,6 +51,8 @@ static int cakeisinit = 0;			// is set to 1 after cake is initialized, i.e. init
 static int32 hashxors[2][4][32];			// this is initialized to constant hashxors stored in the code.
 static int  norefresh;
 
+FILE* cake_main_fp; 
+
 int32 killer1[MAXDEPTH], killer2[MAXDEPTH];
 
 #ifdef HEURISTICDBSAVE
@@ -91,6 +93,8 @@ int initcake(char str[1024])
 	sprintf(s,"characters returned: %i \n\n",returnvalue);
 	logtofile(s);
 	SetCurrentDirectory(dirname);
+
+	cake_main_fp = getlogfile(); 
 	// TODO: here working dir is still ok
 	// do some loads. first, the endgame database.
 
@@ -617,12 +621,15 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	FILE *lfp; 
 
-	lfp = fopen("c:\\code\\checkerspositions.txt", "a");
-	//fseek(lfp, 0, SEEK_END);
-	if (lfp != NULL) {
-		fprintf(lfp, "%i %i %i %i %i\n", p->bm, p->bk, p->wm, p->wk, p->color);
-		fclose(lfp);
-	}
+	/*
+	if (log) {
+		lfp = fopen("c:\\code\\checkerspositions.txt", "a");
+		//fseek(lfp, 0, SEEK_END);
+		if (lfp != NULL) {
+			fprintf(lfp, "%i %i %i %i %i\n", p->bm, p->bk, p->wm, p->wk, p->color);
+			fclose(lfp);
+		}
+	}*/
 	
 	// initialize module if necessary
 	if (!cakeisinit) {
@@ -630,9 +637,10 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		initcake(str);
 	}
 	resetsearchinfo(si);
-	for (i = 0; i < MAXDEPTH; i++) {
-		iscapture[i] = 0;
-	}
+	memset(iscapture, 0, MAXDEPTH * sizeof(int)); 
+	//for (i = 0; i < MAXDEPTH; i++) {
+	//	iscapture[i] = 0;
+	//}
 	*playnow = 0;
 	si->play = playnow;
 	si->out = str;
@@ -647,9 +655,10 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	// allscores:
 	if(info&8)
 		si->allscores = 1;
-	printboardtofile(p);
+	if(log)
+		printboardtofile(p);
 	// print current directory to see whether CB is getting confused at some point.
-	GetCurrentDirectory(256, pvstring);
+	//GetCurrentDirectory(256, pvstring);
 	// initialize material 
 	countmaterial(p, &(si->matcount));
 
@@ -657,7 +666,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	memset(si->history,0,32*32*sizeof(int));
 #endif
 	// clear the hashtable 
-	memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
+	//if(reset)
+	//memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
 	// initialize hash key 
 	absolutehashkey(p, &(si->hash));
 	
@@ -670,7 +680,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	norefresh=0;
 
 	// what is this doing here?
-	n = makecapturelist(p, movelist, values, 0);
+	//n = makecapturelist(p, movelist, values, 0);
 
 #ifdef REPCHECK
 	// initialize history list: holds the last few positions of the current game 
@@ -724,8 +734,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	else
 		bookfound=0;
 
-	absolutehashkey(p, &(si->hash));
-	countmaterial(p, &(si->matcount));
+	//absolutehashkey(p, &(si->hash));
+	//countmaterial(p, &(si->matcount));
 	
 	// check if the move on the board is forced - if yes, we don't waste time on it.
 	forcedmove = isforced(p);
@@ -821,7 +831,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		}
 	// TODO: remove this, only used for eval improvement.
 	si->spasuccess = value; 
-
+	if (log & 2)
+		printf("\n%s", si->out); 
 	// check if we can learn this position
 #ifdef LEARNSAVE
 	dolearn = 0;
@@ -862,10 +873,14 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	absolutehashkey(p, &(si->hash));
 	// return value: WIN / LOSS / DRAW / UNKNOWN
 	// if this position occurred before, return a rep draw
+	int repetitions = 0; 
 	for(i= HISTORYOFFSET; i>=0; i--) {
 		if(si->repcheck[i].hash == si->hash.key && p->bk && p->wk) {
-			strcat(str, " Cake claims repetition draw"); 
-			return DRAW;
+			repetitions++; 
+			if (repetitions > 1) {
+				strcat(str, " Cake claims repetition draw");
+				return DRAW;
+			}
 		}
 	}
 	if(value > WINLEVEL) {
@@ -977,7 +992,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 	sprintf(Lstr1,"value=%i",g);
 	searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
 	logtofile(si->out);
-	printf("%s\n", si->out); 
+	//printf("%s\n", si->out); 
 	 
 	return g;
 	}

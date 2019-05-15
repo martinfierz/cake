@@ -92,7 +92,7 @@
     <ClCompile Include="..\spa.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\testcake.c">
+    <ClCompile Include="..\evaluateTaggedPositions.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

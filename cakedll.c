@@ -156,10 +156,10 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(!cake_is_init)
 			{
-			sprintf(reply,"Cake %s\nApril 2011 by Martin Fierz\n\nEngine not initialized yet!",version);
+			sprintf(reply,"Cake %s\nApril 2019 by Martin Fierz\n\nEngine not initialized yet!",version);
 			return 1;
 			}
-		sprintf(reply,"Cake %s\nApril 2011 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
+		sprintf(reply,"Cake %s\nApril 2019 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
 #ifdef ETC
 		strcat(reply,"\n    - ETC");
 #endif
@@ -387,7 +387,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		else zero. you should respond to a nonzero value of *playnow by
 		interrupting your search IMMEDIATELY. */
 
-		// info currently has uses for it's first 3 bits:
+		// info currently has uses for its first 3 bits:
 		// info&1 means reset
 		// info&2 means exact time level
 		// info&4 means increment time level

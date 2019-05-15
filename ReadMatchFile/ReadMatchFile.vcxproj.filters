@@ -15,15 +15,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\checkerboard17\PDNmain.c">
+    <ClCompile Include="..\..\checkerboard17\PDNparser.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\checkerboard17\PDNparser.c">
+    <ClCompile Include="ReadMatchFileMain.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\move_gen.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\boolean.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cake_eval.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cake_misc.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dblookup.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\checkerboard17\PDNparser.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\consts.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\structs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\switches.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\move_gen.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\boolean.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dblookup.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

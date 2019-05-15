@@ -148,9 +148,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\checkerboard17\PDNparser.h" />
     <ClInclude Include="..\boolean.h" />
+    <ClInclude Include="..\cake_eval.h" />
     <ClInclude Include="..\cake_misc.h" />
     <ClInclude Include="..\move_gen.h" />
-    <ClInclude Include="cake_eval.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="structs.h" />
@@ -160,9 +160,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\checkerboard17\PDNparser.c" />
     <ClCompile Include="..\boolean.c" />
+    <ClCompile Include="..\cake_eval_parametrized.c" />
     <ClCompile Include="..\cake_misc.c" />
+    <ClCompile Include="..\dblookup.c" />
     <ClCompile Include="..\move_gen.c" />
-    <ClCompile Include="cake_eval.c" />
     <ClCompile Include="OptimizeCakeEvaluation.c" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

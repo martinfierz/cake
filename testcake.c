@@ -106,7 +106,7 @@ main()
 	resetsearchinfo(&si);
 
 	// turn off book
-	usethebook = 1;
+	usethebook = 0;
 
 	printf("\ntestcake 2.11");
 	printf("\n20th April 2019");
@@ -295,9 +295,10 @@ main()
 		int v0, v1, v3, v5; 
 		int delta; 
 		
+	
 
-		fp = fopen("c:\\code\\checkersdata\\taggedpositions.txt", "r");
-		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "w");
+		fp = fopen("c:\\code\\checkersdata\\taggedpositions_new.txt", "r");
+		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions_new.txt", "w");
 		printf("\nloading...");
 		while (!feof(fp)) {
 			// load a position from file
@@ -320,43 +321,38 @@ main()
 			mc.wm = bitcount(p.wm);
 			mc.wk = bitcount(p.wk);
 			v0 = evaluation(&p, &mc, 0, &delta, 0, 0);
-			cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 1, 1);
-
+			cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 0, 0);
 			v1 = si.spasuccess; 
-			printf("\nd1 %s", si.out);
+			//printf("\nd1 %s", si.out);
 
 			p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
 			resetsearchinfo(&si);
-			cake_getmove(&si, &p, 1, 1, 3, 10000, str, &play, 1, 1);
+			cake_getmove(&si, &p, 1, 1, 3, 10000, str, &play, 0, 0);
 			v3 = si.spasuccess;
 			printf("\nd3 %s", si.out);
 
-			p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
-			resetsearchinfo(&si);
-			cake_getmove(&si, &p, 1, 1, 5, 10000, str, &play, 1, 1);
-			v5 = si.spasuccess; 
-			printf("\nd5 %s", si.out);
 
 			//printf("\n%s", str);
-			printf("\n(%i) eval is %i %i %i %i", n, v0,v1,v3,v5);
+			printf("\n(%i) eval is %i %i %i", n, v0,v1,v3);
 			/*if (eval == WIN)
 				printf(" (black won)");
 			if (eval == DRAW)
 				printf(" (draw)");
 			if (eval == LOSS)
 				printf(" (white won)");*/
-			fprintf(fpout, "%u %u %u %u %i %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3, v5);
-			if (abs(v0 - v1) > 50) {
+			fprintf(fpout, "%u %u %u %u %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3);
+			/*if (abs(v0 - v1) > 50) {
 				p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
 				printboard(&p);
 				getch(); 
-			}
+			}*/
 			n++; 
 
 		}
 		fclose(fp); 
 		fclose(fpout); 
 		getch();
+		exit(0); 
 		return 0; 
 	}
 

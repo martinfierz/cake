@@ -120,6 +120,17 @@ typedef struct
 	int color;
 	} POSITION;
 
+typedef struct
+{
+	int32 bm;
+	int32 bk;
+	int32 wm;
+	int32 wk;
+	int color;
+	int value;
+	int staticeval;
+	int gameresult;
+} EVALUATEDPOSITION;
 
 typedef struct 
 	{

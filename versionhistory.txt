@@ -1,3 +1,182 @@
+looking at games i think i should try adding
+-- general contact-grounded-ungrounded eval
+-- bridge stone eval if other side has a king or >= kings than side with bridge
+-- repetitions don't seem to be recognized properly
+-- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
+
+14.5.2019:
+I add a few parameters to the optimizer and make sure ungrounded is also optimized
+
+************************  best version so far (or at least very similar)vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Cake 1.85g 3162k (58p) - Kingsrow(x64) 1.18 : W-L-D:946-602-2184  (54.61%, 157.1% wins)
++:946 =:2180 -:602 unknown:4 +B:393 -B:1155
+Cake 1.85g 3162k (58p) - Kingsrow(x64) 1.18f : W-L-D:256-1060-3484 (41.63%, 24.15%)
++:256 =:3431 -:1060 unknown:53 +B:740 -B:576
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+
+13.5. 2019 I fix the bug in cake eval parametrized and now get
+Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18 : W-L-D:935-610-2187 (54.35%, 153.3%) (match31)
++:935 =:2184 -:610 unknown:3 +B:378 -B:1167
+(a bit worse than previous best result +:966 =:2159 -:599 unknown:8 +B:415 -B:1150 but not such a big difference)
+this is the first version that I can finally use with Cake and OptimizeCake and that will hopefully avoid errors
+in transmission in the future.
+
+13.5.2019
+I move to cake_eval_parametrized and get
+Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18 : W-L-D:899-633-2200  (53.56%, 142.0% relative) (match30)
++:899 =:2189 -:633 unknown:11 +B:391 -B:1141
+But it turned out that testcake was not identical after badstructure -> new version, I appear
+to have made a bug there which appears to have been beneficial!
+
+
+12.5.2019
+I use hand-smoothed tempo modifiers and get (match29)
+Cake 1.85g 3162k (54p v2) - Kingsrow(x64) 1.18 : W-L-D:952-629-2151  
++:952 =:2140 -:629 unknown:11 +B:399 -B:1182
+
+11.5.2019
+
+I once again try adding tempo modifier and remove the last 13 parameters that I used on 10.5. although it looks like
+it would be worth revisiting these as a lot of the values were quite different than what I had hand-coded
+
+but again, no banana: 
+Cake 1.85g 3162k (79p) - Kingsrow(x64) 1.18f : W-L-D:205-1133-3462 (match27)
++:205 =:3415 -:1133 unknown:47 +B:779 -B:559 
+Cake 1.85g 3162k (79p) - Kingsrow(x64) 1.18 : W-L-D:956-667-2109 (match28)
++:956 =:2097 -:667 unknown:12 +B:439 -B:1184
+
+10.5.2019
+I add further parameters to the optimizer! I now have 67 params
+but it's worse than it usd to be :-(
+Cake 1.85g 3162k (67p) - Kingsrow(x64) 1.18f : W-L-D:229-1098-3473   (match26)
++:229 =:3409 -:1098 unknown:64 +B:771 -B:556
+
+9.5.2019
+I increase my game database with matches up to 23, and the 7-move-pdn 0.5s match on the old laptop
+I redo the optimiziation with 54 parameters
+I rewrite cake_eval.c so that the parameters the optimizer comes up with are all at the start of the file in the
+  same order as they appear in the optimizer output so I am less likely to make mistakes in transfer
+
+************************  best version so far vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18 : W-L-D:966-599-2167  (54.92% total, 161.3% relative wins)
++:966 =:2159 -:599 unknown:8 +B:415 -B:1150
+
+Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18f : W-L-D:250-1090-3460   (41.25%  total, 22.94% relative wins)
++:250 =:3414 -:1090 unknown:46 +B:753 -B:587       
+----------------------------------------------------------------------------------------------------------
+
+240-1050 would be nice in new version
+Cake 1.85g 1522k (54p) - Kingsrow(x64) 1.18f : W-L-D:235-1087-3478
+
+7.5.2019
+since it's unclear whether backrank or ungrounded arrays helped at all, I remove those two again
+but instead try to optimize over all positions instead of only the "quiet" ones - with the idea that
+being less wrong on the non-quite ones might be important too?
+
+I quickly try non-quiet positions with a 38-parameter optimizer, but it's not looking good
+
+TODO: I should throw away older games (match 1-13) because Cake was hampered by file open
+Redo my game database with matches 14-21 and then maybe add in match on old laptop which should have 29'000 games when it's done.
+
+TODO: run optimizer with ungrounded array added, that might help
+
+Match with 41 parameters (3 different cramps instead of one size fits all): 
+Cake 1.85g 1522k (41p) - Kingsrow(x64) 1.18f : W-L-D:199-1125-3476
++:199 =:3427 -:1125 unknown:49 +B:749 -B:575  (40.35%, 17.69% relative wins)
+it looks like I have hit a wall, whatever I do isn't doing much   match21
+--> but I notice that I forgot to change tmod array....grrrr....
+
+
+8.5.2019
+new attempt: start all parameters at 0, only allow parameter to grow if minimal (1e-6) improvement
+Cake 1.85g 1522k (54p) - Kingsrow(x64) 1.18f : W-L-D:235-1087-3478
++:235 =:3417 -:1087 unknown:61 +B:759 -B:563  (41.13% overall, 21.62% relative wins)      match22
+Cake 1.85g 1522k (54p) - Kingsrow(x64) 1.18 : W-L-D:904-608-2220
++:904 =:2213 -:608 unknown:7 +B:360 -B:1152   (53.97%,  148.7% relative wins)  match23
+save this, although I notice I managed once again to not make all proper values (backrankpower and initbackrank...)
+************************  best version so far ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+------------------------------ old baselines ---------------------------------------------------------
+But now I need to establish a new baseline! I need to revert to old parameters and see what it does!
+Cake 1.85 original (x64) - Kingsrow(x64) 1.18 : W-L-D:861-639-2232          (match16)
++:861 =:2222 -:639 unknown:10 +B:352 -B:1148  (52.97%, 134.7% relative wins)
+Cake 1.85 original (x64) - Kingsrow(x64) 1.18f : W-L-D:241-1149-3410        (match17)
++:241 =:3348 -:1149 unknown:62 +B:790 -B:600  (40.54% total, 20.97% relative wins)
+-------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TODO: remove tempo change in doghole, see if that does anything
+
+7.5.2019
+add ungrounded array to optimizer - looks a tiny bit better than before, so perhaps
+using ungrounded array but not using back rank might be a good idea?
+Cake 1.85g 1522k (83p) (x64) - Kingsrow(x64) 1.18 : W-L-D:882-653-2197  (match20)
++:882 =:2193 -:653 unknown:4 +B:410 -B:1125
+
+5.5.2019
+Increase number of parameters more, add br array (32 parameters) to optimizer
+
+Cake 1.85g 1522k (70p) (x64) - Kingsrow(x64) 1.18f : W-L-D:246-1199-3355
++:246 =:3319 -:1199 unknown:36 +B:839 -B:606  (40.08% wins, 20.52% relative wins)
+Cake 1.85g 1522k (70p) (x64) - Kingsrow(x64) 1.18 : W-L-D:856-646-2230
++:856 =:2215 -:646 unknown:15 +B:376 -B:1126 (52.81%, 132.5% relative)
+--- looks like this was a bad idea
+
+nevertheless, I add another 13 parameters (ungrounded penalty) to the optimizer
+
+4.5.2019 
+new entry since I found out that in mtdf function there was an fopen fclose which seriously slowed down cake. all 0.1s match results
+were hampered by this!
+I remove it and run a match with a 1500k, 38-parameter optimized Cake (up and including match13) and get
+
+
+Cake 1.85g opt 1522k (38p) (x6... - Kingsrow(x64) 1.18f : W-L-D:234-1121-3445   - forgot to save! (should have been match14)
++:234 =:3392 -:1121 unknown:53 +B:761 -B:594   (40.76 win%, 20.87% relative wins)
+I repeat it:
+Cake 1.85g opt 1522k (38p) (x6... - Kingsrow(x64) 1.18f : W-L-D:230-1095-3475
++:230 =:3427 -:1095 unknown:48 +B:780 -B:545  (40.99 win %, 21.00% relative wins)
+
+Cake 1.85g opt 1522k (38p) (x6... - Kingsrow(x64) 1.18 : W-L-D:921-605-2206     - forgot to save! (should have been match15)
++:921 =:2197 -:605 unknown:9 +B:387 -B:1139  (54.23%, 152.2% relative wins)
+I repeat it
+Cake 1.85g opt 1522k (38p) (x6... - Kingsrow(x64) 1.18 : W-L-D:918-618-2196
++:918 =:2191 -:618 unknown:5 +B:389 -B:1147   (148.5% relative wins, 54.02% wins )
+
+But now I need to establish a new baseline! I need to revert to old parameters and see what it does!
+Cake 1.85 original (x64) - Kingsrow(x64) 1.18 : W-L-D:861-639-2232          (match16)
++:861 =:2222 -:639 unknown:10 +B:352 -B:1148  (52.97%, 134.7% relative wins)
+Cake 1.85 original (x64) - Kingsrow(x64) 1.18f : W-L-D:241-1149-3410        (match17)
++:241 =:3348 -:1149 unknown:62 +B:790 -B:600  (40.54% total, 20.97% relative wins)
+
+
+
+
+
+
+
+
+
 21.4.2019
 new interest in Cake after seeing Ed Gilbert's amazing kr 1.18f, which uses a machine-learned eval function.
 but before I look into that I need to get everything working again!
@@ -59,6 +238,88 @@ Cake 1.85g3 (x64) - Kingsrow(x64) 1.18f : W-L-D:36-194-770
 
 Cake 1.85g opt (x64) - Kingsrow(x64) 1.18f : W-L-D:30-220-750 (parameter set from evalopt)
 +:30 =:729 -:220 unknown:21 +B:168 -B:82
+
+Cake 1.85g unopt (x64) - Kingsrow(x64) 1.18f : W-L-D:33-176-791
++:33 =:773 -:176 unknown:18 +B:143 -B:66
+should be the same as best version so far but isn't
+
+new baseline 0.1s match
++:147 =:2999 -:1594 unknown:60 +B:961 -B:780  (34.93%)
+
+1st L2 optimized version of Eval:  (match2)
+Cake 1.85g opt L2 (x64) - Kingsrow(x64) 1.18f : W-L-D:100-2104-2596
++:100 =:2536 -:2104 unknown:60 +B:1179 -B:1025  (29.13%)
+
+Eval-optimized version of Cake trying to approach 3-ply search: (match3)
+Cake 1.85g opt eval (x64) - Kingsrow(x64) 1.18f : W-L-D:153-1586-3061
++:153 =:3004 -:1586 unknown:57 +B:996 -B:743
+a tiny tiny bit better than the baseline match, but nothing serious => not significant
+
+2nd logistic L2 optimized version, using games of baseline match + games of match 2  (match4)
+Cake 1.85g opt logit L2 v2 (x6... - Kingsrow(x64) 1.18f : W-L-D:128-1738-2934
++:128 =:2861 -:1738 unknown:73 +B:1074 -B:792  (33.23%)
+--> much better, still not good, but looks like number of games is really important)
+
+use standard version of Cake against old kr118 with non-ML eval, and with 5-move-english pdn (match5)
+to (1) add variety in games and (2) in opponents and (3) to have a baseline for an improved cake
+Cake 1.85g standard (x64) - Kingsrow(x64) 1.18 : W-L-D:644-895-2193
++:644 =:2185 -:895 unknown:8 +B:412 -B:1127 (46.64%) (71.96% relative wins)
+
+3rd logistic L2 optimized version, using games of Match1,2,4,5 - about 532k positions  (match6)
+Cake 1.85g logit L2 opt 500k (... - Kingsrow(x64) 1.18f : W-L-D:184-1571-3045
++:184 =:2991 -:1571 unknown:54 +B:1003 -B:752 (35.55%)  
+
+Cake 1.85g logit L2 opt 500k (... - Kingsrow(x64) 1.18 : W-L-D:685-853-2194  (match7)
++:685 =:2184 -:853 unknown:10 +B:400 -B:1138 (47.76%) (80.30% relative wins)
+
+play a 5 man match between Cake logit and Cake original:
+Cake 1.85g logit L2 opt 500k (... - Cake 1.85g standard (x64) : W-L-D:845-779-2108  (match8)
++:845 =:1949 -:779 unknown:159 +B:479 -B:1145 (50.88%) (52.03% relative wins)
+
+----  30.4.2019: now I have 900k training positions; retrain the eval for 900k version, 
+this is now pretty similar in parameters to the 500k version => probably it has more or less converged.
+I see that I may have not set the backrankpower values correctly in the 500k version!?!?
+
+I play a 5-man match against Kingsrow 1.18 to verify performance of the 900k version:
+it is worse than before with 500k!?!?
+Cake 1.85g logit L2 opt 900k (... - Kingsrow(x64) 1.18 : W-L-D:646-841-2245
++:646 =:2234 -:841 unknown:11 +B:389 -B:1098   (76.81% relative wins)
+
+I revert only backrankpowers to 30/35/40 since I seem to have not set backrankpower in the 500k version
+of course this is stupid, if anything I should not optimize these 3 parameters, keep them fixed and optimize rest
+Cake 1.85g logit L2 opt 900k (... - Kingsrow(x64) 1.18 : W-L-D:657-867-2208
++:657 =:2203 -:867 unknown:5 +B:428 -B:1096   (75.78% relative wins, worse again - so that was not the problem - but what was?)
+
+I go a step further and optimize 12 further parameters, now there are 36 that are optimized (all things with kings in addition)
+Cake 1.85g opt 900k (36p) (x64... - Kingsrow(x64) 1.18 : W-L-D:673-885-2174
++:673 =:2164 -:885 unknown:10 +B:401 -B:1157  (76.05%) - again nothing special...
+
+I add 25 tmod[stones] array to optimizer for another 25 parameters, now 61 in total, but this was even worse
+Cake 1.85g opt 900k (61p) (x64... - Kingsrow(x64) 1.18f : W-L-D:156-1616-3028
++:156 =:2946 -:1616 unknown:82 +B:1003 -B:769 (34.79%, tiny bit worse than baseline).
+Compare to
+Cake 1.85g logit L2 opt 500k (... - Kingsrow(x64) 1.18f : W-L-D:184-1571-3045
++:184 =:2991 -:1571 unknown:54 +B:1003 -B:752 (35.55%) 
+
+Further ideas: 
+--> finish testing 900k-36param version (finish match vs kr118, add match against kr ML)
+--> I think cake repeats moves in strong positions?
+--> run 0.5s 7-move (14632*2 games) match on my old laptop, with kingsrow 1.18 and kingsrow-ML as opponents to get ~58'000 higher quality
+games. 
+--> make new default values for parameters which may give a different c to start with?
+--> optimize tmod[stones] array - should be straightforward!
+--> directly optimize backrank-eval array (256 entries using a "reverse" array to make b/w with same array if I don't already have this reverse
+array) instead of 4 governing variables (oreo, devloped single corner etc)
+--> introduce "phase" which changes from 24 men in opening = 0 to 10 men in endgame = 1, and use this to make two evaluation parameters that are
+linearly interpolated
+--> try to find new eval parameters that could be added such as ungrounded, pinned etc.
+--> increase resolution of eval by factor 10 everywhere
+--> 50k of 950k positions are not quiet - detect somehow?
+--> use non-quiet positions in eval optimization anyway?
+--> use L1 optimization?
+--> decrease pruning windows on grounds that eval is better??
+--> try changing CL lookup depth (smaller because huge cache?)
+
 
 3 things to try from looking at games:
 - try different immobile definition (~line 827 in eval.c) - didn't work

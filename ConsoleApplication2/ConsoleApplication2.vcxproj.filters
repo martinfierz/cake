@@ -24,9 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cake_eval.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,15 +45,15 @@
     <ClInclude Include="..\cake_misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\cake_eval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OptimizeCakeEvaluation.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cake_eval.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\checkerboard17\PDNparser.c">
@@ -69,6 +66,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\cake_misc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cake_eval_parametrized.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dblookup.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

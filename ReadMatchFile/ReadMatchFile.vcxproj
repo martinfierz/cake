@@ -91,8 +91,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:/code/cake;C:\code\checkerboard17;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\code\checkerboard17;C:\code\cake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,11 +153,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\checkerboard17\PDNmain.c" />
     <ClCompile Include="..\..\checkerboard17\PDNparser.c" />
+    <ClCompile Include="..\boolean.c" />
+    <ClCompile Include="..\cake_eval.c" />
+    <ClCompile Include="..\cake_misc.c" />
+    <ClCompile Include="..\dblookup.c" />
+    <ClCompile Include="..\move_gen.c" />
+    <ClCompile Include="ReadMatchFileMain.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\checkerboard17\PDNparser.h" />
+    <ClInclude Include="..\boolean.h" />
+    <ClInclude Include="..\consts.h" />
+    <ClInclude Include="..\dblookup.h" />
+    <ClInclude Include="..\move_gen.h" />
+    <ClInclude Include="..\structs.h" />
+    <ClInclude Include="..\switches.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

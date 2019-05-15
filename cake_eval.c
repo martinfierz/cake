@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <windows.h>
 
+// test what happens if I write something here 8.5.2019 07:42
 // cake-specific includes - structs defines structures, consts defines constants,
 // xxx.h defines function prototypes for xxx.c
 #include "switches.h"
@@ -16,6 +17,50 @@
 static short materialeval[13][13][13][13];						// bm bk wm wk
 char  blackbackrankeval[256],whitebackrankeval[256];			// not static because it's used too in movegen for move ordering
 static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man down situations
+
+const int devsinglecornerval = 6;// 2;// 5;// 7;  // optimized? 5;
+const int intactdoublecornerval = 0;// 5;// 1;  // optimized? 5;
+const int oreoval = 7; // 8; // 7; // optimized?  8;
+const int idealdoublecornerval = 10; // 11;// 4; // 11;  // optimized? 4;
+const int backrankpower1 = 20; 
+const int backrankpower2 = 12; 
+const int backrankpower3 = 9; 
+const int king_value = 115;
+const int crampval = 0;// 4; // 10; // optimized? 4;
+const int nocrampval = 4; // 2;  // optimized 1;
+int badstructureval = 5;// 2; //  5;  // optimized 2;
+const int dogholeval = 18;// 8;// 16;  // optimized 8;
+const int dogholemandownval = 11;// 20;// 6;  // optimized 20;
+const int mc_occupyval = -2;// 1;// 0; // optimized 1;
+const int mc_attackval = 2; // 1; // optmized 1;
+const int realdykeval = 0;// 5;// 1;  // optimized 5;
+const int greatdykeval = 6;// 2;// 5;  //  optimized 2;
+const int promoteinone = 14;// 24;// 16;  //optimized 24;
+const int promoteintwo = 9; // 20;// 8;  // optimized 20;
+const int promoteinthree = 5;// 12;// 4;  // optimized 12;
+const int tailhookval = 15;// 10;// 15;  // optimized 10; // tailhookval is very small!
+const int kcval = 6;// 4;// 9;  // optimized 4;
+const int keval = -5;// -4;// -3;  // optimized -4;
+const int turnval = 0; // 3;// -1;  // optimized?  3;
+const int kingcentermonopoly = 2; // 12;// -2;  //  12; optimized?
+const int kingtrappedinsinglecornerval = 35; // 20;// 40;  // 20; optimized?
+const int kingtrappedinsinglecornerbytwoval = 15;// 20;// 7;  // 20; optimized?
+const int kingtrappedindoublecornerval = 14;// 10;// 17;  // 10; optimized?
+const int dominatedkingval = 18;// 10;// 26; // 10; optimized?
+const int dominatedkingindcval = 12;// 10;// 58; // 10; optimized?
+const int kingproximityval = 4;// 4;// 7; // 4; optimized?
+const int immobilemanval = 2;// 2;// 3; // 2; optimized?
+const int kingholdstwomenval = 16;// 10;// 28;  // 10; optimized?
+const int onlykingval = 11;// 20;// 6; // 20; optimized?
+const int roamingkingval = 15;// 40;// 16; // 40; optimized?
+const int man_value = 93;
+const int balancemult = 4;    // optimized? 1
+const int skewnessmult = 6;		// optimized? 1
+const int cramp12 = 8;
+const int cramp13 = 26;
+const int cramp20 = 2;
+static int ungroundedpenalty[13] = { -5,-5,-2,3,10,18,27,34,24,28,28,28,28 }; // optimized
+
 
 
 // tiny decider functions what no move, no material means (used so that cake can easily be 
@@ -643,33 +688,18 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int ending=0;
 	int equal=0;
 	int tempo=0;
-	int crampval = 4; // optimized? 4;
-	int nocrampval = 1; // optimized 1;
-	int badstructureval = 2;
-	//int blackcramps,whitecramps,newcrampval=10;
 	int index;
-	int balance=0;
-	int dogholeval=8, dogholemandownval=20; 
-	int mcenter,mc_occupyval=1,mc_attackval=1; 
-	const int realdykeval=5;
-	const int greatdykeval=2;
-	const int promoteinone=24,promoteintwo=20,promoteinthree=12; 
-	int potbk=0, potwk=0;
-	//int blackhasbridge=0,whitehasbridge=0;
-	const int kcval=4,keval=-4;  
-	const int kingcentermonopoly = 12; 
-	const int kingtrappedinsinglecornerval=20;
-	const int kingtrappedinsinglecornerbytwoval=20;
-	const int kingtrappedindoublecornerval=10;
-	const int dominatedkingval = 10;
-	const int dominatedkingindcval=10;
-	int blacktailhooks=0,whitetailhooks=0,tailhookval=10; // tailhookval is very small!
-	int kingproximityval = 4, kingproximity = 0; 
+	int balance = 0;
+	int mcenter;
+
+
+
+	int potbk = 0, potwk = 0;
+	int blacktailhooks = 0, whitetailhooks = 0; 
+	int kingproximity = 0;
 	int32 tmp,m1,free2,attack;
-	int /*immobilewhitemen=0,immobileblackmen=0,*/immobilemanval=2,kingholdstwomenval = 10;//allimmobileval=2;
-	int onlykingval=20,roamingkingval=40; 
 	int endangeredbridgeval=6;
-	int turn=0, turnval=3;
+	int turn = 0; 
 	int32 white=p->wm|p->wk;
 	int32 black=p->bk|p->bm;
 	int realdoghole = 0;
@@ -677,6 +707,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int br1,br2,br3,br4,br6,br7,br8;
 	int32 ungrounded_black = 0, ungrounded_white = 0;
 	int32 immobile_black = 0, immobile_white = 0;
+
 	/*int32 grounded_black_leftforward, grounded_black_rightforward;
 	int32 grounded_white_leftbackward, grounded_white_rightbackward;
 	int32 contacts;
@@ -699,9 +730,12 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	// W:W32,31,30,29,28,26,24,21:B16,14,13,12,4,3,2,1.
 	// in general: you want to give a penalty for tempo count if the opponent has a strong
 	// back rank, right? because only then it will be a problem that you run into him...
-	static int tmod[25]={0,2,2,2,2,1,1,1,1,0,0,0,0,-1,-1,-1,-1,-2,-2,-2,-2,-3,-3,-3,-3}; 
 	
-	static int ungroundedpenalty[13] = {0,0,0,2,5,8,11,14,17,20,24,28,32};
+	static int tmod[25] = { 0,5 ,2, 2, 2, 1, 1, 1, 0, 0, 0, -1, -1,-2,-2,-3,-3,-4,-4, -5, -5, -6, -6, -7, -7 };  // my adapted version
+	//static int tmod[25]={0,2,2,2,2,1,1,1,1,0,0,0,0,-1,-1,-1,-1,-2,-2,-2,-2,-3,-3,-3,-3};   // original  
+	//static int tmod[25] = { 0,5 ,2, 2, 2, 1, 1, 1, 0, 0, 0, -1, -1,-2,-2,-3,-3,-4,-4, -5, -5, -6, -6, -7, -7 }; // - optimized?
+
+	//static int ungroundedpenalty[13] = {0,   0,0,2, 5, 8,11,14,17,20,24,28,32};
 
 
 	/* 
@@ -971,12 +1005,14 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			// standard: balance and index
 			// try increasing
 
-			e->men += balance;
+			e->men += (balancemult * balance)/4;
+
+
 			// skewness: is a large number for skewed positions i.e. for lots of men toward edge.
 			
 			index = -((br1+br2-br3-br4-br6+br7+br8));
 			index += ((wr1+wr2-wr3-wr4-wr6+wr7+wr8));
-			e->men += index;
+			e->men += (skewnessmult*index)/4;
 			
 			// adjust skewness for number of men - with few men on the board,
 			// it doesn't matter any more
@@ -1101,52 +1137,67 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 
 		eval += e->men;
 		//
-		// now for cramps and bad structures:
-		// 
+			// now for cramps and bad structures:
+			// 
 
-		/* cramping squares */
-		/* all the 'cramping nothing statements: found with PDNtool */
-		if(p->bm&SQ20) 
-			{
-			if(p->wm&SQ24)  
-				e->cramp += crampval;
-			if(free&SQ24) 
+			/* cramping squares */
+			/* all the 'cramping nothing statements: found with PDNtool */
+
+			//params[38] = 0; // cramp12
+			//params[39] = 0; // cramp13
+			//params[40] = 0; // cramp20
+			// cramp20 = params[40]
+		if (p->bm & SQ20)
+		{
+			if (p->wm & SQ24)
+				e->cramp += cramp20;
+			if (free & SQ24)
 				e->cramp -= nocrampval; //cramping nothing - discourage a little
-			}
+		}
 
-		if(p->wm&SQ13)
-			{
-			if(p->bm&SQ9)
-				e->cramp -= crampval;
-			if(free&SQ9)
+		if (p->wm & SQ13)
+		{
+			if (p->bm & SQ9)
+				e->cramp -= cramp20;
+			if (free & SQ9)
 				e->cramp += nocrampval; // cramping nothing - discourage a little
-			}
+		}
 
-		if(p->bm&SQ13)
-			{
-			//if (p->wm & SQ17)
-			//	e->cramp++; 
-			if( (p->wm&(SQ17|SQ21/*|SQ22*/))==(SQ17|SQ21/*|SQ22*/) )
-	   			e->cramp += (crampval);
-			if((free&(SQ17|SQ21))==(SQ17|SQ21))
+		// cramp13 = params[39]
+		if (p->bm & SQ13)
+		{
+			if (p->wm & SQ17)
+				e->cramp += cramp13;
+			//if ((p->wm&(SQ17 | SQ21/*|SQ22*/)) == (SQ17 | SQ21/*|SQ22*/))
+			//	e->cramp += crampval;
+			if ((free & (SQ17 | SQ21)) == (SQ17 | SQ21))
 				e->cramp -= nocrampval; // cramping nothing - discourage a little
-			}
-		if(p->wm&SQ20) 
-			{
-			//if (p->bm & SQ16)
-			//	e->cramp--; 
-			if( (p->bm&(/*SQ11|*/SQ12|SQ16))==(/*SQ11|*/SQ12|SQ16) ) 
-				e->cramp -= (crampval);
-			if((free&(SQ12|SQ16))==(SQ12|SQ16))
+		}
+		if (p->wm & SQ20)
+		{
+			//if ((p->bm&(/*SQ11|*/SQ12 | SQ16)) == (/*SQ11|*/SQ12 | SQ16))
+			//	e->cramp -= crampval;
+			if (p->bm & SQ16)
+				e->cramp -= cramp13;
+			if ((free & (SQ12 | SQ16)) == (SQ12 | SQ16))
 				e->cramp += nocrampval; // cramping nothing - discourage a little
-			}
+		}
+
+		//params[38] = 0; // cramp12
+		if (p->bm & SQ12) {
+			if (p->wm & SQ16)
+				e->cramp += cramp12;
+		}
+		if (p->wm & SQ21) {
+			if (p->bm & SQ17)
+				e->cramp -= cramp12;
+		}
 
 		//
 		//  end of cramps
 		//
 
 		eval += e->cramp;
-		
 
 		// 
 		// holds
@@ -2400,5 +2451,209 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		}
 	
 	return (p->color == BLACK) ? eval:-eval;
+	}
+
+
+	int initializematerial(short materialeval[13][13][13][13])
+	{
+		// initialize material value array for value[bm][bk][wm][wk]
+		int i, j, k, l;
+		int v1, v2;
+
+		for (i = 0; i < 13; i++)
+		{
+			for (j = 0; j < 13; j++)
+			{
+				for (k = 0; k < 13; k++)
+				{
+					for (l = 0; l < 13; l++)
+					{
+						/*bm bk wm wk */
+						//v1 = 100 * i + 130 * j;  // optimized? 130
+						//v2 = 100 * k + 130 * l;  // optimized? 130
+						v1 = man_value * i + king_value * j;  // optimized? 130
+						v2 = man_value * k + king_value * l;  // optimized? 130
+						if (v1 + v2 == 0)
+							continue;
+						v1 = v1 - v2 + (EXBIAS * (v1 - v2)) / (v1 + v2);
+
+						/* take away the 10 points which a side is up over 100 with a one
+							man advantage in the 12-11 position */
+						if (v1 <= -100)
+							v1 += 10;
+						if (v1 >= 100)
+							v1 -= 10;
+
+						materialeval[i][j][k][l] = v1;
+					}
+				}
+			}
+		}
+		return 1;
+	}
+
+
+	int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256], char blackbackrankpower[256], char whitebackrankpower[256])
+	{
+		// initializes the arrays   blackbackrankeval
+		//							whitebackrankeval
+		//							blackbackrankpower
+		//							whitebackrankpower
+
+		static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
+						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
+
+		//static int br[32] = { -5,-13,-5,-11, 5,6,14,14,0,-11,18,2,20,19,22,18,		// optimized
+		//				 -6,-24,-3,-13, 7,2,13,6,5,-13,22,-2,31,26,31,26 };
+
+		//static int br[32] = { -1,-12,-5,-12, 4,4,11,11,2,-11,16,1,20,19,21,18,		// optimized
+		//				 -3,-23,-4,-14, 6,0,10,5,6,-11,20,-2,32,26,31,26 };
+
+
+		// contains the back rank evaluation 
+		// strange: pdntool insists that the back rank 0 x 0 x (bridge) is worse than 0 x x 0 which
+		//leaves the double corner open
+		// should try a change there! 
+		POSITION p;
+		int32 u;
+		int32 index;
+		
+
+		/* 		WHITE
+			28  29  30	31
+		  24  25  26  27
+			20  21  22	23
+		  16  17  18  19
+			12  13  14	15
+		   8  9	  10  11
+			 4   5	6	 7
+		   0   1   2   3
+				BLACK */
+
+		for (u = 0; u < 256; u++)
+		{
+			// for all possible back ranks do: 
+			p.bm = u;
+			p.wm = u << 24;
+
+			index = p.bm & 0x0000000F;
+			if (p.bm & BIT7)
+				index += 16;
+			blackbackrankeval[u] = br[index];
+
+			index = 0;
+			if (p.wm & BIT31)
+				index++;
+			if (p.wm & BIT30)
+				index += 2;
+			if (p.wm & BIT29)
+				index += 4;
+			if (p.wm & BIT28)
+				index += 8;
+			if (p.wm & BIT24)
+				index += 16;
+
+			whitebackrankeval[u] = br[index];
+
+			/* 		WHITE
+				28  29  30	31
+			  24  25  26  27
+				20  21  22	23
+			  16  17  18  19
+				12  13  14	15
+			   8  9	  10  11
+				 4   5	6	 7
+			   0   1   2   3
+					BLACK */
+
+					/* oreo */
+			if (match1(p.bm, SQ2 | SQ3 | SQ7))
+			{
+				blackbackrankeval[u] += oreoval;
+			}
+			if (match1(p.wm, SQ31 | SQ30 | SQ26))
+			{
+				whitebackrankeval[u] += oreoval;
+			}
+
+
+
+
+			// developed single corner
+			// TODO: make this more fine-grained: if men on 4 and 8, subtract something. if
+			//		 only man on 4, but not on 8, subtract less
+			//       if only man on 8 but not on 4 subract the least.
+
+			if (((~p.bm) & SQ4) && ((~p.bm) & SQ8))
+				blackbackrankeval[u] += devsinglecornerval; //devsinglecorner 5!!
+			if (((~p.wm) & SQ29) && ((~p.wm) & SQ25))
+				whitebackrankeval[u] += devsinglecornerval;//2!!
+
+
+			//  double corner evals: intact and developed 
+
+			if (match1(p.bm, (SQ2 | SQ5 | SQ6)) && !(p.bm & SQ1))
+				blackbackrankeval[u] += intactdoublecornerval;
+			if (match1(p.wm, (SQ27 | SQ28 | SQ31)) && !(p.wm & SQ32))
+				whitebackrankeval[u] += intactdoublecornerval;
+
+
+			// ideal double corner
+		/* 		WHITE
+			28  29  30	31
+		  24  25  26  27
+			20  21  22	23
+		  16  17  18  19
+			12  13  14	15
+		   8  9	  10  11
+			 4   5	6	 7
+		   0   1   2   3
+				BLACK */
+			if ((p.bm & BIT3) && (p.bm & BIT2) && (p.bm & BIT6) && (!(p.bm & BIT7)))
+				blackbackrankeval[u] += idealdoublecornerval;//2!!
+			// maybe also allow 2,6,7 &!3 to be ideal?
+			if ((p.wm & BIT28) && (p.wm & BIT29) && (p.wm & BIT25) && (!(p.wm & BIT24)))
+				whitebackrankeval[u] += idealdoublecornerval;//2!!
+
+			// new 1.41'
+			// maybe also allow 2,6,7 &!3 to be ideal?
+			if ((p.bm & BIT7) && (p.bm & BIT2) && (p.bm & BIT6) && (!(p.bm & BIT3)))
+				blackbackrankeval[u] += intactdoublecornerval;//2!!
+			if ((p.wm & BIT24) && (p.wm & BIT29) && (p.wm & BIT25) && (!(p.wm & BIT28)))
+				whitebackrankeval[u] += intactdoublecornerval;//2!!	
+
+
+
+			// backrankpower gives the power of the back rank to withstand onslaught
+			// by enemy men - only used in the case of man down.
+						// ideal double corner
+		/* 		WHITE
+			28  29  30	31
+		  24  25  26  27
+			20  21  22	23
+		  16  17  18  19
+			12  13  14	15
+		   8  9	  10  11
+			 4   5	6	 7
+		   0   1   2   3
+				BLACK */
+			// TODO: power is non-zero if black has a bridge for instance
+			// TODO: write this with squares to make sure it's readable.
+			if (match1(p.bm, 0xE))
+				blackbackrankpower[u] = backrankpower1; // 21;// 30;// 14; //30; optimized
+			if (match1(p.bm, 0x2E) || match1(p.bm, 0x4E))
+				blackbackrankpower[u] = backrankpower2; // 11;// 35;// 3; //  35; optimized
+			if (match1(p.bm, 0x6E))
+				blackbackrankpower[u] = backrankpower3;// 40;// 0; //  40; optimized
+
+			if (match1(p.wm, 0x70000000))
+				whitebackrankpower[u] = backrankpower1; // 21;// 30;// 14;// 30; optimized
+			if (match1(p.wm, 0x72000000) || match1(p.wm, 0x74000000))
+				whitebackrankpower[u] = backrankpower2; // 11;// 35;// 3; // 35; optimized
+			if (match1(p.wm, 0x76000000))
+				whitebackrankpower[u] = backrankpower3; // 40;// 0;// 40; optimized
+		}
+
+		return 1;
 	}
 

@@ -200,25 +200,28 @@ void printboardtofile(POSITION *p)
 	fprintf(Lfp,"\n%c %c %c %c ",c[b[8]],c[b[9]],c[b[10]],c[b[11]]);
 	fprintf(Lfp,"\n %c %c %c %c",c[b[4]],c[b[5]],c[b[6]],c[b[7]]);
 	fprintf(Lfp,"\n%c %c %c %c ",c[b[0]],c[b[1]],c[b[2]],c[b[3]]);
-	fclose(Lfp);
+	//fclose(Lfp);
 	}
 
 
 FILE *getlogfile()
 {
 	char lstr[256];
+	char dirname[256]; 
 
-	//if(cake_fp != 0)
-	//	return cake_fp;
+	if(cake_fp != 0)
+		return cake_fp;
 	
 	/* Create the standard set of CheckerBoard directories under My Documents. */
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, lstr))) {
 		getcakedir(lstr);
+		GetCurrentDirectory(256, dirname); 
 		SetCurrentDirectory(lstr);
 
 		cake_fp = fopen("cakelog.txt","a");
 		if(cake_fp == NULL)
 			cake_fp = fopen("cakelog.txt","w");
+		SetCurrentDirectory(dirname); 
 		
 		return cake_fp;
 	}
@@ -259,6 +262,8 @@ int logtofile(char *str)
 {
 	// log a string to the engine logfile "cakelog.txt"
 	FILE *fp;
+
+	return; 
 
 	//printf("%s\n",str);
 	fp = getlogfile();
@@ -328,13 +333,14 @@ void resetsearchinfo(SEARCHINFO *s)
 	memset(s, 0, sizeof(SEARCHINFO)); 
 	s->repcheck = (REPETITION *) rep; //malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
 	s->repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
-		
 	}
 
 int exitcake()
 	{
 	// deallocate memory 
 	db_exit();
+	if(cake_fp != NULL)
+		fclose(cake_fp); 
 	return 1;
 	}
 

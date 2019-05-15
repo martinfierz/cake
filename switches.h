@@ -4,7 +4,8 @@
 #pragma warning( once : 4133 )  // once instead of disable is maybe better
 
 #ifdef _WIN64 
-#define VERSION "1.85g unopt (x64)"
+#define VERSION "1.85g 3162k (61p)"
+//#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
 #endif
@@ -80,7 +81,7 @@
 #define SINGLEEXTEND FRAC/2			// extension for forced move 
 #define CLDEPTH 5					// if depth < CLDEPTH // 5
 
-#define HASHSIZE 0x00800000			// 64 MB default hashtable size
+#define HASHSIZE 0x00800000			// 64 MB default hashtable size  (was 64 if you something has changed somewhere...)
 
 #define HASHITER 2					// 2 probes in the hashtable
 

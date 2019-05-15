@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>testcake</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>EvaluateTaggedPositions</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -169,10 +170,10 @@
     <ClCompile Include="..\cake_learn.c" />
     <ClCompile Include="..\cake_misc.c" />
     <ClCompile Include="..\dblookup.c" />
+    <ClCompile Include="..\evaluateTaggedPositions.c" />
     <ClCompile Include="..\initcake.c" />
     <ClCompile Include="..\move_gen.c" />
     <ClCompile Include="..\spa.c" />
-    <ClCompile Include="..\testcake.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

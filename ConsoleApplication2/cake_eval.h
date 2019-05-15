@@ -15,3 +15,4 @@ int materialevaluation(MATERIALCOUNT *m);
 #ifdef USEDB
 int dbwineval(POSITION *p, MATERIALCOUNT *mc);
 #endif
+
