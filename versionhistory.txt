@@ -1,18 +1,40 @@
 looking at games i think i should try adding
--- general contact-grounded-ungrounded eval
--- bridge stone eval if other side has a king or >= kings than side with bridge
+
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
+
+17.5.2019
+Add 2 parameters to eval based on what I think I see in games
+-- general contact-grounded-ungrounded eval
+-- bridge stone eval if other side has a king or >= kings than side with bridge
+
+
+
+16.5.2019
+I add another 4 parameters to optimize
+(badstructure3, badstructure4, badstructure2stones, kingmanstones)
+big change in terms of what it is doing with badstructure2stones and kingmanstones, which are the limit value
+for when to evaluate bad structures and king-man-interaction (such as tailhooks), it does this 
+from the start (2*12 stones for badstructure2stones) and nearly from start (2*10 for kingmanstones)
+
+************************  clearly best version so far!! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18f : W-L-D:244-1016-3540  (41.96% overall, 24.01% relative)
++:244 =:3486 -:1016 unknown:54 +B:730 -B:530
+Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18 : W-L-D:1082-537-2113
++:1082 =:2103 -:537 unknown:10 +B:469 -B:1150  (57.30% overall, 201.5% relative)
+----------------------------------------------------------------------------------------------------
+
+
 
 14.5.2019:
 I add a few parameters to the optimizer and make sure ungrounded is also optimized
 
-************************  best version so far (or at least very similar)vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
 Cake 1.85g 3162k (58p) - Kingsrow(x64) 1.18 : W-L-D:946-602-2184  (54.61%, 157.1% wins)
 +:946 =:2180 -:602 unknown:4 +B:393 -B:1155
 Cake 1.85g 3162k (58p) - Kingsrow(x64) 1.18f : W-L-D:256-1060-3484 (41.63%, 24.15%)
 +:256 =:3431 -:1060 unknown:53 +B:740 -B:576
---------------------------------------------------------------------------------------------------------------------
+
 
 
 

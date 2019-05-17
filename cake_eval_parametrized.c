@@ -52,7 +52,7 @@ int getparams(int* params, int* n) {
 		params[i] = v[i];
 }
 
-int initparams() {
+int optimalparams() {
 	// meant to set Cake's parameters to the optimal values
 	int i; 
 	v[devsinglecorner] = 6;// 2;// 5;// 7;  // optimized? 5;
@@ -100,10 +100,18 @@ int initparams() {
 	v[badstructuremax1] = 34; 
 	v[badstructuremax2] = 32; 
 	v[badstructuremin] = 10; 
+	// 58->62 param version with badstructure3
+	// badstructure4, badstructure2stones
+	// kingmanstones
 	v[badstructure3] = 8;
 	v[badstructure4] = 2;
 	v[badstructure2stones] = 12; 
 	v[kingmanstones] = 10; 
+
+	// up to here was best version by far ever, then I added ungroundedcontact and endangeredbridge; 
+	// remove those again if they are not better. 
+	v[ungroundedcontact] = 0; 
+	v[endangeredbridge] = 0; 
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
 	return 0; 
@@ -163,6 +171,8 @@ int startparams() {
 	v[badstructure4] = 5;
 	v[badstructure2stones] = 6; 
 	v[kingmanstones] = 6; 
+	v[ungroundedcontact] = 0;
+	v[endangeredbridge] = 0;
 
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i] / 2; 
@@ -192,7 +202,7 @@ int evaluation_nomove(int depth)
 
 int initeval(void) {
 	// initializes the evaluation completely
-	initparams();
+	optimalparams();
 	initializematerial(materialeval);
 	initializebackrank(blackbackrankeval, whitebackrankeval, blackbackrankpower, whitebackrankpower);
 	return 1;
@@ -812,7 +822,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int blacktailhooks = 0, whitetailhooks = 0; 
 	int kingproximity = 0;
 	int32 tmp,m1,free2,attack;
-	int endangeredbridgeval=6;
+	//int endangeredbridgeval=6;
 	int turn = 0; 
 	int32 white=p->wm|p->wk;
 	int32 black=p->bk|p->bm;
@@ -822,7 +832,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int32 ungrounded_black = 0, ungrounded_white = 0;
 	int32 immobile_black = 0, immobile_white = 0;
 	int badstructureval; // = 5;// 2; //  5;  // optimized 2;
-
+	int whitehasbridge = 0, blackhasbridge = 0; 
 	//int badstructureval;
 
 	/*int32 grounded_black_leftforward, grounded_black_rightforward;
@@ -1009,7 +1019,19 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 
 		// generalized cramp eval - find contact points and
 		// check whether the contacting men are grounded or not.
-		// leftforward as seen from black men 
+		
+		// find all ungrounded black men that are in contact with white men
+		m = ungrounded_black & (rightbackward(p->wm) | leftbackward(p->wm));
+		m1 = ungrounded_white & (leftforward(p->bm) | rightforward(p->bm));
+		e->men += v[ungroundedcontact] * (bitcount(m1) - bitcount(m)); 
+		
+		
+		/*if (m1 && !m) {
+			printint32(m1); 
+			printboard(p);
+			getch();
+		}*/
+		
 		/*m = p->bm & rightbackward(p->wm);
 		m |= leftforward(m);
 
@@ -1324,15 +1346,15 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
  
 		if(match3(p->bm, p->wm, free, (SQ19|SQ23), (SQ28|SQ31), (SQ24|SQ27|SQ32)))
 			{
-			e->hold -= v[badstructure3];
+			e->hold -= v[badstructure3];  // was 6
 			if(p->wk)
-				e->hold -= v[badstructure4];
+				e->hold -= v[badstructure4];  // was 10
 			}
 		if(match3(p->bm, p->wm, free, (SQ2|SQ5), (SQ10|SQ14), (SQ1|SQ6|SQ9)))
 			{
-			e->hold += v[badstructure3];
+			e->hold += v[badstructure3];  // was 6
 			if(p->bk)
-				e->hold += v[badstructure4];
+				e->hold += v[badstructure4];  // was 10
 			}
 
 		/* some bad structures */
@@ -1738,7 +1760,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if( (p->wm & BIT28) && (p->wm&BIT30) && (free&BIT29) ) // vtune: use &
 			{
 			ungrounded_black |= SQ23;
-			//blackhasbridge = 1;
+			blackhasbridge = 1;
 			/* black has a bridgehead on BIT21 - maybe account for weakness?
 			e.g. if p->wk -> penalty, or if wk>bk -> penalty?*/
 			/* left side */
@@ -1763,7 +1785,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(match2(p->wm, free, SQ29|SQ31, SQ30))
 			{
 			ungrounded_black |= SQ22;
-			//blackhasbridge = 1;
+			blackhasbridge = 1;
 			if(match2(p->bm, free, SQ23, SQ26|SQ27))
 				{
 				e->runaway+=v[promoteintwo];
@@ -1795,7 +1817,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			{
 			ungrounded_white |= SQ10;
 			/*white has a bridgehead on BIT10 - maybe account for weakness?*/
-			//whitehasbridge = 1;
+			whitehasbridge = 1;
 			/* left side */
 			if( (free&BIT4) && (free&BIT5) && (p->wm&BIT9) ) // vtune: use &
 				{
@@ -1818,7 +1840,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(match2(p->bm, free, SQ2|SQ4, SQ3))
 			{
 			ungrounded_white |= SQ11;
-			//whitehasbridge = 1;
+			whitehasbridge = 1;
 			if(match2(p->wm, free, SQ12, SQ8))
 				{
 				e->runaway-=v[promoteintwo];
@@ -2239,6 +2261,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(pieces <= 2*v[kingmanstones]) //12)
 			{
 			// TODO: why only pieces < 12 for tailhooks and ungrounded men? this looks really bad...
+			// optimization gave v[kingmanstones = 10], so pieces <= 20!
 			// experimental kingcramper
 			// but the match result with pieces <= 14 was worse....
 
@@ -2270,7 +2293,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				be dangerous, at least if it is an "endangered man". */
 			// 2-stage eval: ungrounded men next to kings get twice the penalty, 
 			// ungrounded men one square further away get once the penalty.
-			// TODO: why is this only evaluated with pieces <=12?
+			// TODO: why is this only evaluated with pieces <=12? - no longer!
 			// and why are bridgeheads evaluated separately?
 			// TODO: why not combine this with king mobility evaluation?
 		
@@ -2291,20 +2314,20 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		/* endangered bridge heads */
 		/* new 1.3 III */
 		// TODO should read: if white king cannot get out from under bridge, then big penalty!
-		/*if(whitehasbridge)
+		if(whitehasbridge)
 			{
-			if(ki->freebk>ki->freewk)
-				e->king_man += 2*endangeredbridgeval;
+			if (ki->freebk > ki->freewk)
+				e->king_man += 2 * v[endangeredbridge]; 
 			if(ki->freebk == ki->freewk)   //else if freebk>0 do this not freebk==freewk
-				e->king_man += endangeredbridgeval;
+				e->king_man += v[endangeredbridge];
 			}
 		if(blackhasbridge)
 			{
 			if(ki->freebk < ki->freewk)
-				e->king_man -= 2*endangeredbridgeval;
+				e->king_man -= 2* v[endangeredbridge];
 			if(ki->freebk == ki->freewk)
-				e->king_man -= endangeredbridgeval;
-			}*/
+				e->king_man -= v[endangeredbridge];
+			}
 		/* 'other' bridgeheads */
 		/* new 1.35 */
 		/* this is too little to stop it from believing in the testpos for this theme   */
@@ -2775,3 +2798,27 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		return 1;
 	}
 
+
+	// reverse array
+			/* 		WHITE
+			28  29  30	31
+		  24  25  26  27
+			20  21  22	23
+		  16  17  18  19
+			12  13  14	15
+		   8  9	  10  11
+			 4   5	6	 7
+		   0   1   2   3
+				BLACK */
+	/*
+	int reverse(int x) {
+		// return a reverted 8-bit pattern, i.e. if you have pattern
+		// e.g. 00001111 return 11110000, or if you have 11000000 return 00000011
+		int index = 0;
+		int i; 
+		for (i = 0; i < 8; i++) {
+			if (x & (1 << i))
+				index += (1 << (8 - i)); 
+		}
+		return index; 
+	}  */
