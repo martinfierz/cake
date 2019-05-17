@@ -8,6 +8,9 @@ Add 2 parameters to eval based on what I think I see in games
 -- general contact-grounded-ungrounded eval
 -- bridge stone eval if other side has a king or >= kings than side with bridge
 
+match37
+Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18f : W-L-D:227-1010-3563 (41.84% overall, 22.47% relative)
++:227 =:3516 -:1010 unknown:47 +B:741 -B:496
 
 
 16.5.2019
@@ -18,9 +21,9 @@ for when to evaluate bad structures and king-man-interaction (such as tailhooks)
 from the start (2*12 stones for badstructure2stones) and nearly from start (2*10 for kingmanstones)
 
 ************************  clearly best version so far!! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18f : W-L-D:244-1016-3540  (41.96% overall, 24.01% relative)
-+:244 =:3486 -:1016 unknown:54 +B:730 -B:530
-Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18 : W-L-D:1082-537-2113
+Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18f : W-L-D:244-1016-3540  (41.96% overall, 24.01% relative, 3.48 draw/loss ratio)
++:244 =:3486 -:1016 unknown:54 +B:730 -B:530  (match35)
+Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18 : W-L-D:1082-537-2113   (match36)
 +:1082 =:2103 -:537 unknown:10 +B:469 -B:1150  (57.30% overall, 201.5% relative)
 ----------------------------------------------------------------------------------------------------
 

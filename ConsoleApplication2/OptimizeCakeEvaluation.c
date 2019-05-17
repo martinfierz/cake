@@ -83,9 +83,13 @@ char strs[PARAMS][128] =  {
 	"kingproximityval", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
 	"man_value", "balancemult", "skewnessmult", "cramp12", "cramp13", "cramp20", "badstructure", 
 	"dogholeval2", "badstructure2", "badstructuremax1", "badstructuremax2", "badstructuremin", "badstructure3", "badstructure4",
-	"badstructure2stones", "kingmanstones", "ungroundedcontact", "endangeredbridge",
+	"badstructure2stones", "kingmanstones",/* "ungroundedcontact", "endangeredbridge",*/
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
-	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12"
+	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
+	"br0", "br1", "br2", "br3", "br4", "br5", "br6", "br7",
+	"br8", "br9", "br10", "br11", "br12", "br13", "br14", "br15",
+	"br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23",
+	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
 };
 
 

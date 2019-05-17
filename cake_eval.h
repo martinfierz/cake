@@ -30,5 +30,5 @@ enum {
 	kingproximityval, immobilemanval, kingholdstwomenval, onlykingval, roamingkingval,
 	man_value, balancemult, skewnessmult, cramp12, cramp13, cramp20, badstructure, dogholeval2, badstructure2, 
 	badstructuremax1, badstructuremax2, badstructuremin, badstructure3, badstructure4, 
-	badstructure2stones, kingmanstones, ungroundedcontact, endangeredbridge, arraystart
+	badstructure2stones, kingmanstones, /*ungroundedcontact, endangeredbridge, */arraystart
 };

@@ -23,7 +23,12 @@ static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man d
 int v[PARAMS];
 
 
-static int ungroundedpenalty[13] = { -4,-4,-1,4,10,19,27,36,30,17,28,28,28 }; // optimized
+//static int ungroundedpenalty[13] = { -4,-4,-1,4,10,19,27,36,30,17,28,28,28 }; // optimized
+static int ungroundedpenalty[13] = { -3,-3,0,4,10,19,27,33,28,14,14,14,14}; // optimized
+
+static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
+						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
+
 
 int setparams(int* params, int n) {
 	int i; 
@@ -34,6 +39,10 @@ int setparams(int* params, int n) {
 	for (i = 0; i < 13; i++) {
 		ungroundedpenalty[i] = params[arraystart + i];
 		//printf("\nsetting ungroundedpenalty[%i] to %i", i, params[arraystart + i]);
+	}
+
+	for (i = 0; i < 32; i++) {
+		br[i] = params[arraystart + 13 + i];
 	}
 	//for (i = n - 13; i < n; i++) {
 	//	ungroundedpenalty[i] = params[i - (n - 13)]; 
@@ -50,70 +59,77 @@ int getparams(int* params, int* n) {
 	*n = (arraystart + 13); 
 	for (i = arraystart; i < (*n); i++)
 		params[i] = v[i];
+
+	*n = (arraystart + 13 + 32);
+	for (i = arraystart + 13; i < (*n); i++)
+		params[i] = v[i]; 
 }
 
 int optimalparams() {
 	// meant to set Cake's parameters to the optimal values
 	int i; 
-	v[devsinglecorner] = 6;// 2;// 5;// 7;  // optimized? 5;
-	v[intactdoublecorner] = 0;// 5;// 1;  // optimized? 5;
-	v[oreoval] = 7; // 8; // 7; // optimized?  8;
-	v[idealdoublecornerval] = 9; // 11;// 4; // 11;  // optimized? 4;
-	v[backrankpower1] = 12;
-	v[backrankpower2] = 5;
-	v[backrankpower3] = 0;
-	v[king_value] = 116;
-	v[nocrampval] = 3; // 2;  // optimized 1;
-	v[dogholeval] = 18;// 8;// 16;  // optimized 8;
-	v[dogholemandownval] = 0;// 20;// 6;  // optimized 20;
-	v[mc_occupyval] = -2;// 1;// 0; // optimized 1;
-	v[mc_attackval] = 2; // 1; // optmized 1;
-	v[realdykeval] = 1;// 5;// 1;  // optimized 5;
-	v[greatdykeval] = 5;// 2;// 5;  //  optimized 2;
-	v[promoteinone] = 12;// 24;// 16;  //optimized 24;
-	v[promoteintwo] = 8; // 20;// 8;  // optimized 20;
-	v[promoteinthree] = 4;// 12;// 4;  // optimized 12;
-	v[tailhookval] = 14;// 10;// 15;  // optimized 10; // tailhookval is very small!
-	v[kcval] = 6;// 4;// 9;  // optimized 4;
-	v[keval] = -4;// -4;// -3;  // optimized -4;
-	v[turnval] = 0; // 3;// -1;  // optimized?  3;
-	v[kingcentermonopoly] = 2; // 12;// -2;  //  12; optimized?
-	v[kingtrappedinsinglecornerval] = 29; // 20;// 40;  // 20; optimized?
-	v[kingtrappedinsinglecornerbytwoval] = 14;// 20;// 7;  // 20; optimized?
-	v[kingtrappedindoublecornerval] = 12;// 10;// 17;  // 10; optimized?
-	v[dominatedkingval] = 20;// 10;// 26; // 10; optimized?
-	v[dominatedkingindcval] = 30;// 10;// 58; // 10; optimized?
-	v[kingproximityval] = 4;// 4;// 7; // 4; optimized?
-	v[immobilemanval] = 3;// 2;// 3; // 2; optimized?
-	v[kingholdstwomenval] = 19;// 10;// 28;  // 10; optimized?
-	v[onlykingval] = 10;// 20;// 6; // 20; optimized?
-	v[roamingkingval] = 7;// 40;// 16; // 40; optimized?
-	v[man_value] = 97;
-	v[balancemult] = 4;    // optimized? 1
-	v[skewnessmult] = 6;		// optimized? 1
-	v[cramp12] = 5;
-	v[cramp13] = 24;
-	v[cramp20] = 2;
-	v[badstructure] = 8; 
-	v[dogholeval2] = 16; 
-	v[badstructure2] = 3; 
-	v[badstructuremax1] = 34; 
-	v[badstructuremax2] = 32; 
-	v[badstructuremin] = 10; 
+	v[devsinglecorner] = 6; // 6;
+	v[intactdoublecorner] = 0; // 0;
+	v[oreoval] = 6; // 7;
+	v[idealdoublecornerval] = 9; // 9;
+	v[backrankpower1] = 13; // 12;
+	v[backrankpower2] = 6; // 5;
+	v[backrankpower3] = 3; // 0;
+	v[king_value] = 115; // 116;
+	v[nocrampval] = 3; // 3;
+	v[dogholeval] = 17; // 18;
+	v[dogholemandownval] = 1; // 0;
+	v[mc_occupyval] = -3;// -2;
+	v[mc_attackval] = 2; // 2;
+	v[realdykeval] = 1; // 1;
+	v[greatdykeval] = 5; // 5;
+	v[promoteinone] = 12; // 12;
+	v[promoteintwo] = 8; // 8;
+	v[promoteinthree] = 4; // 4;
+	v[tailhookval] = 14; // 14;
+	v[kcval] = 5; // 6;
+	v[keval] = -4; // -4;
+	v[turnval] = 0; // 0;
+	v[kingcentermonopoly] = 2; // 2;
+	v[kingtrappedinsinglecornerval] = 28; // 29;
+	v[kingtrappedinsinglecornerbytwoval] = 14; // 14;
+	v[kingtrappedindoublecornerval] = 12; // 12;
+	v[dominatedkingval] = 20; // 20;
+	v[dominatedkingindcval] = 33;// 30;
+	v[kingproximityval] = 4; // 4;
+	v[immobilemanval] = 3; // 3;
+	v[kingholdstwomenval] = 18; // 19;
+	v[onlykingval] = 10; // 10;
+	v[roamingkingval] = 5; // 7;
+	v[man_value] = 97; // 97;
+	v[balancemult] = 4; // 4;
+	v[skewnessmult] = 7; // 6;
+	v[cramp12] = 3; // 5;
+	v[cramp13] = 23; // 24;
+	v[cramp20] = 2; // 2;
+	v[badstructure] = 8; // 8;
+	v[dogholeval2] = 16; // 16;
+	v[badstructure2] = 2; // 3;
+	v[badstructuremax1] = 33;// 34;
+	v[badstructuremax2] = 32;// 32;
+	v[badstructuremin] = 9; // 10;
 	// 58->62 param version with badstructure3
 	// badstructure4, badstructure2stones
 	// kingmanstones
-	v[badstructure3] = 8;
-	v[badstructure4] = 2;
-	v[badstructure2stones] = 12; 
-	v[kingmanstones] = 10; 
+	v[badstructure3] = 7; // 8;
+	v[badstructure4] = 1;// 2;
+	v[badstructure2stones] = 12;// 12;
+	v[kingmanstones] = 10;// 10;
 
 	// up to here was best version by far ever, then I added ungroundedcontact and endangeredbridge; 
 	// remove those again if they are not better. 
-	v[ungroundedcontact] = 0; 
-	v[endangeredbridge] = 0; 
+	//v[ungroundedcontact] = 3;// 0;
+	//v[endangeredbridge] = 7;// 0;
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
+
+	for (i = 0; i < 32; i++)
+		v[arraystart + i + 13] = br[i]; 
 	return 0; 
 }
 
@@ -149,7 +165,7 @@ int startparams() {
 	v[kingtrappedinsinglecornerbytwoval] = 7;// 20;// 7;  // 20; optimized?
 	v[kingtrappedindoublecornerval] = 7;// 10;// 17;  // 10; optimized?
 	v[dominatedkingval] = 10;// 10;// 26; // 10; optimized?
-	v[dominatedkingindcval] = 10;// 10;// 58; // 10; optimized?
+	v[dominatedkingindcval] = 20;// 10;// 58; // 10; optimized?
 	v[kingproximityval] = 0;// 4;// 7; // 4; optimized?
 	v[immobilemanval] = 0;// 2;// 3; // 2; optimized?
 	v[kingholdstwomenval] = 8;// 10;// 28;  // 10; optimized?
@@ -159,23 +175,26 @@ int startparams() {
 	v[balancemult] = 0;    // optimized? 1
 	v[skewnessmult] = 4;		// optimized? 1
 	v[cramp12] = 3;
-	v[cramp13] = 12;
+	v[cramp13] = 15;
 	v[cramp20] = 0;
 	v[badstructure] = 5;
 	v[dogholeval2] = 8;
 	v[badstructure2] = 0;
-	v[badstructuremax1] = 24;
-	v[badstructuremax2] = 24;
+	v[badstructuremax1] = 28;
+	v[badstructuremax2] = 28;
 	v[badstructuremin] = 10;
 	v[badstructure3] = 3;
 	v[badstructure4] = 5;
-	v[badstructure2stones] = 6; 
-	v[kingmanstones] = 6; 
-	v[ungroundedcontact] = 0;
-	v[endangeredbridge] = 0;
+	v[badstructure2stones] = 10; 
+	v[kingmanstones] = 8; 
+	//v[ungroundedcontact] = 0;
+	//v[endangeredbridge] = 3;
 
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i] / 2; 
+
+	for (i = 0; i < 32; i++)
+		v[arraystart + i + 13] = br[i] / 2; 
 
 	return 0;
 }
@@ -832,7 +851,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int32 ungrounded_black = 0, ungrounded_white = 0;
 	int32 immobile_black = 0, immobile_white = 0;
 	int badstructureval; // = 5;// 2; //  5;  // optimized 2;
-	int whitehasbridge = 0, blackhasbridge = 0; 
+	//int whitehasbridge = 0, blackhasbridge = 0; 
 	//int badstructureval;
 
 	/*int32 grounded_black_leftforward, grounded_black_rightforward;
@@ -1021,9 +1040,9 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		// check whether the contacting men are grounded or not.
 		
 		// find all ungrounded black men that are in contact with white men
-		m = ungrounded_black & (rightbackward(p->wm) | leftbackward(p->wm));
+		/*m = ungrounded_black & (rightbackward(p->wm) | leftbackward(p->wm));
 		m1 = ungrounded_white & (leftforward(p->bm) | rightforward(p->bm));
-		e->men += v[ungroundedcontact] * (bitcount(m1) - bitcount(m)); 
+		e->men += v[ungroundedcontact] * (bitcount(m1) - bitcount(m)); */
 		
 		
 		/*if (m1 && !m) {
@@ -1760,7 +1779,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if( (p->wm & BIT28) && (p->wm&BIT30) && (free&BIT29) ) // vtune: use &
 			{
 			ungrounded_black |= SQ23;
-			blackhasbridge = 1;
+			//blackhasbridge = 1;
 			/* black has a bridgehead on BIT21 - maybe account for weakness?
 			e.g. if p->wk -> penalty, or if wk>bk -> penalty?*/
 			/* left side */
@@ -1785,7 +1804,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(match2(p->wm, free, SQ29|SQ31, SQ30))
 			{
 			ungrounded_black |= SQ22;
-			blackhasbridge = 1;
+			//blackhasbridge = 1;
 			if(match2(p->bm, free, SQ23, SQ26|SQ27))
 				{
 				e->runaway+=v[promoteintwo];
@@ -1817,7 +1836,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			{
 			ungrounded_white |= SQ10;
 			/*white has a bridgehead on BIT10 - maybe account for weakness?*/
-			whitehasbridge = 1;
+			//whitehasbridge = 1;
 			/* left side */
 			if( (free&BIT4) && (free&BIT5) && (p->wm&BIT9) ) // vtune: use &
 				{
@@ -1840,7 +1859,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if(match2(p->bm, free, SQ2|SQ4, SQ3))
 			{
 			ungrounded_white |= SQ11;
-			whitehasbridge = 1;
+			//whitehasbridge = 1;
 			if(match2(p->wm, free, SQ12, SQ8))
 				{
 				e->runaway-=v[promoteintwo];
@@ -2314,7 +2333,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		/* endangered bridge heads */
 		/* new 1.3 III */
 		// TODO should read: if white king cannot get out from under bridge, then big penalty!
-		if(whitehasbridge)
+		/*if(whitehasbridge)
 			{
 			if (ki->freebk > ki->freewk)
 				e->king_man += 2 * v[endangeredbridge]; 
@@ -2327,7 +2346,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				e->king_man -= 2* v[endangeredbridge];
 			if(ki->freebk == ki->freewk)
 				e->king_man -= v[endangeredbridge];
-			}
+			}*/
 		/* 'other' bridgeheads */
 		/* new 1.35 */
 		/* this is too little to stop it from believing in the testpos for this theme   */
@@ -2641,8 +2660,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		//							blackbackrankpower
 		//							whitebackrankpower
 
-		static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
-						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
+		//static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
+		//				   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
 
 		//static int br[32] = { -5,-13,-5,-11, 5,6,14,14,0,-11,18,2,20,19,22,18,		// optimized
 		//				 -6,-24,-3,-13, 7,2,13,6,5,-13,22,-2,31,26,31,26 };
