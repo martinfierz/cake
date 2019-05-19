@@ -24,10 +24,26 @@ int v[PARAMS];
 
 
 //static int ungroundedpenalty[13] = { -4,-4,-1,4,10,19,27,36,30,17,28,28,28 }; // optimized
-static int ungroundedpenalty[13] = { -3,-3,0,4,10,19,27,33,28,14,14,14,14}; // optimized
+//static int ungroundedpenalty[13] = { -3,-3,0,4,10,19,27,33,28,14,14,14,14 }; // optimized
+static int ungroundedpenalty[13] = { -5,-4,-1,4,10,20,30,39,38,25,7,7,7 }; // optimized
 
-static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
-						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
+//static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
+//						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
+static int br[32] = { -1,-10,-8, -15, 1,0,7,5,
+					1,-12,14,-2,13,11,19,13,			
+					-5,-22,-7, -17, 2,-3,8,2,
+					1,-17,15,-8,19,17,26,21 };
+
+/* 		WHITE
+	28  29  30	31
+  24  25  26  27
+	20  21  22	23
+  16  17  18  19
+	12  13  14	15
+   8  9	  10  11
+	 4   5	6	 7
+   0   1   2   3
+		BLACK */
 
 
 int setparams(int* params, int n) {
@@ -68,58 +84,58 @@ int getparams(int* params, int* n) {
 int optimalparams() {
 	// meant to set Cake's parameters to the optimal values
 	int i; 
-	v[devsinglecorner] = 6; // 6;
-	v[intactdoublecorner] = 0; // 0;
-	v[oreoval] = 6; // 7;
-	v[idealdoublecornerval] = 9; // 9;
-	v[backrankpower1] = 13; // 12;
-	v[backrankpower2] = 6; // 5;
-	v[backrankpower3] = 3; // 0;
-	v[king_value] = 115; // 116;
-	v[nocrampval] = 3; // 3;
-	v[dogholeval] = 17; // 18;
-	v[dogholemandownval] = 1; // 0;
-	v[mc_occupyval] = -3;// -2;
-	v[mc_attackval] = 2; // 2;
-	v[realdykeval] = 1; // 1;
-	v[greatdykeval] = 5; // 5;
-	v[promoteinone] = 12; // 12;
-	v[promoteintwo] = 8; // 8;
-	v[promoteinthree] = 4; // 4;
-	v[tailhookval] = 14; // 14;
-	v[kcval] = 5; // 6;
-	v[keval] = -4; // -4;
-	v[turnval] = 0; // 0;
-	v[kingcentermonopoly] = 2; // 2;
-	v[kingtrappedinsinglecornerval] = 28; // 29;
-	v[kingtrappedinsinglecornerbytwoval] = 14; // 14;
-	v[kingtrappedindoublecornerval] = 12; // 12;
-	v[dominatedkingval] = 20; // 20;
-	v[dominatedkingindcval] = 33;// 30;
-	v[kingproximityval] = 4; // 4;
-	v[immobilemanval] = 3; // 3;
-	v[kingholdstwomenval] = 18; // 19;
-	v[onlykingval] = 10; // 10;
-	v[roamingkingval] = 5; // 7;
-	v[man_value] = 97; // 97;
-	v[balancemult] = 4; // 4;
-	v[skewnessmult] = 7; // 6;
-	v[cramp12] = 3; // 5;
-	v[cramp13] = 23; // 24;
-	v[cramp20] = 2; // 2;
-	v[badstructure] = 8; // 8;
-	v[dogholeval2] = 16; // 16;
-	v[badstructure2] = 2; // 3;
-	v[badstructuremax1] = 33;// 34;
-	v[badstructuremax2] = 32;// 32;
-	v[badstructuremin] = 9; // 10;
+	v[devsinglecorner] = 1; // 6; // 6;
+	v[intactdoublecorner] = 2; // 0; // 0;
+	v[oreoval] = 7; // 6; // 7;
+	v[idealdoublecornerval] = 9; // 9; // 9;
+	v[backrankpower1] = 10;// 13; // 12;
+	v[backrankpower2] = 5; // 6; // 5;
+	v[backrankpower3] = 0; // 3; // 0;
+	v[king_value] = 116;// 115; // 116;
+	v[nocrampval] = 2;// 3; // 3;
+	v[dogholeval] = 17;// 17; // 18;
+	v[dogholemandownval] = 1;// 1; // 0;
+	v[mc_occupyval] = -3;// -3;// -2;
+	v[mc_attackval] = 2;// 2; // 2;
+	v[realdykeval] = 0;// 1; // 1;
+	v[greatdykeval] = 1;// 5; // 5;
+	v[promoteinone] = 12;// 12; // 12;
+	v[promoteintwo] = 9;// 8; // 8;
+	v[promoteinthree] = 4;// 4; // 4;
+	v[tailhookval] = 14;// 14; // 14;
+	v[kcval] = 5;// 5; // 6;
+	v[keval] = -4;// -4; // -4;
+	v[turnval] = -1;// 0; // 0;
+	v[kingcentermonopoly] = 3;// 2; // 2;
+	v[kingtrappedinsinglecornerval] = 34;// 28; // 29;
+	v[kingtrappedinsinglecornerbytwoval] = 13;// 14; // 14;
+	v[kingtrappedindoublecornerval] = 14;// 12; // 12;
+	v[dominatedkingval] = 21;// 20; // 20;
+	v[dominatedkingindcval] = 37;// 33;// 30;
+	v[kingproximityval] = 4;// 4; // 4;
+	v[immobilemanval] = 1;// 3; // 3;
+	v[kingholdstwomenval] = 16;// 18; // 19;
+	v[onlykingval] = 10;// 10; // 10;
+	v[roamingkingval] = 6;// 5; // 7;
+	v[man_value] = 97; // 97; // 97;
+	v[balancemult] = 3;// 4; // 4;
+	v[skewnessmult] = 8;// 7; // 6;
+	v[cramp12] = 4;// 3; // 5;
+	v[cramp13] = 24;// 23; // 24;
+	v[cramp20] = 1;// 2; // 2;
+	v[badstructure] = 7;// 8; // 8;
+	v[dogholeval2] = 20;// 16; // 16;
+	v[badstructure2] = 6;// 2; // 3;
+	v[badstructuremax1] = 35;// 33;// 34;
+	v[badstructuremax2] = 30;// 32;// 32;
+	v[badstructuremin] = 10;// 9; // 10;
 	// 58->62 param version with badstructure3
 	// badstructure4, badstructure2stones
 	// kingmanstones
-	v[badstructure3] = 7; // 8;
-	v[badstructure4] = 1;// 2;
-	v[badstructure2stones] = 12;// 12;
-	v[kingmanstones] = 10;// 10;
+	v[badstructure3] = 7;// 7; // 8;
+	v[badstructure4] = 1;// 1;// 2;
+	v[badstructure2stones] = 12;// 12;// 12;
+	v[kingmanstones] = 10;// 10;// 10;
 
 	// up to here was best version by far ever, then I added ungroundedcontact and endangeredbridge; 
 	// remove those again if they are not better. 

@@ -3,6 +3,22 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+18.5.2019
+I add br to optimizer, which gives a much better result in terms of error, but in the match it's worse than
+3162k 61p was, clearly. I'm confused and also start a quick 4-move-english checkers match between these two 
+versions of Cake:
+
+************************  best version so far!! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Cake 1.85g 3162k (94p) - Cake 1.85g 3162k (61p) : W-L-D:180-162-908
++:180 =:890 -:162 unknown:18 +B:217 -B:125
+so the new version appears better
+Cake 1.85g 3162k (94p) - Kingsrow(x64) 1.18 : W-L-D:914-579-2239  (match39)
++:914 =:2229 -:579 unknown:10 +B:387 -B:1106  (54.49% absolute, 157.9% relative)
+Cake 1.85g 3162k (94p) - Kingsrow(x64) 1.18f : W-L-D:244-975-3581  (match 41)  (42.39%, 25.03% relative, 3.67 draw-loss)
++:244 =:3532 -:975 unknown:49 +B:691 -B:528
+-----------------------------------------------------------------------------------------
+
+
 17.5.2019
 Add 2 parameters to eval based on what I think I see in games
 -- general contact-grounded-ungrounded eval
@@ -11,7 +27,9 @@ Add 2 parameters to eval based on what I think I see in games
 match37
 Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18f : W-L-D:227-1010-3563 (41.84% overall, 22.47% relative)
 +:227 =:3516 -:1010 unknown:47 +B:741 -B:496
-
+match38
+Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18 : W-L-D:954-584-2194
++:954 =:2186 -:584 unknown:8 +B:364 -B:1174
 
 16.5.2019
 I add another 4 parameters to optimize
@@ -86,10 +104,10 @@ I rewrite cake_eval.c so that the parameters the optimizer comes up with are all
   same order as they appear in the optimizer output so I am less likely to make mistakes in transfer
 
 ************************  best version so far vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18 : W-L-D:966-599-2167  (54.92% total, 161.3% relative wins)
+  Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18 : W-L-D:966-599-2167  (54.92% total, 161.3% relative wins)   --- match24
 +:966 =:2159 -:599 unknown:8 +B:415 -B:1150
 
-Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18f : W-L-D:250-1090-3460   (41.25%  total, 22.94% relative wins)
+Cake 1.85g 3162k (54p) - Kingsrow(x64) 1.18f : W-L-D:250-1090-3460   (41.25%  total, 22.94% relative wins)  -- match25
 +:250 =:3414 -:1090 unknown:46 +B:753 -B:587       
 ----------------------------------------------------------------------------------------------------------
 
