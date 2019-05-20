@@ -123,9 +123,10 @@ int main()
 	int paramnum; 
 
 	// if I want to check search times, run analyze_matchprogress()
-	//analyze_matchprogress(); 
+	analyze_matchprogress(); 
 
-	ep = malloc(sizeof(EVALUATEDPOSITION) * 4000000);
+
+	ep = malloc(sizeof(EVALUATEDPOSITION) * 6000000);
 
 	// initialize eval
 	initeval();
@@ -562,11 +563,11 @@ int analyze_matchprogress(void) {
 	float timesum_kr = 0, timesum_cake = 0; 
 	int n_kr = 0, n_cake = 0; 
 
-	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog185f'_QS.txt", "r");
+	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog36'.txt", "r");
 	while (!feof(fp)) {
 		fgets(line, 255, fp);
 		if (line[0] == 'a' && (line[10] == 'v' || line[33] == 'v')) {  // kingsrow
-			printf("\n%s", line);
+			//printf("\n%s", line);
 			sscanf(line, "analysis: value=%i, depth  %i/%f/%i, %fs", &value, &d1, &d3, &d2, &time);
 			//sscanf(line, "analysis: time remaining:%fs   value=%i, depth  %i/%f/%i, %fs", &dummy, &value, &d1, &d3, &d2, &time);
 			if (d1 > 10 && d1 < 50

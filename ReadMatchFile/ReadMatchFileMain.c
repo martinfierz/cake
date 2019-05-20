@@ -79,11 +79,11 @@ typedef struct
 	
 } SHORTGAME;
 
-#define MAXGAMES 200000
+#define MAXGAMES 400000
 SHORTGAME* gamelist;
 
 
-#define NUMFILES 23
+#define NUMFILES 42
 
 char files[NUMFILES][128] = { "match1.pdn",
 							"match2.pdn",
@@ -107,7 +107,26 @@ char files[NUMFILES][128] = { "match1.pdn",
 "match21.pdn",
 "match22.pdn",
 "match23.pdn",
-"match0.5_1.pdn"
+"match0.5_1.pdn",
+"match24.pdn",
+"match25.pdn",
+"match26.pdn",
+"match27.pdn",
+"match28.pdn",
+"match29.pdn",
+"match30.pdn",
+"match31.pdn",
+"match32.pdn",
+"match33.pdn",
+"match34.pdn",
+"match35.pdn",
+"match36'.pdn",
+"match37.pdn",
+"match38.pdn",
+"match39.pdn",
+"match40.pdn",
+"match41.pdn",
+"match0.5_2.pdn"
 };
 char directory[64] = "C:\\code\\checkersdata\\";
 

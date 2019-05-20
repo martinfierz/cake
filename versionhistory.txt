@@ -3,6 +3,22 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+19.5.2019
+Expand data set to 187k games, with 5890k positions, of which 5534 are quiet
+
+************************  best version so far!! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+but difference to 3162k 94p is small. 
+Cake 1.85g 5534k (94p) - Kingsrow(x64) 1.18 : W-L-D:949-585-2198  (match 42, 54.88%, 162.2% relative)
++:949 =:2195 -:585 unknown:3 +B:383 -B:1151
+Cake 1.85g 5534k (94p) - Kingsrow(x64) 1.18f : W-L-D:259-984-3557 (match 43, 42.45%, 26.32% relative, 3.61 draw-loss)
++:259 =:3515 -:984 unknown:42 +B:718 -B:525
+----------------------------------------------------------------------------------------------
+
+18.5.+19.5.2019:
+5-second match of Cake 3162k 94p vs kr ML on my old laptop with old 3-move openings, no books:
++2 -17 = 269
+5-second match with book:
+
 18.5.2019
 I add br to optimizer, which gives a much better result in terms of error, but in the match it's worse than
 3162k 61p was, clearly. I'm confused and also start a quick 4-move-english checkers match between these two 
@@ -16,7 +32,10 @@ Cake 1.85g 3162k (94p) - Kingsrow(x64) 1.18 : W-L-D:914-579-2239  (match39)
 +:914 =:2229 -:579 unknown:10 +B:387 -B:1106  (54.49% absolute, 157.9% relative)
 Cake 1.85g 3162k (94p) - Kingsrow(x64) 1.18f : W-L-D:244-975-3581  (match 41)  (42.39%, 25.03% relative, 3.67 draw-loss)
 +:244 =:3532 -:975 unknown:49 +B:691 -B:528
+
+reminder: baseline was W-L-D:241-1149-3410 , so wins similar, but 175 losses less now!
 -----------------------------------------------------------------------------------------
+
 
 
 17.5.2019
@@ -28,7 +47,7 @@ match37
 Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18f : W-L-D:227-1010-3563 (41.84% overall, 22.47% relative)
 +:227 =:3516 -:1010 unknown:47 +B:741 -B:496
 match38
-Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18 : W-L-D:954-584-2194
+Cake 1.85g 3162k (64p) - Kingsrow(x64) 1.18 : W-L-D:954-584-2194  (54.96% overall, 163.3% relative)
 +:954 =:2186 -:584 unknown:8 +B:364 -B:1174
 
 16.5.2019
@@ -43,6 +62,12 @@ Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18f : W-L-D:244-1016-3540  (41.96% over
 +:244 =:3486 -:1016 unknown:54 +B:730 -B:530  (match35)
 Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18 : W-L-D:1082-537-2113   (match36)
 +:1082 =:2103 -:537 unknown:10 +B:469 -B:1150  (57.30% overall, 201.5% relative)
+
+Match 36 is an extreme outlier. I repeat it as Match 36' on 18.5.2019 and get a very different result:
+
+Cake 1.85g 3162k (61p) - Kingsrow(x64) 1.18 : W-L-D:913-600-2219
++:913 =:2210 -:600 unknown:9 +B:371 -B:1142    (54.19%, 152.17% relative)
+
 ----------------------------------------------------------------------------------------------------
 
 

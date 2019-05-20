@@ -112,10 +112,6 @@ main()
 	printf("\n20th April 2019");
 	fflush(stdout);
 
-	// if you want to use testcake to evaluate tagged positions then use this
-	//evaluate_tagged_positions(); 
-
-
 	testfile = fopen("C:\\code\\checkersdata\\testcake.txt","r");
 	if(testfile == NULL)
 	{

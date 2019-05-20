@@ -155,7 +155,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\checkerboard17\PDNparser.c" />
     <ClCompile Include="..\boolean.c" />
-    <ClCompile Include="..\cake_eval.c" />
+    <ClCompile Include="..\cake_eval_parametrized.c" />
     <ClCompile Include="..\cake_misc.c" />
     <ClCompile Include="..\dblookup.c" />
     <ClCompile Include="..\move_gen.c" />

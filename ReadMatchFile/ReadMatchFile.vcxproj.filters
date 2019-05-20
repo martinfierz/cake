@@ -27,13 +27,13 @@
     <ClCompile Include="..\boolean.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\cake_eval.c">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="..\cake_misc.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="..\dblookup.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cake_eval_parametrized.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

@@ -166,7 +166,7 @@
     <ClCompile Include="..\boolean.c" />
     <ClCompile Include="..\cakepp.c" />
     <ClCompile Include="..\cake_book.c" />
-    <ClCompile Include="..\cake_eval.c" />
+    <ClCompile Include="..\cake_eval_parametrized.c" />
     <ClCompile Include="..\cake_learn.c" />
     <ClCompile Include="..\cake_misc.c" />
     <ClCompile Include="..\dblookup.c" />
