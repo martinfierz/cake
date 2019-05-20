@@ -27,7 +27,7 @@ int v[PARAMS];
 //static int ungroundedpenalty[13] = { -3,-3,0,4,10,19,27,33,28,14,14,14,14 }; // optimized
 //static int ungroundedpenalty[13] = { -5,-4,-1,4,10,20,30,39,38,25,7,7,7 }; // optimized
 //static int ungroundedpenalty[13] = { -4,-4,-1,3,9,16,24,31,29,20,20,20,20 }; // optimized
-static int ungroundedpenalty[13] = { -3,-3,0,4,9,16,22,28,23,21,21,21,21}; // optimized
+static int ungroundedpenalty[13] = { -3,-3,0,4,9,16,22,28,25,21,21,21,21}; // optimized
 
 //static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
 //						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
@@ -40,9 +40,9 @@ static int ungroundedpenalty[13] = { -3,-3,0,4,9,16,22,28,23,21,21,21,21}; // op
 //					0,-17,10,-6,8,7,16,13,
 //					-12,-28,-12, -22, -4,-9,3,0,
 //					-6,-24,9,-14,13,11,22,19 };
-static int br[32] = { -8,-17,-13, -20, -6,-6,2,-2,
+static int br[32] = { -9,-18,-13, -21, -6,-6,2,-2,
 					-5,-18,9,-8,8,5,14,9,
-					-11,-28,-12, -23, -4,-9,3,-1,
+					-12,-28,-12, -23, -5,-10,3,-2,
 					-6,-23,9,-15,14,11,21,17 };
 
 /* 		WHITE
@@ -93,63 +93,63 @@ int optimalparams() {
 	// meant to set Cake's parameters to the optimal values
 	int i; 
 	v[devsinglecorner] = 2; 
-	v[intactdoublecorner] = 2; 
+	v[intactdoublecorner] = 3; 
 	v[oreoval] = 6; 
 	v[idealdoublecornerval] = 9; 
-	v[backrankpower1] = 37; 
-	v[backrankpower2] = 47; 
-	v[backrankpower3] = 53; 
-	v[king_value] = 114;
+	v[backrankpower1] = 42; 
+	v[backrankpower2] = 66; 
+	v[backrankpower3] = 70; 
+	v[king_value] = 113;
 	v[nocrampval] = 2; 
-	v[dogholeval] = 19;
+	v[dogholeval] = 20;
 	v[dogholemandownval] = 2;
 	v[mc_occupyval] = -2; 
 	v[mc_attackval] = 2; 
 	v[realdykeval] = 0;
 	v[greatdykeval] = 1;
-	v[promoteinone] = 12;
-	v[promoteintwo] = 8; 
+	v[promoteinone] = 13;
+	v[promoteintwo] = 9; 
 	v[promoteinthree] = 4; 
-	v[tailhookval] = 12; 
-	v[kcval] = 5; 
+	v[tailhookval] = 13; 
+	v[kcval] = 6; 
 	v[keval] = -4; 
 	v[turnval] = -1; 
 	v[kingcentermonopoly] = 5; 
-	v[kingtrappedinsinglecornerval] = 34; 
+	v[kingtrappedinsinglecornerval] = 39; 
 	v[kingtrappedinsinglecornerbytwoval] = 13;
-	v[kingtrappedindoublecornerval] = 12;
-	v[dominatedkingval] = 24;
-	v[dominatedkingindcval] = 38;
+	v[kingtrappedindoublecornerval] = 14;
+	v[dominatedkingval] = 27;
+	v[dominatedkingindcval] = 41;
 	v[kingproximityval] = 4;
 	v[immobilemanval] = 1;
-	v[kingholdstwomenval] = 17;
-	v[onlykingval] = 11;
-	v[roamingkingval] = 6;
-	v[man_value] = 96;
+	v[kingholdstwomenval] = 19;
+	v[onlykingval] = 10;
+	v[roamingkingval] = 14;
+	v[man_value] = 94;
 	v[balancemult] = 3;
 	v[skewnessmult] = 8;
-	v[cramp12] = 4;
-	v[cramp13] = 23;
+	v[cramp12] = 5;
+	v[cramp13] = 25;
 	v[cramp20] = 3;
 	v[badstructure] = 6;
-	v[dogholeval2] = 19;
+	v[dogholeval2] = 20;
 	v[badstructure2] = 6;
-	v[badstructuremax1] = 33;
+	v[badstructuremax1] = 34;
 	v[badstructuremax2] = 27;
 	v[badstructuremin] = 7;
 	v[badstructure3] = 5;
-	v[badstructure4] = 5;
+	v[badstructure4] = 7;
 	v[badstructure2stones] = 12;
 	v[kingmanstones] = 11;
 	v[immobile_mult] = 3;
-	v[runaway_destroys_backrank] = 11;
+	v[runaway_destroys_backrank] = 14;
 	v[king_blocks_king_and_man] = 80;
 	v[king_denied_center] = 0;
 	v[king_low_mobility_mult] = 3;
 	v[king_no_mobility] = -10;
-	v[experimental_king_cramp] = 33;
-	v[compensation] = 74;
-	v[compensation_mandown] = 35;
+	v[experimental_king_cramp] = 28;
+	v[compensation] = 75;
+	v[compensation_mandown] = 39;
 
 
 	// up to here was best version by far ever, then I added ungroundedcontact and endangeredbridge; 
