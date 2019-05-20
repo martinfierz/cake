@@ -30,5 +30,10 @@ enum {
 	kingproximityval, immobilemanval, kingholdstwomenval, onlykingval, roamingkingval,
 	man_value, balancemult, skewnessmult, cramp12, cramp13, cramp20, badstructure, dogholeval2, badstructure2, 
 	badstructuremax1, badstructuremax2, badstructuremin, badstructure3, badstructure4, 
-	badstructure2stones, kingmanstones, /*ungroundedcontact, endangeredbridge, */arraystart
+	badstructure2stones, kingmanstones, immobile_mult, runaway_destroys_backrank,
+	king_blocks_king_and_man, king_denied_center, king_low_mobility_mult, king_no_mobility,
+	experimental_king_cramp, compensation, compensation_mandown,
+	/*ungroundedcontact, endangeredbridge, */arraystart
 };
+
+

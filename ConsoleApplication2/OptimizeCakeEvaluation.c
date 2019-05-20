@@ -1,18 +1,12 @@
-// ConsoleApplication2.cpp : Defines the entry point for the console application.
-//
-
-
-// 26.11.2017
-// a first test with an "optimized" evaluation gives catastrophic result
-// +22-57 instead of ~equal!
+// TODO
+// position selection should be on basis of file on disk, not of eval itself - otherwise, 
+// when you run the optimizer again, it gives a different result because the eval has changed.
 
 #include <stdlib.h> 
 #include <assert.h>
 #include <windows.h>
 #include <math.h>
 #include "stdafx.h"
-//#include "cake_misc.h"
-
 
 // cake-specific includes - structs defines structures, consts defines constants,
 // xxx.h defines function prototypes for xxx.c
@@ -27,8 +21,8 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 100
-#define PARAMSOPT 56 //24  //35
+#define PARAMS 120
+
 
 /* bitboard masks for moves in various directions */
 /* here "1" means the squares in the columns 1357 and "2" in 2468.*/
@@ -83,7 +77,10 @@ char strs[PARAMS][128] =  {
 	"kingproximityval", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
 	"man_value", "balancemult", "skewnessmult", "cramp12", "cramp13", "cramp20", "badstructure", 
 	"dogholeval2", "badstructure2", "badstructuremax1", "badstructuremax2", "badstructuremin", "badstructure3", "badstructure4",
-	"badstructure2stones", "kingmanstones",/* "ungroundedcontact", "endangeredbridge",*/
+	"badstructure2stones", "kingmanstones","immobile_mult", 
+	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", "king_no_mobility",
+	"experimental_king_cramp", "compensation", "compensation_mandown",	
+	/* "ungroundedcontact", "endangeredbridge",*/
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
 	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
 	"br0", "br1", "br2", "br3", "br4", "br5", "br6", "br7",
@@ -91,6 +88,8 @@ char strs[PARAMS][128] =  {
 	"br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23",
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
 };
+
+
 
 
 float calc_error(int n, EVALUATEDPOSITION* ep, float c); 
@@ -120,17 +119,18 @@ int main()
 	int iter[3] = { 1,0,2 };
 	int sameadjust; 
 	int adjust; 
-	int paramnum; 
+	int paramnum = 0; 
 
 	// if I want to check search times, run analyze_matchprogress()
-	analyze_matchprogress(); 
+	//analyze_matchprogress(); 
 
 
 	ep = malloc(sizeof(EVALUATEDPOSITION) * 6000000);
 
 	// initialize eval
 	initeval();
-	startparams();
+	//startparams();
+	optimalparams(); 
 	updateeval();
 
 	// recall parameters from cake's evaluation
@@ -141,7 +141,8 @@ int main()
 	//	printf("\nparameter[%i] is %i (%s)", i, params[i], strs[i]); 
 	//getch(); 
 
-	startparams(); 
+	//startparams(); 
+	optimalparams(); 
 	updateeval();
 
 	getparams(params, &paramnum);
