@@ -620,6 +620,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 								// and remain so during iterative deeping.
 
 	FILE *lfp; 
+#ifdef NEWREPDETECTION
+	static POSITION lastsearchpos; 
+#endif
 
 	/*
 	if (log) {
@@ -691,6 +694,23 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		for(i=0;i<HISTORYOFFSET;i++)
 			si->repcheck[i] = dummy;
 		}
+#ifdef NEWREPDETECTION
+	// no reset indicated by CB; check if we have to shift history array
+	else {
+		if (si->repcheck[HISTORYOFFSET].hash != si->hash.key) {
+			logtofile("\nNo reset, shifting repcheck array by 1");
+			for (i = 0; i < HISTORYOFFSET - 1; i++)
+				si->repcheck[i] = si->repcheck[i + 1];
+		}
+		else
+			logtofile("\nlast position found in repcheck array, not shifting it");
+	}
+	si->repcheck[HISTORYOFFSET].hash = si->hash.key;
+	if (reset != 0)
+		logtofile("\nReset indicated by calling function, resetting repcheck array"); 
+#endif
+
+
 #endif
 
 #ifdef TESTPERF
@@ -771,6 +791,10 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 				}
 			else
 				value = allscoresearch(si, p, movelist, FRAC*d, &best);
+#endif
+
+#ifdef NEWLOG
+			logtofile(si->out); 
 #endif
 			// count zero evals
 			if(value == 0)
@@ -870,7 +894,27 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		best = last;
 #endif
 	togglemove(p,best);
+
+
 	absolutehashkey(p, &(si->hash));
+
+#ifdef NEWREPDETECTION
+	// remember this position 
+	lastsearchpos.color = p->color;
+	lastsearchpos.bm = p->bm;
+	lastsearchpos.bk = p->bk;
+	lastsearchpos.wm = p->wm;
+	lastsearchpos.wk = p->wk;
+
+	// shift history array
+	for (i = 0; i < HISTORYOFFSET; i++)
+		si->repcheck[i] = si->repcheck[i + 1];
+
+	si->repcheck[HISTORYOFFSET].hash = si->hash.key;
+	logtofile("\nShifted repcheck array by 1 at end of search");
+#endif
+
+
 	// return value: WIN / LOSS / DRAW / UNKNOWN
 	// if this position occurred before, return a rep draw
 	int repetitions = 0; 
@@ -959,6 +1003,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		if(g<beta)
 			{
 			upperbound=g;
+			// TODO: move sprintfs into a #ifdef FULLOG clause
 			sprintf(Lstr1,"value<%i",beta);
 			}
 		else
@@ -971,6 +1016,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		time = ( (clock() - si->start)/CLK_TCK);
 		getpv(si, p, Lstr2);
 
+		// TODO: move line below into fullog
 		searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
 #ifdef FULLLOG
 		sprintf(Lstr,"\n -> %s",si->out);
@@ -991,7 +1037,9 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		}
 	sprintf(Lstr1,"value=%i",g);
 	searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
+#ifndef NEWLOG
 	logtofile(si->out);
+#endif
 	//printf("%s\n", si->out); 
 	 
 	return g;

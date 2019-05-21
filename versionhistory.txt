@@ -3,6 +3,13 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+21.5.2019
+I try to redo the last version of Cake but also run optimizer multiple times after noticing that this affects
+the positions used by the optimizer.
+
+Match results: 
+match48: 
+
 20.5.2019
 I add 9 further parameters (last 9 except tempo array!!) to optimizer.
 I notice that two parameters are negative which were supposed to be positive, strange, I investigate and it seems
@@ -14,6 +21,16 @@ Cake 1.85g 5534k (103p) - Cake 1.85 original (x64) : W-L-D:215-145-890
 +:215 =:874 -:145 unknown:16 +B:220 -B:140  (148.3 win-%, quite impressive)
 sanity check against last version  (103p - 94p)
 
+it loses and I start messing around like an idiot, why?? this was likely not significant
+Cake 1.85g 5534k (103p) - Cake 1.85g 5534k (94p) : W-L-D:153-161-936
++:153 =:927 -:161 unknown:9 +B:195 -B:119
+
+************************  probably best version so far!! vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+Cake 1.85g 5534k (103p) - Kingsrow(x64) 1.18f : W-L-D:256-933-3611  (match46)
++:256 =:3552 -:933 unknown:59 +B:686 -B:503  (42.95%, 27.44% relative, 3.87 draw-loss)
+Cake 1.85g 5534k (103p) - Kingsrow(x64) 1.18 : W-L-D:950-594-2188    (match47)
++:950 =:2177 -:594 unknown:11 +B:380 -B:1164  (54.77%, 159.9% relative)
+----------------------------------------------------------------------------------------------
 
 
 19.5.2019

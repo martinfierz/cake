@@ -10,6 +10,10 @@
 #define VERSION "1.85"
 #endif
 
+// two new flags to test logging and rep detection later on
+#undef NEWREPDETECTION
+#undef NEWLOG
+
 //#define FIXEDDEPTH 3
 #undef THREADSAFEHT				// locks access to hashlookup and hashstore if set.
 #include "consts.h"
