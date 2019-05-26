@@ -626,6 +626,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	FILE *fp; 
 
 	static POSITION lastsearchpos; 
+	static int newgamestarts = 0; 
 	int32 difference; 
 
 	/*
@@ -723,15 +724,19 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 #endif
 
 	// check if position we are searching resembles last searched position or not
-// future use: clear hashtable if not!
+	// this is good for deciding on hash clear, and for deciding on repetition checks
 	difference = p->bm ^ lastsearchpos.bm;
 	difference |= (p->wm ^ lastsearchpos.wm);
 	difference |= (p->bk ^ lastsearchpos.bk);
 	difference |= (p->wk ^ lastsearchpos.wk);
 
 	if (bitcount(difference) > 6) {
-		logtofile(fp, "\n******very different position found, clearing hashtable");
-		memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+		logtofile(fp, "\n******very different position found, assuming new game");
+		newgamestarts++;
+		if((newgamestarts % 500) == 0)
+			memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+		//for (i = 0; i < hashsize + HASHITER; i++)
+		//	hashtable[i].depth = 0; 
 	}
 	else
 		logtofile(fp, "\n******very similar position found");

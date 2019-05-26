@@ -3,9 +3,9 @@
 #include <windows.h>
 #include <winbase.h>
 #include <assert.h>
+#include <string.h>
 #include <shlwapi.h>
 #include <shlobj.h>
-#include <string.h>
 
 #include "structs.h"
 #include "consts.h"
@@ -15,8 +15,6 @@
 #include "cake_misc.h"
 #include "dblookup.h"
 
-
-//static FILE * cake_fp = 0;
 
 
 void searchinfotostring(char *out, int depth, double time, char *valuestring, char *pvstring, SEARCHINFO *si)
@@ -209,35 +207,34 @@ FILE *getlogfile(int clear)
 {
 	char lstr[256];
 	char dirname[256]; 
-	wchar_t dir[256]; 
-	//TCHAR dir[256]; 
-
+	//wchar_t dir[256]; 
+	char dir[256]; 
 	FILE* fp; 
 
-	//return NULL; 
-
 	// Create the standard set of CheckerBoard directories under My Documents. 
-	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
-		// folder should be in lstr
-		wcscat(dir, L"\\Martin Fierz\\Cake\\cakelog.txt");
-
-		//printf("\n Cake log file is %ws", dir);
-		//getch(); 
-		//exit(0);
+	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
+		// personal folder is now in dir, append my path
+		//wcscat(dir, L"\\Martin Fierz\\Cake\\cakelog.txt");
+		//strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
+		strcat(dir, "\\Martin Fierz");
+		strcat(dir, "\\Cake");
+		strcat(dir, "\\cakelog.txt");
+		printf("\ncake logfile is %s", dir);
+		getch(); 
 
 		getcakedir(lstr);
 		GetCurrentDirectory(256, dirname); 
 		SetCurrentDirectory(lstr);
 
 		if (clear)
-			fp = fopen("C:\\code\\cakelog.txt", "w");
-			//fp = _wfopen(dir, L"w");
+			//fp = fopen("C:\\code\\cakelog.txt", "w");
+			fp = fopen(dir, "w");
 		else {
-			fp = fopen("C:\\code\\cakelog.txt", "a");
-			//fp = _wfopen(dir, L"a");
+			//fp = fopen("C:\\code\\cakelog.txt", "a");
+			fp = fopen(dir, "a");
 			if (fp == NULL)
-				//fp = _wfopen(dir, L"w");
-				fp = fopen("C:\\code\\cakelog.txt", "w");
+				fp = fopen(dir, "w");
+				//fp = fopen("C:\\code\\cakelog.txt", "w");
 		}
 		
 		/*if (fp != NULL) {
