@@ -209,17 +209,19 @@ FILE *getlogfile(int clear)
 {
 	char lstr[256];
 	char dirname[256]; 
-	//wchar_t dir[256]; 
-	TCHAR dir[256]; 
+	wchar_t dir[256]; 
+	//TCHAR dir[256]; 
 
 	FILE* fp; 
+
+	//return NULL; 
 
 	// Create the standard set of CheckerBoard directories under My Documents. 
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
 		// folder should be in lstr
 		wcscat(dir, L"\\Martin Fierz\\Cake\\cakelog.txt");
 
-		//printf("\npersonal directory is %ws", dir);
+		//printf("\n Cake log file is %ws", dir);
 		//getch(); 
 		//exit(0);
 
@@ -228,14 +230,14 @@ FILE *getlogfile(int clear)
 		SetCurrentDirectory(lstr);
 
 		if (clear)
-			//fp = fopen("C:\\code\\cakelog.txt", "w");
-			fp = _wfopen(dir, "w");
+			fp = fopen("C:\\code\\cakelog.txt", "w");
+			//fp = _wfopen(dir, L"w");
 		else {
-			//fp = fopen("C:\\code\\cakelog.txt", "a");
-			fp = _wfopen(dir, "a");
+			fp = fopen("C:\\code\\cakelog.txt", "a");
+			//fp = _wfopen(dir, L"a");
 			if (fp == NULL)
-				fp = _wfopen(dir, "w");
-				//fp = fopen("C:\\code\\cakelog.txt", "w");
+				//fp = _wfopen(dir, L"w");
+				fp = fopen("C:\\code\\cakelog.txt", "w");
 		}
 		
 		/*if (fp != NULL) {

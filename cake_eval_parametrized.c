@@ -923,7 +923,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 	int br1,br2,br3,br4,br6,br7,br8;
 	int32 ungrounded_black = 0, ungrounded_white = 0;
 	int32 immobile_black = 0, immobile_white = 0;
-	int badstructureval; // = 5;// 2; //  5;  // optimized 2;
+	//int badstructureval; // = 5;// 2; //  5;  // optimized 2;
 	int whitehasbridge = 0, blackhasbridge = 0; 
 	//int badstructureval;
 

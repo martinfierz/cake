@@ -138,7 +138,8 @@ int initcake(char str[1024])
 #endif
 
 	cakeisinit=1;
-	fclose(fp); 
+	if(fp != NULL)
+		fclose(fp); 
 	return 1;
 	}
 
@@ -678,22 +679,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 #endif
 
 
-	// check if position we are searching resembles last searched position or not
-	// future use: clear hashtable if not!
-	difference = p->bm ^ lastsearchpos.bm;
-	difference |= (p->wm ^ lastsearchpos.wm);
-	difference |= (p->bk ^ lastsearchpos.bk);
-	difference |= (p->wk ^ lastsearchpos.wk);
-
-	if (bitcount(difference) > 6) {
-		logtofile(fp, "\n******very different position found, clearing hashtable");
-		memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
-	}
-	else
-		logtofile(fp, "\n******very similar position found");
-
-
-
 
 	// clear the hashtable 
 	//if(reset)
@@ -736,6 +721,21 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	if (reset != 0)
 		logtofile("\nReset indicated by calling function, resetting repcheck array"); 
 #endif
+
+	// check if position we are searching resembles last searched position or not
+// future use: clear hashtable if not!
+	difference = p->bm ^ lastsearchpos.bm;
+	difference |= (p->wm ^ lastsearchpos.wm);
+	difference |= (p->bk ^ lastsearchpos.bk);
+	difference |= (p->wk ^ lastsearchpos.wk);
+
+	if (bitcount(difference) > 6) {
+		logtofile(fp, "\n******very different position found, clearing hashtable");
+		memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+	}
+	else
+		logtofile(fp, "\n******very similar position found");
+
 
 
 
