@@ -10,7 +10,7 @@
 
 // TODO: variables such as the book hashtable, number of bookentries and the usethebook setting should be owned by this file
 
-int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], HASHENTRY *book, int bookentries, int usethebook)
+int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], HASHENTRY *book, int bookentries, int usethebook, FILE *fp)
 	{
 	// searches for a position in the book hashtable.
 	int32 index;
@@ -39,18 +39,18 @@ int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *b
 	if(pointer == NULL)
 		return 0;
 
-	printboardtofile(p); 
+	printboardtofile(p, fp); 
 	
 	// now, look up current position
 	absolutehashkey(p,&hash);
 	index = hash.key % size;
 
 	sprintf(Lstr, "hash is %i (key) %i (lock), index is %i, searching through %i book entries", hash.key, hash.lock, index, bookentries);
-	logtofile(Lstr); 
+	logtofile(fp, Lstr); 
 	printf(str); 
 
 	sprintf(Lstr, "the size of an int32 is %zi", sizeof(int32)); 
-	logtofile(Lstr); 
+	logtofile(fp, Lstr); 
 	
 	// harmonize colors between cake and book
 	bookcolor = p->color;
@@ -62,10 +62,10 @@ int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *b
 	//while (iter<bookentries)
 		{
 		sprintf(Lstr, "iteration %i index %i: %i =? %i", iter, index, pointer[index].lock, hash.lock);
-		logtofile(Lstr);
+		logtofile(fp, Lstr);
 		if(pointer[index].lock == hash.lock)  {
 			sprintf(Lstr, "\npotential match in book found"); 
-			logtofile(Lstr); 
+			logtofile(fp, Lstr); 
 			if (((int)pointer[index].color == bookcolor)) {
 				*remainingdepth = pointer[index].depth;
 				*value = pointer[index].value;
@@ -86,7 +86,7 @@ int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *b
 		sprintf(Lstr, "found position in book at index %i", index);
 	else
 		sprintf(Lstr, "position not found in book after %i iterations", iter);
-	logtofile(Lstr);
+	logtofile(fp, Lstr);
 	printf(Lstr);
 
 	if(bookfound)

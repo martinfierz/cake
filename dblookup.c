@@ -816,7 +816,7 @@ int db_exit(void)
 	return 1;
 	}
 
-int db_init(int suggestedMB, char out[256])
+int db_init(int suggestedMB, char out[256], FILE *logfile)
 	{
 	// returns the number of dbpieces that can be looked up, i.e. the largest db found
 	// parameters: suggestedMB which is what dblookup will allocate if possible
@@ -889,8 +889,8 @@ int db_init(int suggestedMB, char out[256])
 	memset(cprsubdatabase, 0, (MAXPIECE+1)*(MAXPIECE+1)*(MAXPIECE+1)*(MAXPIECE+1)*98*sizeof(cprsubdb));
 	
 	SetCurrentDirectory((LPCWSTR) DBpath);
-	logtofile("db search path is:");
-	logtofile(DBpath);
+	logtofile(logfile, "db search path is:");
+	logtofile(logfile, DBpath);
 			
 
 	// detect largest present database and put the number of pieces in variable pieces:
@@ -1007,12 +1007,12 @@ int db_init(int suggestedMB, char out[256])
 			{
 			strcat(dbinfo,dbname);
 			strcat(dbinfo,"\n");
-			logtofile("found an index file:"); 
-			logtofile(out);
+			logtofile(logfile, "found an index file:"); 
+			logtofile(logfile, out);
 			fclose(fp);
 		}
 		else
-			logtofile("could not find the expected index file!"); 
+			logtofile(logfile, "could not find the expected index file!"); 
 		// parse next index file
 		pifreturnvalue = parseindexfile(dbname,blockoffset,fpcount);
 		
@@ -1022,7 +1022,7 @@ int db_init(int suggestedMB, char out[256])
 			{
 			blockoffset += pifreturnvalue;
 			sprintf(str,"  %i blocks",blockoffset);
-			logtofile(str);
+			logtofile(logfile, str);
 			fpcount++;
 			}
 		}
@@ -1046,29 +1046,29 @@ int db_init(int suggestedMB, char out[256])
 					// ok, found a valid db, now do the do: 
 					sprintf(dbname,"%s\\%s%i_%i%i%i%i.idx",DBpath,DBPREFIX,bm+bk+wm+wk,bm,bk,wm,wk);
 					sprintf(out,"parsing %s",dbname);
-					logtofile("trying to parse:"); 
-					logtofile(dbname); 
+					logtofile(logfile, "trying to parse:"); 
+					logtofile(logfile, dbname); 
 					fp = fopen(dbname,"rb");
 					if(fp != NULL)				// TODO: what happens if fp = null??
 						{
-						logtofile("found an index file:"); 
+						logtofile(logfile, "found an index file:"); 
 						strcat(dbinfo,dbname);		// TODO: is there a problem here? what is dbinfo anyway??
 						strcat(dbinfo,"\n");
 						//strcat_s(dbinfo,1024,dbname);		// TODO: is there a problem here? what is dbinfo anyway??
 						//strcat_s(dbinfo,1024,"\n");
 						
-						logtofile(out);
+						logtofile(logfile, out);
 						fclose(fp);
 						}
 					else
-						logtofile("could not find the expected index file!"); 
+						logtofile(logfile, "could not find the expected index file!"); 
 		
 					pifreturnvalue = parseindexfile(dbname,blockoffset,fpcount);
 					if(pifreturnvalue >= 0)
 						{
 						blockoffset += pifreturnvalue;
 						sprintf(str, "  %i blocks",blockoffset);
-						logtofile(str);
+						logtofile(logfile, str);
 						fpcount++;
 						}
 					}
@@ -1076,9 +1076,9 @@ int db_init(int suggestedMB, char out[256])
 			}
 		}
 
-	logtofile("index files parsed");
+	logtofile(logfile, "index files parsed");
 	sprintf(str,"allocated %i KB for indexing",bytesallocated/1024);
-	logtofile(str);
+	logtofile(logfile, str);
 	// index files are parsed!
 	
 	
@@ -1090,14 +1090,14 @@ int db_init(int suggestedMB, char out[256])
 	if(cachebaseaddress == NULL && memsize!=0)
 		{	
 		sprintf(str,"\ncould not allocate DB cache (%i KB)",(cachesize));
-		logtofile(str);
+		logtofile(logfile, str);
 		error = GetLastError();
 		sprintf(str,"\nerror code %i",error);
-		logtofile(str);
+		logtofile(logfile, str);
 		exit(0);
 		}
 	sprintf(str,"\nallocated %i KB for DB cache ",(cachesize));
-	logtofile(str);
+	logtofile(logfile, str);
 
 	// allocate memory for blockpointers
 	// statement below was sizeof(int) which returned 4 even on the 64-bit version of windows?!
@@ -1106,14 +1106,14 @@ int db_init(int suggestedMB, char out[256])
 	if(blockpointer == NULL && memsize != 0 )
 		{	
 		sprintf(str,"\ncould not allocate blockpointer array (%i blocks)",maxblocknum);
-		logtofile(str);
+		logtofile(logfile, str);
 		error = GetLastError();
 		sprintf(str,"\nerror code %i",error);
-		logtofile(str);
+		logtofile(logfile, str);
 		exit(0);
 		}
 	sprintf(str,"\nallocated %i KB for block pointer array",maxblocknum/256);
-	logtofile(str);
+	logtofile(logfile, str);
 	// set blockpointers to NULL - this statement crashes on 64-bit machine
 	for(i=0;i<maxblocknum;i++)
 		blockpointer[i]=NULL;
@@ -1124,14 +1124,14 @@ int db_init(int suggestedMB, char out[256])
 	if(blockinfo == NULL && memsize!=0)
 		{	
 		sprintf(str,"\ncould not allocate LRU list (%zi KB)",(cachesize)*sizeof(struct bi)/1024);
-		logtofile(str);
+		logtofile(logfile, str);
 		error = GetLastError();
 		sprintf(str,"\nerror code %i",error);
-		logtofile(str);
+		logtofile(logfile, str);
 		exit(0);
 		}
 	sprintf(str,"\nallocated %zi KB for LRU linked list",(cachesize)*sizeof(struct bi)/1024);
-	logtofile(str);
+	logtofile(logfile, str);
 
 #ifdef PRELOAD
 	preload(out);
@@ -1160,12 +1160,12 @@ int db_init(int suggestedMB, char out[256])
 		if(dbfp[fpcount]==NULL)
 			{
 			sprintf(str,"\ndbfp[%i] is null! (%s)",fpcount, dbname);
-			logtofile(str);
+			logtofile(logfile, str);
 			}
 		else
 			{
-			logtofile("database found:"); 
-			logtofile(dbname);
+			logtofile(logfile, "database found:"); 
+			logtofile(logfile, dbname);
 		}
 		fpcount++;
 		}
@@ -1313,13 +1313,13 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 	char str[256];
 
 	sprintf(str,"parsing index file %s",idxfilename);
-	logtofile(str);
+	//logtofile(str);
 
 	fp = fopen(idxfilename,"r");
 	if(fp==0)
 		{
 		sprintf(str,"cannot open index file %s",idxfilename);
-		logtofile(str); 
+		//logtofile(str); 
 		return -1;
 		}
 
@@ -1333,7 +1333,7 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 			break;
 		else if (stat < 7) {
 			sprintf(str, "Error parsing!\n");
-			logtofile(str); 
+			//logtofile(str); 
 			return -2;
 		}
 
@@ -1353,7 +1353,7 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 				stat = fscanf(fp, "%c", &c);
 				if (stat < 1) {
 					sprintf(str, "Bad line");
-					logtofile(str); 
+					//logtofile(str); 
 					return -2;
 				}
 			}
@@ -1375,7 +1375,7 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 				// Check for too many indices.
 				if (num == maxidx) {
 					sprintf(str, "reached maxidx\n");
-					logtofile(str); 
+					//logtofile(str); 
 					return -2;
 				}
 			}
@@ -1386,7 +1386,7 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 			bytesallocated += num*sizeof(int);
 			if (dbpointer->idx == NULL) {
 				sprintf(str, "malloc error for idx array!");
-				logtofile(str); 
+				//logtofile(str); 
 				return -2;
 			}
 			memcpy(dbpointer->idx, idx, num * sizeof(int));
@@ -1404,7 +1404,7 @@ static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
 				break;
 			default:
 				sprintf(str, "Bad singlevalue line");
-				logtofile(str); 
+				//logtofile(str); 
 				return(0);
 			}
 			dbpointer = &cprsubdatabase[bm][bk][wm][wk][bmrank][wmrank][color];

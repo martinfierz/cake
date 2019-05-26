@@ -84,6 +84,11 @@ SHORTGAME* gamelist;
 
 
 #define NUMFILES 42
+#define NUMFILESREP 5
+
+// repeat identical matches should be 46,53,54 and 50,52
+
+char repeatfiles[NUMFILESREP][128] = { "match46.pdn", "match54.pdn", "match53.pdn", "match50.pdn", "match52.pdn" };
 
 char files[NUMFILES][128] = { "match1.pdn",
 							"match2.pdn",
@@ -163,15 +168,17 @@ int main()
 	if(gamelist != NULL)
 		memset(gamelist, 0, sizeof(SHORTGAME) * MAXGAMES); // set to 0
 
-	for (i = 0; i < NUMFILES; i++) {
-		sprintf(filename, "%s%s", directory, files[i]);
-		printf("\nfile to open is %s", filename);
+	for (i = 0; i < NUMFILESREP; i++) {
+		sprintf(filename, "%s%s", directory, repeatfiles[i]);
+	//for (i = 0; i < NUMFILES; i++) {
+	//	sprintf(filename, "%s%s", directory, files[i]);
+			printf("\nfile to open is %s", filename);
 		position_number = load_PDN(ep, filename);
 		//getch();
 	}
 
 	printf("\nnow storing positions..."); 
-	fp = fopen("C:\\code\\checkersdata\\taggedpositions_new.txt", "w");
+	fp = fopen("C:\\code\\checkersdata\\taggedpositions_newrep.txt", "w");
 	for (i = 0; i < position_number; i++)
 		fprintf(fp, "%u %u %u %u %i %i\n", ep[i].bm, ep[i].bk, ep[i].wm, ep[i].wk, ep[i].color, ep[i].gameresult);
 	fclose(fp);
@@ -248,6 +255,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 		isduplicate = 0; 
 
 		// get headers
+		p.bm = 0; p.wm = 0; 
 		result = readheaders(&p, &startheader); 
 
 
@@ -281,9 +289,16 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 			}
 		}
 		// headers parsed*/
-
+		
+		// initialize the gamelist entry:
 		gamelist[gamenumber].result = result; 
 		gamelist[gamenumber].startposition = ((__int64) p.bm) + (((__int64)p.wm) << 32);
+		gamelist[gamenumber].moves[0] = 0;
+		gamelist[gamenumber].moves[1] = 0;
+		gamelist[gamenumber].moves[2] = 0;
+		gamelist[gamenumber].moves[3] = 0;
+		gamelist[gamenumber].moves[4] = 0;
+
 
 		// remember the position index so that we could reset
 		gamestart_position = positions; 
@@ -335,6 +350,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 				}
 			}
 			// store move in short game list
+			
 			if (movenumber < 40) {
 				gamelist[gamenumber].moves[movenumber / 8] +=  ( ((__int64) (moveindex % 16)) << ((moveindex % 16) * 5) ); 
 			}
@@ -345,6 +361,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 				//printf("\n%s", game); 
 				//getch();
 				error = 1; 
+				printf("!!error!!"); 
 			}
 			// check for capture
 			capture = 0;
@@ -403,7 +420,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 					gamelist[i].moves[4] == gamelist[gamenumber].moves[4]) {
 					duplicates++;
 					isduplicate = 1; 
-					//printf("\nduplicate game found! %i %i", i, gamenumber); 
+					//printf("\nduplicate game found! %i %i (%i)", i, gamenumber, positions); 
 					//printf("\n%s", game); 
 					//getch(); 
 				}
@@ -413,7 +430,9 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 		if(error || isduplicate)		// go back to original entry of array thereby overwriting 
 			positions = gamestart_position;
 		if (isduplicate)
-			gamenumber--; 		
+			gamenumber--;
+		//else
+		//	printf("\ngame %i is no duplicate", gamenumber); 
 	}
 	printf("\n%i positions stored, %i repetitions, %i endgames, %i captures, %i duplicates found", 
 		positions, repetitions, endgames, captures, duplicates);

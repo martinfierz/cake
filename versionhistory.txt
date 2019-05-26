@@ -3,12 +3,55 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+
+25.5.2019
+I add tempo modifier to optimizer, for a 135parameter version. match against kr 118 is 2nd best ever = very good:
+Match result against kr 1.18 f also very good. Maybe best version overall ever?
+
+Cake 1.86 5547k (135p) - Kingsrow(x64) 1.18 : W-L-D:982-546-2204 (55.84% overall, 179.9% relative, match57)
++:982 =:2192 -:546 unknown:12 +B:375 -B:1153
+Cake 1.86 5547k (135p) - Kingsrow(x64) 1.18f : W-L-D:279-962-3559  (42.89%, 29.00% relative, 3.70 loss-draw , match58)
++:279 =:3503 -:962 unknown:56 +B:744 -B:497
+
+
+24.5.2019
+I add another few parameters to the optimizer, in particular I disentangle all the bad structures to individual
+values. I also simplified by giving the bad structures a constant value, not a phase-dependent value.
+In return, I remove some parameters that had no effect, now I have a 110-parameter version.
+*****need to revisit the phase-dependent thing!******
+
+Cake 1.86 5547k (110p) - Kingsrow(x64) 1.18f : W-L-D:243-950-3607 (match56)
++:243 =:3562 -:950 unknown:45 +B:697 -B:496
+Cake 1.86 5547k (110p) - Kingsrow(x64) 1.18 : W-L-D:961-563-2208  (match55)
++:961 =:2194 -:563 unknown:14 +B:370 -B:1154
+
+23.5.2019:
+I try to repeat matches!
+Cake 1.86 5547k (107p) - Kingsrow(x64) 1.18f : W-L-D:272-971-3557
++:272 =:3514 -:971 unknown:43 +B:731 -B:512
+19 wins more and 2 losses less than yesterday's match
+
+22.5.2019: 
+I use endangered bridge head and ungrounded contacts, but that gave a clearly worse result: (43 losses-wins more)
+Cake 1.86 5547k (107p) - Kingsrow(x64) 1.18f : W-L-D:253-973-3574
++:253 =:3523 -:973 unknown:51 +B:731 -B:495
+However, in the match against kr 1.18 it gave a fantastic result:  (42 wins-losses more)
+Cake 1.86 5547k (107p) - Kingsrow(x64) 1.18 : W-L-D:1001-555-2176  
++:1001 =:2166 -:555 unknown:10 +B:390 -B:1166
+
+it's so unrepeatable :-(
+
 21.5.2019
 I try to redo the last version of Cake but also run optimizer multiple times after noticing that this affects
 the positions used by the optimizer.
 
 Match results: 
-match48: 
+match48: massive!
+Cake 1.85g 5550k (103p) - Kingsrow(x64) 1.18 : W-L-D:966-562-2204  (55.41% absolute, 171.9% relative)
++:966 =:2187 -:562 unknown:17 +B:365 -B:1163
+match49:
+Cake 1.85g 5550k (103p) - Kingsrow(x64) 1.18f : W-L-D:255-932-3613  (42.95% absolute, 27.36% relative, 3.88 draw-loss)
++:255 =:3558 -:932 unknown:55 +B:691 -B:496  
 
 20.5.2019
 I add 9 further parameters (last 9 except tempo array!!) to optimizer.

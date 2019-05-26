@@ -90,6 +90,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 	EVALUATION e;
 	char *s;
 	int dbresult;
+	//FILE* fp; 
 
 	if(!dll_is_init)
 		{
@@ -398,6 +399,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		int i;
 		SEARCHINFO si;
 		HASH h; 
+		//FILE* fp; 
 		
 		if(!cake_is_init)
 			{

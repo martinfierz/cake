@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 120
+#define PARAMS 135
 
 
 /* bitboard masks for moves in various directions */
@@ -69,24 +69,31 @@ static int params[PARAMS]; // parameters to optimize
 
 char strs[PARAMS][128] =  {
 	"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", "backrankpower1",
-	"backrankpower2", "backrankpower3", "king_value", "nocrampval", "dogholeval", "dogholemandownval",
+	"backrankpower2", "backrankpower3", "king_value", "nocrampval13", "nocrampval20", "dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
 	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
 	"turnval", "kingcentermonopoly", "kingtrappedinsinglecornerval",
 	"kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval", "dominatedkingval", "dominatedkingindcval",
 	"kingproximityval", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
 	"man_value", "balancemult", "skewnessmult", "cramp12", "cramp13", "cramp20", "badstructure", 
-	"dogholeval2", "badstructure2", "badstructuremax1", "badstructuremax2", "badstructuremin", "badstructure3", "badstructure4",
-	"badstructure2stones", "kingmanstones","immobile_mult", 
+	"dogholeval2", "badstructure2", /*"badstructuremax1", "badstructuremax2", "badstructuremin", */
+	"badstructure3", "badstructure4",
+	"badstructure5", "badstructure6", "badstructure7", "badstructure8",
+	"badstructure9", "badstructure10", "badstructure11",
+	/*"badstructure2stones",*/ "kingmanstones","immobile_mult", 
 	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", "king_no_mobility",
 	"experimental_king_cramp", "compensation", "compensation_mandown",	
-	/* "ungroundedcontact", "endangeredbridge",*/
+	/*"compensation_mandown_norunaway",*/
+	"ungroundedcontact", "endangeredbridge", "endangeredbridge_kingdown",
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
 	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
 	"br0", "br1", "br2", "br3", "br4", "br5", "br6", "br7",
 	"br8", "br9", "br10", "br11", "br12", "br13", "br14", "br15",
 	"br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23",
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
+	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
+	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
+	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24"
 };
 
 
@@ -120,6 +127,9 @@ int main()
 	int sameadjust; 
 	int adjust; 
 	int paramnum = 0; 
+	float influence[PARAMS];
+	float influence0[PARAMS]; 
+	
 
 	// if I want to check search times, run analyze_matchprogress()
 	//analyze_matchprogress(); 
@@ -217,6 +227,7 @@ int main()
 			}
 		}
 	}
+	fclose(fp); 
 	n = i - 1 - rejected;
 	printf("\ntotal %i, quiet %i, final %i, %i were rejected", pos_num, quiet_pos_num, n, rejected);
 	getch(); 
@@ -275,6 +286,7 @@ int main()
 	
 			// save old value	
 			oldparam = params[j];
+			influence[j] = 0; 
 
 			printf("\nparameter %i:%i", j, oldparam);
 			// 1. try going in positive direction
@@ -284,6 +296,7 @@ int main()
 				setparams(params, paramnum); 
 				updateeval(); 
 				error = calc_error(n, ep, c);
+				influence[j] += fabs(error - minerror);
 				printf(" +(%.6f)", error); 
 				if (error > (minerror - 1e-7)) {
 					// revert
@@ -303,12 +316,14 @@ int main()
 					updateeval();
 					error = calc_error(n, ep, c);
 					printf(" -(%.6f)", error);
+					influence[j] += fabs(error - minerror);
 					if (error > (minerror-1e-7)) {
 						// revert
 						params[j]++;
 						break;
 					}
 					adjust++;
+
 					minerror = error; 
 					printf(" (%i)", params[j]);
 				}
@@ -329,9 +344,24 @@ int main()
 			break; 
 	}
 
-	for(i=0; i<paramnum; i++) 
-		printf("\n%i:\t%i\t(%s)", i, params[i], strs[i]); 
-	
+	// find out what the influence of this parameter is overall:
+	for (i = 0; i < paramnum; i++) {
+		oldparam = params[i];
+		params[i] = 0;
+		setparams(params, paramnum);
+		updateeval();
+		error = calc_error(n, ep, c);
+		influence0[i] = error - minerror; 
+		params[i] = oldparam;
+	}
+
+
+	fp = fopen("C:\\code\\checkersdata\\param_influence.txt", "w");
+	for (i = 0; i < paramnum; i++) {
+		printf("\n%i:\t%i\t(%s)  (+-%.3f, +-%.3f)", i, params[i], strs[i], 1000.0 * influence[i], 1000.0 * influence0[i]);
+		fprintf(fp, "%i\t%s\t%i\t%.3f\t%.3f\n", i, strs[i], params[i], 1000.0* influence[i], 1000.0* influence0[i]);
+	}
+	fclose(fp); 
 	printf("\n%i iterations made, no more improvement possible", iterations);
 	printf("\nerror after optimization is %.7f", minerror);
 

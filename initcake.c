@@ -12,7 +12,7 @@
 #include "boolean.h"
 
 #ifdef BOOK
-HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
+HASHENTRY *loadbook(int *bookentries, int *bookmovenum, FILE *fp)
 // loads the cake book file and returns a pointer to the book,
 // sets bookentries to the number of entries in the opening book.
 {
@@ -32,7 +32,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 		/* book file not found */
 		book = NULL;
 		sprintf(Lstr,"no opening book detected under %s\\engines\\book.bin\n", dirname);
-		logtofile(Lstr);
+		logtofile(fp, Lstr);
 		return 0;	
 		}
 
@@ -49,7 +49,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 	if (book == NULL)
 	{
 		sprintf(Lstr,"malloc failure in initcake (book malloc failed)");
-		logtofile(Lstr);
+		logtofile(fp, Lstr);
 		return NULL;
 	}
 
@@ -60,10 +60,10 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 	fclose(Lfp); 
 
 	sprintf(Lstr,"allocated %zi KB for book hashtable",sizeof(struct bookhashentry)*(*bookentries)/1024);
-	logtofile(Lstr);
+	logtofile(fp, Lstr);
 	printf(Lstr); 
 	sprintf(Lstr,"book hashtable with %i entries allocated\n",(*bookentries));
-	logtofile(Lstr);
+	logtofile(fp, Lstr);
 	printf(Lstr); 
 
 	//Lfp = fopen("d:\\booklog.txt", "w"); 
@@ -81,7 +81,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 		}
 
 	sprintf(Lstr,"%i moves in opening book\n",j);
-	logtofile(Lstr);
+	logtofile(fp, Lstr);
 	printf(Lstr); 
 
 	*bookmovenum = j;
@@ -92,7 +92,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum)
 
 #endif
 
-HASHENTRY *inithashtable(int hashsize)
+HASHENTRY *inithashtable(int hashsize, FILE *logfile)
 	{
 	// allocate memory for the hashtable. 
 	// align the hashtable on a 64-byte-boundary
@@ -109,7 +109,7 @@ HASHENTRY *inithashtable(int hashsize)
 	if(ptr == NULL)
 		{
 		sprintf(Lstr,"malloc failure in initcake (hashtable memory allocation failed)");
-		logtofile(Lstr);
+		logtofile(logfile, Lstr);
 		exit(0);
 		}
 

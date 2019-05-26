@@ -39,7 +39,7 @@
 
 #define MINCACHESIZE 65536
 
-int db_init(int suggestedMB, char str[256]);
+int db_init(int suggestedMB, char str[256], FILE *logfile);
 int db_exit(void);
 int dblookup(POSITION *p,int cl, MATERIALCOUNT * matcount);
 int revert(int32 n);

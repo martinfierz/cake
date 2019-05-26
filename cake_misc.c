@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <shlwapi.h>
 #include <shlobj.h>
+#include <string.h>
 
 #include "structs.h"
 #include "consts.h"
@@ -15,7 +16,7 @@
 #include "dblookup.h"
 
 
-static FILE * cake_fp = 0;
+//static FILE * cake_fp = 0;
 
 
 void searchinfotostring(char *out, int depth, double time, char *valuestring, char *pvstring, SEARCHINFO *si)
@@ -163,18 +164,18 @@ void printboard(POSITION *p)
 	}
 
 
-void printboardtofile(POSITION *p)
+void printboardtofile(POSITION *p, FILE *fp)
 	{
 	int i;
 	int free=~(p->bm|p->bk|p->wm|p->wk);
 	int b[32];
 	char c[15]="-wb      WB";
 
-	FILE *Lfp;
+	//FILE *Lfp;
 	
-	Lfp = getlogfile();
+	//Lfp = getlogfile();
 
-	if(Lfp == NULL)
+	if(fp == NULL)
 		return;
 
 	for(i=0;i<32;i++)
@@ -191,56 +192,87 @@ void printboardtofile(POSITION *p)
 			b[i]=0;
 		}
 
-	fprintf(Lfp,"\n\n");
-	fprintf(Lfp,"\n %c %c %c %c",c[b[28]],c[b[29]],c[b[30]],c[b[31]]);
-	fprintf(Lfp,"\n%c %c %c %c ",c[b[24]],c[b[25]],c[b[26]],c[b[27]]);
-	fprintf(Lfp,"\n %c %c %c %c",c[b[20]],c[b[21]],c[b[22]],c[b[23]]);
-	fprintf(Lfp,"\n%c %c %c %c ",c[b[16]],c[b[17]],c[b[18]],c[b[19]]);
-	fprintf(Lfp,"\n %c %c %c %c",c[b[12]],c[b[13]],c[b[14]],c[b[15]]);
-	fprintf(Lfp,"\n%c %c %c %c ",c[b[8]],c[b[9]],c[b[10]],c[b[11]]);
-	fprintf(Lfp,"\n %c %c %c %c",c[b[4]],c[b[5]],c[b[6]],c[b[7]]);
-	fprintf(Lfp,"\n%c %c %c %c ",c[b[0]],c[b[1]],c[b[2]],c[b[3]]);
+	fprintf(fp,"\n\n");
+	fprintf(fp,"\n %c %c %c %c",c[b[28]],c[b[29]],c[b[30]],c[b[31]]);
+	fprintf(fp,"\n%c %c %c %c ",c[b[24]],c[b[25]],c[b[26]],c[b[27]]);
+	fprintf(fp,"\n %c %c %c %c",c[b[20]],c[b[21]],c[b[22]],c[b[23]]);
+	fprintf(fp,"\n%c %c %c %c ",c[b[16]],c[b[17]],c[b[18]],c[b[19]]);
+	fprintf(fp,"\n %c %c %c %c",c[b[12]],c[b[13]],c[b[14]],c[b[15]]);
+	fprintf(fp,"\n%c %c %c %c ",c[b[8]],c[b[9]],c[b[10]],c[b[11]]);
+	fprintf(fp,"\n %c %c %c %c",c[b[4]],c[b[5]],c[b[6]],c[b[7]]);
+	fprintf(fp,"\n%c %c %c %c ",c[b[0]],c[b[1]],c[b[2]],c[b[3]]);
 	//fclose(Lfp);
 	}
 
 
-FILE *getlogfile()
+FILE *getlogfile(int clear)
 {
 	char lstr[256];
 	char dirname[256]; 
+	//wchar_t dir[256]; 
+	TCHAR dir[256]; 
 
-	if(cake_fp != 0)
-		return cake_fp;
-	
-	/* Create the standard set of CheckerBoard directories under My Documents. */
-	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, lstr))) {
+	FILE* fp; 
+
+	// Create the standard set of CheckerBoard directories under My Documents. 
+	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
+		// folder should be in lstr
+		wcscat(dir, L"\\Martin Fierz\\Cake\\cakelog.txt");
+
+		//printf("\npersonal directory is %ws", dir);
+		//getch(); 
+		//exit(0);
+
 		getcakedir(lstr);
 		GetCurrentDirectory(256, dirname); 
 		SetCurrentDirectory(lstr);
 
-		cake_fp = fopen("cakelog.txt","a");
-		if(cake_fp == NULL)
-			cake_fp = fopen("cakelog.txt","w");
+		if (clear)
+			//fp = fopen("C:\\code\\cakelog.txt", "w");
+			fp = _wfopen(dir, "w");
+		else {
+			//fp = fopen("C:\\code\\cakelog.txt", "a");
+			fp = _wfopen(dir, "a");
+			if (fp == NULL)
+				fp = _wfopen(dir, "w");
+				//fp = fopen("C:\\code\\cakelog.txt", "w");
+		}
+		
+		/*if (fp != NULL) {
+			printf("\nopened cake log file, writing something");
+			fprintf(fp, "cake log file");
+			fclose(fp); 
+			printf("\nlog file closed, check it! ");
+			getch(); 
+		}*/
+
 		SetCurrentDirectory(dirname); 
 		
-		return cake_fp;
+		return fp;
 	}
 	return NULL;
 }
 
-void clearlogfile()
+void clearlogfile(FILE* fp)
 {
-	char lstr[256];
+	//char lstr[256];
+
+	if (fp != NULL) {
+		fprintf(fp, "Cake log file\n\n");
+		//fclose(fp);
+	}
+	return; 
 
 	/* Create the standard set of CheckerBoard directories under My Documents. */
+	/*
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, lstr))) {
 		getcakedir(lstr);
 		SetCurrentDirectory(lstr);
 
 		cake_fp = fopen("cakelog.txt","w");
-		fprintf(cake_fp,"Cake log file\n\n");
-		fclose(cake_fp);
+
 	}
+	*/
 }
 
 void getcakedir(char *lstr)
@@ -258,20 +290,20 @@ void getcakedir(char *lstr)
 	CreateDirectory(lstr, NULL);
 }
 
-int logtofile(char *str)
+int logtofile(FILE *fp, char *str)
 {
 	// log a string to the engine logfile "cakelog.txt"
-	FILE *fp;
+	//FILE *fp;
 
-	return; 
+	//return; 
 
 	//printf("%s\n",str);
-	fp = getlogfile();
+	//fp = getlogfile();
 	if(fp != NULL)
 		{
 		fprintf(fp,"\n%s",str);
 		fflush(fp); 
-		fclose(fp);
+		//fclose(fp);
 		return 1;
 		}
 	return 0;
@@ -339,8 +371,8 @@ int exitcake()
 	{
 	// deallocate memory 
 	db_exit();
-	if(cake_fp != NULL)
-		fclose(cake_fp); 
+	//if(cake_fp != NULL)
+	//	fclose(cake_fp); 
 	return 1;
 	}
 

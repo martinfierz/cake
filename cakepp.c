@@ -51,7 +51,7 @@ static int cakeisinit = 0;			// is set to 1 after cake is initialized, i.e. init
 static int32 hashxors[2][4][32];			// this is initialized to constant hashxors stored in the code.
 static int  norefresh;
 
-FILE* cake_main_fp; 
+//FILE* cake_main_fp; 
 
 int32 killer1[MAXDEPTH], killer2[MAXDEPTH];
 
@@ -85,22 +85,26 @@ int initcake(char str[1024])
 	char dirname[256];
 	int returnvalue;
 	char s[256];
+	FILE* fp; 
 
 	returnvalue = GetCurrentDirectory(256, dirname);
-	clearlogfile();
-	logtofile("working directory is:"); 
-	logtofile(dirname);
+	
+	//clearlogfile();
+	fp = getlogfile(1);
+	
+	logtofile(fp, "working directory is:"); 
+	logtofile(fp, dirname);
 	sprintf(s,"characters returned: %i \n\n",returnvalue);
-	logtofile(s);
+	logtofile(fp, s);
 	SetCurrentDirectory(dirname);
 
-	cake_main_fp = getlogfile(); 
+	
 	// TODO: here working dir is still ok
 	// do some loads. first, the endgame database.
 
 #ifdef USEDB
 	sprintf(str, "initializing database");
-	maxNdb = db_init(dbmegabytes,str);
+	maxNdb = db_init(dbmegabytes,str, fp);
 	printf("\nfound %i-piece database in %s", maxNdb, dirname); 
 #endif // USEDB
 
@@ -109,17 +113,15 @@ int initcake(char str[1024])
 	SetCurrentDirectory(dirname);
 	sprintf(str,"loading book...");
 	printf("loading book...");
-	book = loadbook(&bookentries, &bookmovenum);
+	book = loadbook(&bookentries, &bookmovenum, fp);
 #endif
 
 	// allocate hashtable
 	sprintf(str,"allocating hashtable...");
-	hashtable = inithashtable(hashsize);
+	hashtable = inithashtable(hashsize, fp);
 	
 	// initialize xors 
 	initxors((int*)hashxors);
-	
-
 	
 	initeval();
 #ifdef SPA
@@ -136,6 +138,7 @@ int initcake(char str[1024])
 #endif
 
 	cakeisinit=1;
+	fclose(fp); 
 	return 1;
 	}
 
@@ -154,7 +157,7 @@ int hashreallocate(int newMB)  // call with hashmegabytes
 	newsize = (hashmegabytes)*1024*1024/sizeof(HASHENTRY);	
 
 	sprintf(Lstr,"reallocating hashtable to %i MB", newMB);
-	logtofile(Lstr);
+	//logtofile(Lstr);
 
 	// TODO: this must be coerced to a power of 2. luckily this is true
 	// with sizeof(HASHENTRY) == 8 bytes, but if i ever change that it will
@@ -181,7 +184,7 @@ int hashreallocate(int newMB)  // call with hashmegabytes
 		}*/
 	// TODO: do something if pointer == NULLbut what do we do when pointer == 0 here??
 	if(pointer == NULL) {
-		logtofile("hash reallocation failed");
+		//logtofile("hash reallocation failed");
 		exit(0);
 	}
 	return 1;
@@ -619,10 +622,10 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	MOVE movelist[MAXMOVES];	// we make a movelist here which we pass on, so that it can be ordered
 								// and remain so during iterative deeping.
 
-	FILE *lfp; 
-#ifdef NEWREPDETECTION
+	FILE *fp; 
+
 	static POSITION lastsearchpos; 
-#endif
+	int32 difference; 
 
 	/*
 	if (log) {
@@ -633,12 +636,17 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			fclose(lfp);
 		}
 	}*/
+
 	
 	// initialize module if necessary
 	if (!cakeisinit) {
 		printf("\ninitializing Cake");
 		initcake(str);
 	}
+
+	// open the log file at the start of a search
+	fp = getlogfile(0);
+
 	resetsearchinfo(si);
 	memset(iscapture, 0, MAXDEPTH * sizeof(int)); 
 	//for (i = 0; i < MAXDEPTH; i++) {
@@ -659,7 +667,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	if(info&8)
 		si->allscores = 1;
 	if(log)
-		printboardtofile(p);
+		printboardtofile(p, fp);
 	// print current directory to see whether CB is getting confused at some point.
 	//GetCurrentDirectory(256, pvstring);
 	// initialize material 
@@ -668,6 +676,25 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 #ifdef MOHISTORY // reset history table 
 	memset(si->history,0,32*32*sizeof(int));
 #endif
+
+
+	// check if position we are searching resembles last searched position or not
+	// future use: clear hashtable if not!
+	difference = p->bm ^ lastsearchpos.bm;
+	difference |= (p->wm ^ lastsearchpos.wm);
+	difference |= (p->bk ^ lastsearchpos.bk);
+	difference |= (p->wk ^ lastsearchpos.wk);
+
+	if (bitcount(difference) > 6) {
+		logtofile(fp, "\n******very different position found, clearing hashtable");
+		memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
+	}
+	else
+		logtofile(fp, "\n******very similar position found");
+
+
+
+
 	// clear the hashtable 
 	//if(reset)
 	//memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
@@ -711,6 +738,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 #endif
 
 
+
 #endif
 
 #ifdef TESTPERF
@@ -749,7 +777,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			sprintf(str,"%X %X not found in book\n",si->hash.key,si->hash.lock);
 			value=0;
 			}
-		logtofile(str);
+		logtofile(fp, str);
 		}
 	else
 		bookfound=0;
@@ -794,7 +822,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 #endif
 
 #ifdef NEWLOG
-			logtofile(si->out); 
+			logtofile(fp, si->out); 
 #endif
 			// count zero evals
 			if(value == 0)
@@ -898,7 +926,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	absolutehashkey(p, &(si->hash));
 
-#ifdef NEWREPDETECTION
+
 	// remember this position 
 	lastsearchpos.color = p->color;
 	lastsearchpos.bm = p->bm;
@@ -906,6 +934,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	lastsearchpos.wm = p->wm;
 	lastsearchpos.wk = p->wk;
 
+#ifdef NEWREPDETECTION
 	// shift history array
 	for (i = 0; i < HISTORYOFFSET; i++)
 		si->repcheck[i] = si->repcheck[i + 1];
@@ -914,6 +943,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	logtofile("\nShifted repcheck array by 1 at end of search");
 #endif
 
+	// we are done searching, close the log file
+	if (fp != NULL)
+		fclose(fp); 
 
 	// return value: WIN / LOSS / DRAW / UNKNOWN
 	// if this position occurred before, return a rep draw
@@ -1113,7 +1145,7 @@ int allscoresearch(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, 
 		sprintf(si->out,"%s", str);
 		}
 
-	logtofile(str);
+	//logtofile(str);
 
 	// now, order the list according to values
 	for(j=0;j<n;j++)
@@ -2717,8 +2749,8 @@ int perft(SEARCHINFO *si, POSITION *p, int depth)
 	char str[256];
 	double t = clock(); 
 	
-	logtofile("");
-	logtofile("perft");
+	//logtofile("");
+	//logtofile("perft");
 	for(i=1; i<=depth; i++)
 		{
 		resetsearchinfo(si);
@@ -2727,7 +2759,7 @@ int perft(SEARCHINFO *si, POSITION *p, int depth)
 		t = clock(); 
 		t = (t-si->start)/CLK_TCK; 
 		sprintf(str, "depth %i positions %i  time %f   %.1f kN/s", i, si->negamax, t, si->negamax/(t*1000));
-		logtofile(str);
+		//logtofile(str);
 		}
 	return si->negamax; 
 	}
