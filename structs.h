@@ -179,11 +179,11 @@ typedef struct
 // struct hashentry needs 8 bytes 
 	{
 	int32  lock;
-	unsigned int best:6;		// best is an index, with 6 bits I can do 64, 1 bit less should suffice
+	unsigned int best : 6;		// could be 5 bits
 	int value:12;				// value is 12 bits because +-MATE is 4000
 	unsigned int color:1;
 	unsigned int ispvnode:1;
-	unsigned int depth:10;		// depth is 10 bits because? it can actually only go to 400, so 9 bits would be sufficient
+	unsigned int depth : 10;		// could be 9 bits
 	unsigned int valuetype:2;
 	} HASHENTRY;
 

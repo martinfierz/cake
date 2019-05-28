@@ -397,7 +397,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		int how=0;
 		int maxdepth=0;
 		int i;
-		SEARCHINFO si;
+		static SEARCHINFO si;
 		HASH h; 
 		//FILE* fp; 
 		
@@ -405,6 +405,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 			{
 			initcake(str);
 			cake_is_init = 1;
+			si.repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
 			}
 
 		resetsearchinfo(&si);
@@ -412,14 +413,14 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		p.color = color;
 		
 		// allocate memory for repcheck array
-		si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
+		//si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
 		absolutehashkey(&p, &h);
 
 		// initialize repdetect array
-		repdetect[HISTORYOFFSET].hash = h.key;
+		/*repdetect[HISTORYOFFSET].hash = h.key;
 		repdetect[HISTORYOFFSET].irreversible = !(p.bk && p.wk); // only if both sides have kings it can be reversible 
 		for(i = 0; i<=HISTORYOFFSET;i++) 
-			si.repcheck[i] = repdetect[i];
+			si.repcheck[i] = repdetect[i];*/
 		// if reset, then we clear repdetect array
 		if(info & 1) {
 			for(i = 0 ;i<HISTORYOFFSET; i++) {
@@ -439,12 +440,12 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		returns if playnow is !=0 and does logging according to LOG. and does a reset
 		if this is requested (info bit 1 set)*/
 		bitboardtoboard(&p,b);
-		absolutehashkey(&p, &h);
+		/*absolutehashkey(&p, &h);
 		repdetect[HISTORYOFFSET+1].hash = h.key;
 		repdetect[HISTORYOFFSET+1].irreversible = 0;
 		for(i = 0; i<HISTORYOFFSET;i++) 
 			repdetect[i] = repdetect[i+2];
-		free(si.repcheck);
+		free(si.repcheck);*/
 
 		return value;
 		}

@@ -219,8 +219,8 @@ FILE *getlogfile(int clear)
 		strcat(dir, "\\Martin Fierz");
 		strcat(dir, "\\Cake");
 		strcat(dir, "\\cakelog.txt");
-		printf("\ncake logfile is %s", dir);
-		getch(); 
+//		printf("\ncake logfile is %s", dir);
+	//	getch(); 
 
 		getcakedir(lstr);
 		GetCurrentDirectory(256, dirname); 
@@ -363,7 +363,7 @@ void resetsearchinfo(SEARCHINFO *s)
 	int *rep = (int*)s->repcheck; 
 	memset(s, 0, sizeof(SEARCHINFO)); 
 	s->repcheck = (REPETITION *) rep; //malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
-	s->repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
+	//s->repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
 	}
 
 int exitcake()

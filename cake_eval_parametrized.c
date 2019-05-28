@@ -23,6 +23,8 @@ static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man d
 #define PARAMS 150
 int v[PARAMS];
 
+#define RARELYUSED
+
 
 //static int ungroundedpenalty[13] = { -4,-4,-1,4,10,19,27,36,30,17,28,28,28 }; // optimized
 //static int ungroundedpenalty[13] = { -3,-3,0,4,10,19,27,33,28,14,14,14,14 }; // optimized
@@ -1362,7 +1364,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		/* add 'greatdykeval': no more men on bit2,3,6 -> the man on bit14 cannot be challenged
 			any more! */
 
-		
+#ifdef RARELYUSED
 		if((p->bm & SQ19) && (p->wm & SQ28)) // vtune: use &
 			{
 			e->men += v[realdykeval];
@@ -1375,6 +1377,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if(match1(~p->bm, SQ1|SQ2|SQ6))
 				e->men -= v[greatdykeval];
 			}
+#endif
 		
 		//
 		// done with man evaluation
@@ -1396,16 +1399,20 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		{
 			if (p->wm & SQ24)
 				e->cramp += v[cramp20];
+#ifdef RARELYUSED
 			if (free & SQ24)
 				e->cramp -= v[nocrampval20]; //cramping nothing - discourage a little
+#endif
 		}
 
 		if (p->wm & SQ13)
 		{
 			if (p->bm & SQ9)
 				e->cramp -= v[cramp20];
+#ifdef RARELYUSED
 			if (free & SQ9)
 				e->cramp += v[nocrampval20]; // cramping nothing - discourage a little
+#endif
 		}
 
 		// cramp13 = params[39]
@@ -1428,7 +1435,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				e->cramp += v[nocrampval13]; // cramping nothing - discourage a little
 		}
 
-		//params[38] = 0; // cramp12
+
+#ifdef RARELYUSED
 		if (p->bm & SQ12) {
 			if (p->wm & SQ16)
 				e->cramp += v[cramp12];
@@ -1437,7 +1445,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (p->bm & SQ17)
 				e->cramp -= v[cramp12];
 		}
-
+#endif
 		//
 		//  end of cramps
 		//
@@ -1458,7 +1466,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			//    4   5   6   7
 			//  0   1   2   3
 		// Todo: bm on 19+24 is also terrible
-
+#ifdef RARELYUSED
 		if(match3(p->bm, p->wm, free, (SQ19|SQ23), (SQ28|SQ31), (SQ24|SQ27|SQ32)))
 			{
 			e->hold -= v[badstructure3];  // was 6
@@ -1471,6 +1479,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if(p->bk)
 				e->hold += v[badstructure4];  // was 10
 			}
+#endif
 
 		/* some bad structures */
 		/* found with PDNtool */
@@ -1528,10 +1537,12 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		//    4   5   F   b
 		//  0   1   2   F
 		// these were all wrong until las vegas 1.04!!
+#ifdef RARELYUSED
 		if(match3(p->bm, p->wm, free, (SQ5|SQ9|SQ13), (SQ14|SQ17|SQ18|SQ22), (SQ1|SQ6)))
 			e->hold += v[badstructure5];
 		if (match3(p->bm, p->wm, free, (SQ11 | SQ15 | SQ16 | SQ19), (SQ20 | SQ24 | SQ28), (SQ27 | SQ32)))
 			e->hold -= v[badstructure5];
+#endif
 
 		//   28  29  30  31
 		// 24   w  26  27
@@ -2326,8 +2337,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=(~attack);
 			tmp&=free2;
 			m=bitcount(tmp);
+#ifdef RARELYUSED
 			if(!(tmp&CENTER))
-				e->king -= v[king_denied_center]; 
+				e->king -= v[king_denied_center];
+#endif
 				//e->king -= 2;
 			if(m<=4)
 				e->king -= (v[king_low_mobility_mult] * (5 - m));
@@ -2364,8 +2377,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=free2;
 			tmp&=(~attack);
 			m=bitcount(tmp);
+#ifdef RARELYUSED
 			if (!(tmp & CENTER))
 				e->king += v[king_denied_center]; // 2;
+#endif
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 
 			if(m<=1)
@@ -2550,8 +2565,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 					if(m1 == 2)
 						// one king holds two men!
 						e->king_man += v[kingholdstwomenval];
+#ifdef RARELYUSED
 					else if(m1 == 1)
 						e->king_man += v[immobilemanval];
+#endif
 					}
 				}
 	
@@ -2585,8 +2602,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 					if(m1 == 2)
 						// one king holds two men!
 						e->king_man -= v[kingholdstwomenval];
+#ifdef RARELYUSED
 					else if(m1 == 1)
 						e->king_man -= v[immobilemanval];
+#endif
 					}
 			
 				}

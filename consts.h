@@ -262,10 +262,12 @@
 #define RIGHT 0x7777777
 #define left(x) ( ((x)&LEFT) >> 1)
 #define right(x) ( ((x)&RIGHT) << 1)
-#define forward(x) ( (((x)&LF1)<<3) | (((x)&LF2)<<4) | (((x)&RF1)<<4) | (((x)&RF2)<<5) )
+//#define forward(x) ( (((x)&LF1)<<3) | (((x)&LF2)<<4) | (((x)&RF1)<<4) | (((x)&RF2)<<5) )
+#define forward(x) ( (((x)&LF1)<<3) | (((x)&0x0FFFFFFF)<<4) | (((x)&RF2)<<5) )
 #define leftforward(x) ( (((x)&LF1)<<3) | (((x)&LF2)<<4)  )
 #define rightforward(x) ( (((x)&RF1)<<4) | (((x)&RF2)<<5) )
-#define backward(x) ( (((x)&LB1)>>5) | (((x)&LB2)>>4) | (((x)&RB1)>>4) | (((x)&RB2)>>3) )
+//#define backward(x) ( (((x)&LB1)>>5) | (((x)&LB2)>>4) | (((x)&RB1)>>4) | (((x)&RB2)>>3) )
+#define backward(x) ( (((x)&LB1)>>5) | (((x)&0xFFFFFFF0)>>4) | (((x)&RB2)>>3) )
 #define leftbackward(x) ( (((x)&LB1)>>5) | (((x)&LB2)>>4)  )
 #define rightbackward(x) ( (((x)&RB1)>>4) | (((x)&RB2)>>3) )
 #define TWOLEFTFORWARD 0x00EEEEEE

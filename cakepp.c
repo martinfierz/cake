@@ -627,7 +627,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	static POSITION lastsearchpos; 
 	static int newgamestarts = 0; 
-	int32 difference; 
+	int32 difference = 0; 
+	int32 identical = 0; 
+	int irreversible = 0; 
 
 	/*
 	if (log) {
@@ -639,6 +641,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		}
 	}*/
 
+
+
 	
 	// initialize module if necessary
 	if (!cakeisinit) {
@@ -648,6 +652,12 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	// open the log file at the start of a search
 	fp = getlogfile(0);
+
+	//logtofile(fp, "repcheck array at very start of cake_getmove");
+	//for (i = 0; i <= HISTORYOFFSET; i++) {
+	//	sprintf(Lstr, "(%i, %i, %i)", i, si->repcheck[i].hash, si->repcheck[i].irreversible);
+	//	logtofile(fp, Lstr);
+	//}
 
 	resetsearchinfo(si);
 	memset(iscapture, 0, MAXDEPTH * sizeof(int)); 
@@ -679,13 +689,36 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	memset(si->history,0,32*32*sizeof(int));
 #endif
 
+	// check if position we are searching resembles last searched position or not
+	// this is good for deciding on hash clear, and for deciding on repetition checks
+	difference = p->bm ^ lastsearchpos.bm;
+	difference |= (p->wm ^ lastsearchpos.wm);
+	difference |= (p->bk ^ lastsearchpos.bk);
+	difference |= (p->wk ^ lastsearchpos.wk);
+	if (bitcount(difference > 6))
+		difference = 1;
+	else
+		difference = 0;
 
+	if (!p->bk && !p->wk)
+		irreversible = 1; 
+	if (p->bm != lastsearchpos.bm)
+		irreversible = 1; 
+	if (p->wm != lastsearchpos.wm)
+		irreversible = 1; 
+
+	// check if position we are searching is identical to the last one searched
+	//if (p->bm == lastsearchpos.bm && p->bk == lastsearchpos.bk &&
+	//	p->wm == lastsearchpos.wm && p->wk == lastsearchpos.wk)
+	//	identical = 1; 
 
 	// clear the hashtable 
 	//if(reset)
 	//memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
 	// initialize hash key 
 	absolutehashkey(p, &(si->hash));
+	//sprintf(Lstr, "hash key before Cake's move is %i", si->hash.key);
+	//logtofile(fp, Lstr);
 	
 
 #ifdef LEARNUSE //stuff learned positions in the hashtable
@@ -699,42 +732,59 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	//n = makecapturelist(p, movelist, values, 0);
 
 #ifdef REPCHECK
+	//logtofile(fp, "repcheck array at start of cake_getmove"); 
+	//for (i = 0; i <= HISTORYOFFSET; i++) {
+	//	sprintf(Lstr, "(%i, %i, %i)", i, si->repcheck[i].hash, si->repcheck[i].irreversible);
+	//	logtofile(fp, Lstr);
+	//}
 	// initialize history list: holds the last few positions of the current game 
 	dummy.hash = 0;
 	dummy.irreversible = 0;
 	if(reset != 0)
 		{
-		for(i=0;i<HISTORYOFFSET;i++)
+		//logtofile(fp, "\nreset indicated by CB, resetting rep array\n"); 
+		for (i = 0; i < HISTORYOFFSET; i++) {
 			si->repcheck[i] = dummy;
+			}
 		}
 #ifdef NEWREPDETECTION
 	// no reset indicated by CB; check if we have to shift history array
 	else {
 		if (si->repcheck[HISTORYOFFSET].hash != si->hash.key) {
-			logtofile("\nNo reset, shifting repcheck array by 1");
-			for (i = 0; i < HISTORYOFFSET - 1; i++)
+			//logtofile(fp, "\nNo reset, shifting repcheck array by 1");
+			for (i = 0; i < HISTORYOFFSET; i++) {
 				si->repcheck[i] = si->repcheck[i + 1];
+			}
+			si->repcheck[HISTORYOFFSET].hash = si->hash.key;
+			si->repcheck[HISTORYOFFSET].irreversible = irreversible;  
 		}
-		else
-			logtofile("\nlast position found in repcheck array, not shifting it");
+		//else
+		//	logtofile(fp, "\nlast position found in repcheck array, not shifting it");
 	}
-	si->repcheck[HISTORYOFFSET].hash = si->hash.key;
-	if (reset != 0)
-		logtofile("\nReset indicated by calling function, resetting repcheck array"); 
+
+	/*if (reset != 0)
+		logtofile(fp, "\nReset indicated by calling function, resetting repcheck array"); 
+	logtofile(fp, "repcheck array after init in cake_getmove");
+	for (i = 0; i <= HISTORYOFFSET; i++) {
+		sprintf(Lstr, "(%i, %i, %i)", i, si->repcheck[i].hash, si->repcheck[i].irreversible);
+		logtofile(fp, Lstr);
+	}*/
 #endif
 
-	// check if position we are searching resembles last searched position or not
-	// this is good for deciding on hash clear, and for deciding on repetition checks
-	difference = p->bm ^ lastsearchpos.bm;
-	difference |= (p->wm ^ lastsearchpos.wm);
-	difference |= (p->bk ^ lastsearchpos.bk);
-	difference |= (p->wk ^ lastsearchpos.wk);
+	// repcheck disabled by deleting everything
+	//for (i = 0; i < HISTORYOFFSET; i++) 
+	//	si->repcheck[i] = dummy;
 
-	if (bitcount(difference) > 6) {
+
+
+	if (difference != 0) {
 		logtofile(fp, "\n******very different position found, assuming new game");
 		newgamestarts++;
-		if((newgamestarts % 500) == 0)
-			memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+		memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+		//if ((newgamestarts % 500) == 0) {
+		//	logtofile(fp, "\nclearing hashtable due to game number");
+		//	memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+		//}
 		//for (i = 0; i < hashsize + HASHITER; i++)
 		//	hashtable[i].depth = 0; 
 	}
@@ -929,7 +979,16 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	togglemove(p,best);
 
 
+	// calculate new hash key
+
 	absolutehashkey(p, &(si->hash));
+
+	// find out if move was likely reversible
+	if (p->bm != lastsearchpos.bm ||
+		p->wm != lastsearchpos.wm)
+		irreversible = 1;
+	else
+		irreversible = 0; 
 
 
 	// remember this position 
@@ -940,12 +999,21 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	lastsearchpos.wk = p->wk;
 
 #ifdef NEWREPDETECTION
-	// shift history array
-	for (i = 0; i < HISTORYOFFSET; i++)
-		si->repcheck[i] = si->repcheck[i + 1];
+	// Cake made a move, so we certainly shift history array
 
+	//sprintf(Lstr, "hash key after Cake's move is %i", si->hash.key); 
+	//logtofile(fp, Lstr); 
+	//logtofile(fp, "\nShifted repcheck array by 1 at end of search\nnew history array after Cake's move is");
+	for (i = 0; i < HISTORYOFFSET; i++) {
+		si->repcheck[i] = si->repcheck[i + 1];
+	}
 	si->repcheck[HISTORYOFFSET].hash = si->hash.key;
-	logtofile("\nShifted repcheck array by 1 at end of search");
+	si->repcheck[HISTORYOFFSET].irreversible = irreversible;
+	/*for (i = 0; i <= HISTORYOFFSET; i++) {
+		sprintf(Lstr, "(%i, %i, %i)", i, si->repcheck[i].hash, si->repcheck[i].irreversible);
+		logtofile(fp, Lstr);
+	}*/
+
 #endif
 
 	// we are done searching, close the log file
@@ -1048,6 +1116,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 			lowerbound=g;
 			//lowerbound = beta;
 			sprintf(Lstr1,"value>%i",beta-1);
+			// TODO: if fastupdate I should set best here if si->play is not set!
 			}
 		
 		time = ( (clock() - si->start)/CLK_TCK);

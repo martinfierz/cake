@@ -380,7 +380,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		int value;
 		int how=0;
 		int maxdepth=0;
-		SEARCHINFO si;
+		static SEARCHINFO si;
 
 #ifdef D
 		how=1;
@@ -390,12 +390,13 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		if(!cake_is_init)
 			{
 			initcake(str);
+			si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
 			cake_is_init = 1;
 			}
 
 		resetsearchinfo(&si);
 		// allocate memory for repcheck array
-		si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
+		//si.repcheck = malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
 
 		boardtobitboard(b,&p);
 		p.color = color;

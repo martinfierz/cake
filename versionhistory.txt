@@ -4,6 +4,11 @@ looking at games i think i should try adding
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
 
+27.5.2019
+I think I fixed repetition issue
+Using clear hash always on new game I get:
+
+
 25.5.2019
 I add tempo modifier to optimizer, for a 135parameter version. match against kr 118 is 2nd best ever = very good:
 Match result against kr 1.18 f also very good. Maybe best version overall ever?
