@@ -23,13 +23,17 @@
 #include "move_gen.h"
 //#include "cake_eval.h"
 
+
+#define NODUPLICATES  // undef to allow duplicate games!
+
+
 #define WHITE 1
 #define BLACK 2
 #define MAN 4
 #define KING 8
 #define FREE 16
 
-#define PARAMS 24
+//#define PARAMS 24
 
 /* bitboard masks for moves in various directions */
 /* here "1" means the squares in the columns 1357 and "2" in 2468.*/
@@ -79,11 +83,11 @@ typedef struct
 	
 } SHORTGAME;
 
-#define MAXGAMES 400000
+#define MAXGAMES 700000
 SHORTGAME* gamelist;
 
 
-#define NUMFILES 42
+#define NUMFILES 67
 #define NUMFILESREP 5
 
 // repeat identical matches should be 46,53,54 and 50,52
@@ -131,7 +135,32 @@ char files[NUMFILES][128] = { "match1.pdn",
 "match39.pdn",
 "match40.pdn",
 "match41.pdn",
-"match0.5_2.pdn"
+"match0.5_2.pdn",
+"match42.pdn",
+"match43.pdn",
+"match44.pdn",
+"match45.pdn",
+"match46.pdn",
+"match47.pdn",
+"match48.pdn",
+"match49.pdn",
+"match50.pdn",
+"match51.pdn",
+"match52.pdn",
+"match53.pdn",
+"match54.pdn",
+"match55.pdn",
+"match56.pdn",
+"match57.pdn",
+"match58.pdn",
+"match59.pdn",
+"match60.pdn",
+"match61.pdn",
+"match62.pdn",
+"match63.pdn",
+"match64.pdn",
+"match65.pdn",
+"match66.pdn"
 };
 char directory[64] = "C:\\code\\checkersdata\\";
 
@@ -168,17 +197,21 @@ int main()
 	if(gamelist != NULL)
 		memset(gamelist, 0, sizeof(SHORTGAME) * MAXGAMES); // set to 0
 
-	for (i = 0; i < NUMFILESREP; i++) {
-		sprintf(filename, "%s%s", directory, repeatfiles[i]);
-	//for (i = 0; i < NUMFILES; i++) {
-	//	sprintf(filename, "%s%s", directory, files[i]);
+	//for (i = 0; i < NUMFILESREP; i++) {
+	//	sprintf(filename, "%s%s", directory, repeatfiles[i]);
+	for (i = 0; i < NUMFILES; i++) {
+		sprintf(filename, "%s%s", directory, files[i]);
 			printf("\nfile to open is %s", filename);
 		position_number = load_PDN(ep, filename);
 		//getch();
 	}
 
 	printf("\nnow storing positions..."); 
-	fp = fopen("C:\\code\\checkersdata\\taggedpositions_newrep.txt", "w");
+#ifdef NODUPLICATES
+	fp = fopen("C:\\code\\checkersdata\\taggedpositions.txt", "w");
+#else
+	fp = fopen("C:\\code\\checkersdata\\taggedpositions+duplicates.txt", "w");
+#endif
 	for (i = 0; i < position_number; i++)
 		fprintf(fp, "%u %u %u %u %i %i\n", ep[i].bm, ep[i].bk, ep[i].wm, ep[i].wk, ep[i].color, ep[i].gameresult);
 	fclose(fp);
@@ -409,6 +442,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 		
 		if (!error) {
 
+#ifdef NODUPLICATES
 			// check if we have a repeat game
 			for (i = 0; i < gamenumber; i++) {
 				if (gamelist[i].startposition == gamelist[gamenumber].startposition &&
@@ -425,6 +459,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 					//getch(); 
 				}
 			}
+#endif
 			gamenumber++;
 		}
 		if(error || isduplicate)		// go back to original entry of array thereby overwriting 

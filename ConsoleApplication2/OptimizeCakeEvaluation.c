@@ -101,6 +101,46 @@ char strs[PARAMS][128] =  {
 
 float calc_error(int n, EVALUATEDPOSITION* ep, float c); 
 
+void codeoutput() {
+	// write parameters as C code to file
+	FILE* fp;
+	int i; 
+	int paramnum = 0; 
+	fp = fopen("C:\\code\\checkersdata\\codeoutput.txt", "w");
+
+	getparams(params, &paramnum);
+	// print parameters to show it's working
+	//for (i = 0; i < paramnum; i++)
+	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
+	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
+
+	for (i = 0; i < paramnum - 13 - 25 - 32; i++) {
+		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
+	}
+
+	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
+
+	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
+	for (i = paramnum - 13 - 25 - 32; i < paramnum - 25 - 32; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	fprintf(fp, "\n\nstatic int br[32] = {");
+	for (i = paramnum - 25 - 32; i < paramnum - 25; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	fprintf(fp, "\n\nstatic int tmod[25] = {");
+	for (i = paramnum - 25; i < paramnum; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+	fclose(fp); 
+}
+
+
 int main()
 {
 	int i = 0, n;
@@ -135,7 +175,7 @@ int main()
 	//analyze_matchprogress(); 
 
 
-	ep = malloc(sizeof(EVALUATEDPOSITION) * 6000000);
+	ep = malloc(sizeof(EVALUATEDPOSITION) * 10000000);
 
 	// initialize eval
 	initeval();
@@ -164,8 +204,11 @@ int main()
 
 	getch(); 
 
-	//fp = fopen("c:\\code\\checkersdata\\evaluations2018.txt", "r");
-	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
+	// load either file with or without duplicates
+//	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
+	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions+duplicates.txt", "r");
+
+
 	printf("\nloading...");
 
 	cur = ep; 
@@ -364,6 +407,8 @@ int main()
 	fclose(fp); 
 	printf("\n%i iterations made, no more improvement possible", iterations);
 	printf("\nerror after optimization is %.7f", minerror);
+	codeoutput();
+	printf("\nparameters written to c:\code\checkersdata\codeoutput.txt");
 
 	getch(); 
     return 0;

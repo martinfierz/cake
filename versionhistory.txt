@@ -3,10 +3,45 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+1.6. rerun optimizer on better of two release candidates allowing adjustment even if delta < 1e-7, e.g. <1e-8
+
+30.5. rerun optimizer on all matches up to match66 using repetitions, get new parameters for release candidate 2
+
+29.5.: rerun optimizer on all matches up to match66, get new parameters for release candidate 1!
+
+
+29.5.2019:
+Use QS together with hash clear always
+Cake 1.86 QS 5547k135p hc rep - Kingsrow(x64) 1.18 : W-L-D:905-604-2223  (match65)
++:905 =:2219 -:604 unknown:4 +B:404 -B:1105
+compare with match63: difference of +62 games in result = quite nice but no the huge breakthrough I could have hoped for
+todo: vs kr1.18f
+
+28.5.2019
+I fixed the repetition issue I think, as sanity check run matches with hashclear on, once with rep code enabled
+I'm a tiny bit worried that the disabled version does better but it could be a random fluctuation
+Cake 1.86 5547k135p hc rep - Kingsrow(x64) 1.18 : W-L-D:903-664-2165   (match63)    (rep enabled)
++:903 =:2164 -:664 unknown:1 +B:408 -B:1159
+Cake 1.86 5547k135p hc norep - Kingsrow(x64) 1.18 : W-L-D:889-635-2208  (match64)   (rep disabled)
++:889 =:2195 -:635 unknown:13 +B:413 -B:1111
 
 27.5.2019
 I think I fixed repetition issue
+
 Using clear hash always on new game I get:
+Cake 1.86 5547k (135p) (hashcl... - Kingsrow(x64) 1.18f : W-L-D:249-1009-3542    (match59)
++:249 =:3505 -:1009 unknown:37 +B:753 -B:505
+
+Using hash reset on new game to d=0 I get
+Cake 1.86 5547k (135p) (hash->... - Kingsrow(x64) 1.18f : W-L-D:247-1007-3546  (match60), practically identical
++:247 =:3489 -:1007 unknown:57 +B:719 -B:535
+
+Clearing hashtable every 500 new games I get
+Cake 1.86 5547k (135p) (hashcl... - Kingsrow(x64) 1.18f : W-L-D:284-920-3596  (match61, much better but kind of cheating)
++:284 =:3536 -:920 unknown:60 +B:733 -B:471
+....and....
+Cake 1.86 5547k (135p) (hashcl... - Kingsrow(x64) 1.18 : W-L-D:991-557-2184  (match62, again very good but kind of cheating)
++:991 =:2174 -:557 unknown:10 +B:396 -B:1152
 
 
 25.5.2019

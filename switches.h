@@ -4,7 +4,7 @@
 #pragma warning( once : 4133 )  // once instead of disable is maybe better
 
 #ifdef _WIN64 
-#define VERSION "1.86 5547k135p hc rep"
+#define VERSION "1.86 RC1 (8654k)"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"

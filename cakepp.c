@@ -652,6 +652,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	// open the log file at the start of a search
 	fp = getlogfile(0);
+	//fp = NULL; 
 
 	//logtofile(fp, "repcheck array at very start of cake_getmove");
 	//for (i = 0; i <= HISTORYOFFSET; i++) {
@@ -1090,7 +1091,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 	// value?!
 	int g, lowerbound, upperbound, beta;
 #ifdef FASTUPDATE
-	MOVE lastbest; 
+	MOVE lastbest = { .bm = 0,.bk = 0,.wm = 0,.wk = 0 };
 #endif
 	double time;
 	char Lstr1[1024]="",Lstr2[1024]="";
@@ -1137,7 +1138,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 			(*best) = lastbest;
 			break;
 		}
-		else
+		else  // normal search, store best move
 			lastbest = (*best); 
 #endif
 		}

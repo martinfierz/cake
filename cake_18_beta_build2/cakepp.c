@@ -679,9 +679,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	char pvstring[1024];
 	MOVE movelist[MAXMOVES];	// we make a movelist here which we pass on, so that it can be ordered
 								// and remain so during iterative deeping.
-	
-	
-//	int dolearn;
+
 
 	// initialize module if necessary
 	if(!cakeisinit) 
@@ -691,7 +689,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	for(i=0;i<MAXDEPTH;i++)
 		iscapture[i] = 0;
-
 
 	*playnow = 0;
 	si->play = playnow;
@@ -850,6 +847,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 				{
 				value = mtdf(si, p, movelist, guess, FRAC*d, &best);
 				guess = value;	
+				// if a valid move is given, remember it
+				if (best.bm | best.bk | best.wm | best.wk != 0)
+					last = best; 
 				}
 			else
 				value = allscoresearch(si, p, movelist, FRAC*d, &best);

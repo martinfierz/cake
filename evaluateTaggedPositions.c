@@ -91,9 +91,10 @@ main()
 		int qsvalue; 
 		
 	
+		si.repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
 
-		fp = fopen("c:\\code\\checkersdata\\taggedpositions_new.txt", "r");
-		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions_new.txt", "w");
+		fp = fopen("c:\\code\\checkersdata\\taggedpositions.txt", "r");
+		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "w");
 		printf("\nloading...");
 		while (!feof(fp)) {
 			// load a position from file
