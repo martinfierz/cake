@@ -25,26 +25,27 @@ int v[PARAMS];
 
 #define RARELYUSED
 
-
-//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21}; // optimized
 //static int br[32] = { 0,0,2, 2, 4,6,10,10,1,4,16,16,6,10,24,16,			// old before optimization
 //						   0,0,2, 2, 4,10,16,16,1,4,16,16,6,10,24,16 };
 
-/*static int br[32] = { -10,-18,-14, -21, -6,-7,3,-1,
+// 3 arrays below are the ~5500k optimized 135parameter versions
+/*static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21}; // optimized
+static int br[32] = { -10,-18,-14, -21, -6,-7,3,-1,
 					-6,-18,8,-8,9,6,15,9,
 					-12,-28,-13, -24, -5,-10,3,-3,
-					-7,-23,9,-16,14,10,20,14 };*/
+					-7,-23,9,-16,14,10,20,14 };
+static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6, -6, -8, -10, -8, -9, -15 };  // my adapted version
+*/
 
+// RC2:
+static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
+static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
+static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
 
-
-//static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6, -6, -8, -10, -8, -9, -15 };  // my adapted version
-
-
-static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
-
-static int br[32] = { -9, -17, -12, -20, -6, -6, 3, 1, -6, -17, 8, -7, 8, 5, 15, 9, -12, -26, -11, -20, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13};
-
-static int tmod[25] = { 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
+// below RC1, was bad
+//static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
+//static int br[32] = { -9, -17, -12, -20, -6, -6, 3, 1, -6, -17, 8, -7, 8, 5, 15, 9, -12, -26, -11, -20, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13};
+//static int tmod[25] = { 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
 
 /* 		WHITE
 	28  29  30	31
@@ -102,7 +103,10 @@ int getparams(int* params, int* n) {
 int optimalparams() {
 	// meant to set Cake's parameters to the optimal values
 	int i; 
-	/*v[devsinglecorner] = 3; 
+
+	/*
+	// below optimal 5500k version 135p
+	v[devsinglecorner] = 3; 
 	v[intactdoublecorner] = 3; 
 	v[oreoval] = 5; 
 	v[idealdoublecornerval] = 8; 
@@ -168,47 +172,49 @@ int optimalparams() {
 	v[ungroundedcontact] = 2;// 2;
 	v[endangeredbridge] = 6;// 6;
 	v[endangeredbridge_kingdown] = 14;// 12;
-	//v[twokingbonus] = 0; */
-
+	//v[twokingbonus] = 0; 
+	*/
+	
+	// below: RC2
 	v[devsinglecorner] = 3;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
 	v[idealdoublecornerval] = 7;
-	v[backrankpower1] = 41;
-	v[backrankpower2] = 44;
-	v[backrankpower3] = 78;
+	v[backrankpower1] = 40;
+	v[backrankpower2] = 51;
+	v[backrankpower3] = 80;
 	v[king_value] = 112;
 	v[nocrampval13] = 3;
 	v[nocrampval20] = 1;
 	v[dogholeval] = 19;
-	v[dogholemandownval] = 8;
+	v[dogholemandownval] = 7;
 	v[mc_occupyval] = -2;
 	v[mc_attackval] = 2;
 	v[realdykeval] = 0;
 	v[greatdykeval] = 0;
 	v[promoteinone] = 12;
 	v[promoteintwo] = 8;
-	v[promoteinthree] = 3;
+	v[promoteinthree] = 2;
 	v[tailhookval] = 14;
 	v[kcval] = 6;
 	v[keval] = -4;
 	v[turnval] = -1;
 	v[kingcentermonopoly] = 3;
 	v[kingtrappedinsinglecornerval] = 35;
-	v[kingtrappedinsinglecornerbytwoval] = 12;
+	v[kingtrappedinsinglecornerbytwoval] = 13;
 	v[kingtrappedindoublecornerval] = 12;
-	v[dominatedkingval] = 22;
+	v[dominatedkingval] = 20;
 	v[dominatedkingindcval] = 42;
 	v[kingproximityval] = 4;
 	v[immobilemanval] = -1;
-	v[kingholdstwomenval] = 13;
+	v[kingholdstwomenval] = 14;
 	v[onlykingval] = 10;
 	v[roamingkingval] = 12;
 	v[man_value] = 94;
 	v[balancemult] = 3;
 	v[skewnessmult] = 8;
 	v[cramp12] = 2;
-	v[cramp13] = 23;
+	v[cramp13] = 24;
 	v[cramp20] = 5;
 	v[badstructure] = 6;
 	v[dogholeval2] = 19;
@@ -216,26 +222,25 @@ int optimalparams() {
 	v[badstructure3] = 8;
 	v[badstructure4] = 8;
 	v[badstructure5] = 14;
-	v[badstructure6] = 18;
-	v[badstructure7] = 55;
-	v[badstructure8] = 22;
-	v[badstructure9] = 9;
-	v[badstructure10] = 10;
+	v[badstructure6] = 16;
+	v[badstructure7] = 54;
+	v[badstructure8] = 24;
+	v[badstructure9] = 10;
+	v[badstructure10] = 9;
 	v[badstructure11] = 22;
 	v[kingmanstones] = 11;
 	v[immobile_mult] = 2;
-	v[runaway_destroys_backrank] = 17;
+	v[runaway_destroys_backrank] = 16;
 	v[king_blocks_king_and_man] = 78;
-	v[king_denied_center] = 0;
+	v[king_denied_center] = 1;
 	v[king_low_mobility_mult] = 3;
-	v[king_no_mobility] = -8;
-	v[experimental_king_cramp] = 27;
+	v[king_no_mobility] = -9;
+	v[experimental_king_cramp] = 28;
 	v[compensation] = 80;
 	v[compensation_mandown] = 36;
 	v[ungroundedcontact] = 2;
-	v[endangeredbridge] = 6;
+	v[endangeredbridge] = 7;
 	v[endangeredbridge_kingdown] = 14;
-
 	
 
 	for (i = 0; i < 13; i++)
@@ -1436,7 +1441,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			e->men -= v[realdykeval];
 			if(match1(~p->bm, SQ1|SQ2|SQ6))
 				e->men -= v[greatdykeval];
-			}*/
+			}
+		*/	
 #endif
 		
 		//
@@ -1475,20 +1481,15 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 #endif
 		}
 
-		// cramp13 = params[39]
 		if (p->bm & SQ13)
 		{
 			if (p->wm & SQ17)
 				e->cramp += v[cramp13];
-			//if ((p->wm&(SQ17 | SQ21/*|SQ22*/)) == (SQ17 | SQ21/*|SQ22*/))
-			//	e->cramp += crampval;
 			if ((free & (SQ17 | SQ21)) == (SQ17 | SQ21))
 				e->cramp -= v[nocrampval13]; // cramping nothing - discourage a little
 		}
 		if (p->wm & SQ20)
 		{
-			//if ((p->bm&(/*SQ11|*/SQ12 | SQ16)) == (/*SQ11|*/SQ12 | SQ16))
-			//	e->cramp -= crampval;
 			if (p->bm & SQ16)
 				e->cramp -= v[cramp13];
 			if ((free & (SQ12 | SQ16)) == (SQ12 | SQ16))
@@ -1627,16 +1628,12 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		//if (match2(p->bm, p->wm, (SQ11 | SQ15 | SQ16 | SQ19), (SQ20 | SQ24 | SQ28)) && (bitcount(p->wm & (SQ27 | SQ32)) < 2))
 		//	e->hold -= v[badstructure7];
 
-		// new variant of badstructure7 29.5.2019
+		// new variant of badstructure7 29.5.2019, used in 1.86 RC1 and RC2 which were bad
 		if (match2(p->bm, p->wm, (SQ19 | SQ24), (SQ28 | SQ31))) {
 			e->hold -= v[badstructure7];
-			//printboard(p);
-			//getch();
 		}
 		if (match2(p->bm, p->wm, (SQ2 | SQ5), (SQ9 | SQ14))) {
 			e->hold += v[badstructure7];
-			//printboard(p);
-			//getch();
 		}
 
 
@@ -2411,8 +2408,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=free2;
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			//if(!(tmp&CENTER))
-			//	e->king -= v[king_denied_center];
+			if(!(tmp&CENTER))
+				e->king -= v[king_denied_center];
 #endif
 				//e->king -= 2;
 			if(m<=4)
@@ -2451,15 +2448,15 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=(~attack);
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			//if (!(tmp & CENTER))
-			//	e->king += v[king_denied_center]; // 2;
+			if (!(tmp & CENTER))
+				e->king += v[king_denied_center]; 
 #endif
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 
 			if(m<=1)
 				{
 				ki->freewk--; 
-				e->king += v[king_no_mobility]; //10;
+				e->king += v[king_no_mobility]; 
 				}
 			}
 

@@ -4,7 +4,8 @@
 #pragma warning( once : 4133 )  // once instead of disable is maybe better
 
 #ifdef _WIN64 
-#define VERSION "1.86 RC1 (8654k)"
+//#define VERSION "1.86 RC0 (5500k-log)"
+#define VERSION "1.86 RC2 (8279k)"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
@@ -12,7 +13,7 @@
 
 // two new flags to test logging and rep detection later on
 #define NEWREPDETECTION
-#define NEWLOG
+//#define NEWLOG
 
 //#define FIXEDDEPTH 3
 #undef THREADSAFEHT				// locks access to hashlookup and hashstore if set.

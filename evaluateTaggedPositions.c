@@ -139,7 +139,7 @@ main()
 				printf(" (draw)");
 			if (eval == LOSS)
 				printf(" (white won)");*/
-			fprintf(fpout, "%u %u %u %u %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3);
+			fprintf(fpout, "%u %u %u %u %i %i %i %i %i\n", bm, bk, wm, wk, color, eval, v0, v1, v3);
 			/*if (abs(v0 - v1) > 50) {
 				p.bm = bm; p.bk = bk; p.wm = wm; p.wk = wk; p.color = color;
 				printboard(&p);

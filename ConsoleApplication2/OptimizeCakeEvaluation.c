@@ -162,7 +162,7 @@ int main()
 	int rejected = 0; 
 	int pos_num = 0; 
 	int quiet_pos_num = 0; 
-	int v1, v3; 
+	int v0, v1, v3, staticeval; 
 	int iter[3] = { 1,0,2 };
 	int sameadjust; 
 	int adjust; 
@@ -205,8 +205,8 @@ int main()
 	getch(); 
 
 	// load either file with or without duplicates
-//	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
-	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions+duplicates.txt", "r");
+    fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
+	//fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions+duplicates.txt", "r");
 
 
 	printf("\nloading...");
@@ -219,10 +219,8 @@ int main()
 		// bm, bk, wm, wk, color, evaluation, result
 		// evaluation is from side to move; BLACK to move is 2, WHITE to move is 1
 		// result is WIN (1) if black won, LOSS (2) if white won, DRAW (0) or UNKNOWN (3)
-		// fprintf(fpout, "%u %u %u %u %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3);
-			
-		fscanf(fp, "%u %u %u %u %i %i %i %i\n", &bm, &bk, &wm, &wk, &color, &res_from_file, &v1, &v3);
-		//fscanf(fp, "%u %u %u %u %i %i\n", &bm, &bk, &wm, &wk, &color, &res_from_file);
+		//fprintf(fpout, "%u %u %u %u %i %i %i %i\n", bm, bk, wm, wk, color, eval, v1, v3);
+		fscanf(fp, "%u %u %u %u %i %i %i %i %i\n", &bm, &bk, &wm, &wk, &color, &res_from_file, &staticeval, &v1, &v3);
 		pos_num++;
 		//printf("\n%i %u %u %u %u %i %i %i\n", j++, bm, bk, wm, wk, color, eval, res_from_file); 
 		//getch(); 
@@ -251,12 +249,13 @@ int main()
 				mc.bk = bitcount(p.bk);
 				mc.wm = bitcount(p.wm);
 				mc.wk = bitcount(p.wk);
-				cur->staticeval = evaluation(&p, &mc, 0, &delta, 0, 0);
-				if (abs(cur->staticeval - cur->value) > 50) {
+				//cur->staticeval = evaluation(&p, &mc, 0, &delta, 0, 0);
+				//if (abs(cur->staticeval - cur->value) > 50) {
+				if(abs(staticeval - v3) > 50) {
 					rejected++;
 					quiet_pos_num--;
 					//printboard(p);
-					//printf("\nthis position has evaluation %i but 1ply value %i", cur->staticeval, cur->value);
+					//printf("\nthis position (%i) has evaluation %i but 3ply value %i", i, staticeval, v3);
 					//getch();
 				}
 				else

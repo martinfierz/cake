@@ -30,6 +30,11 @@
 #include "boolean.h"
 #include "cake_book.h"
 
+// define the two following for running the optimizer, undef them for normal operation
+#undef NOHASHRESET
+#undef NOLOGFILE
+
+
 //-------------------------------------------------------------------------------//
 // globals below here are shared - even with these, cake *should* be thread-safe //
 //-------------------------------------------------------------------------------//
@@ -651,8 +656,11 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	}
 
 	// open the log file at the start of a search
+#ifndef NOLOGFILE
 	fp = getlogfile(0);
-	//fp = NULL; 
+#else
+	fp = NULL; 
+#endif
 
 	//logtofile(fp, "repcheck array at very start of cake_getmove");
 	//for (i = 0; i <= HISTORYOFFSET; i++) {
@@ -696,7 +704,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	difference |= (p->wm ^ lastsearchpos.wm);
 	difference |= (p->bk ^ lastsearchpos.bk);
 	difference |= (p->wk ^ lastsearchpos.wk);
-	if (bitcount(difference > 6))
+	if (bitcount(difference) > 6)
 		difference = 1;
 	else
 		difference = 0;
@@ -781,7 +789,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	if (difference != 0) {
 		logtofile(fp, "\n******very different position found, assuming new game");
 		newgamestarts++;
+#ifndef NOHASHRESET
 		memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
+#endif
 		//if ((newgamestarts % 500) == 0) {
 		//	logtofile(fp, "\nclearing hashtable due to game number");
 		//	memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
@@ -877,9 +887,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 				value = allscoresearch(si, p, movelist, FRAC*d, &best);
 #endif
 
-#ifdef NEWLOG
+//#ifdef NEWLOG
 			logtofile(fp, si->out); 
-#endif
+//#endif
 			// count zero evals
 			if(value == 0)
 				zeroes++;
@@ -1144,9 +1154,9 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		}
 	sprintf(Lstr1,"value=%i",g);
 	searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
-#ifndef NEWLOG
-	logtofile(si->out);
-#endif
+//#ifndef NEWLOG
+//	logtofile(si->out);
+//#endif
 	//printf("%s\n", si->out); 
 	 
 	return g;
