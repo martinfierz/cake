@@ -202,7 +202,7 @@ void printboardtofile(POSITION *p, FILE *fp)
 	//fclose(Lfp);
 	}
 
-
+/*
 void createCakeFolder(void) {
 	// function to be called from initCake which generates the \Martin Fierz\Cake subdirectory
 	// in personal folder that Cake needs for writing its logfile to. 
@@ -216,7 +216,7 @@ void createCakeFolder(void) {
 		strcat(dir, "\\Cake");
 		CreateDirectoryA(dir, NULL);
 	}
-}
+}*/
 
 
 FILE *getlogfile(int clear)
@@ -227,25 +227,25 @@ FILE *getlogfile(int clear)
 	// TODO: check if getcakedir, GetCurrentDirectory, SetCurrentDirectory 
 	// is necessary at all.
 
-	//char lstr[256];
-	//char dirname[256]; 
+	char lstr[256];		// todo: comment out
+	char dirname[256];	// todo: comment out
 	char dir[256]; 
 	FILE* fp; 
 
 	// create a logfile in the personal folders path
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
 		// personal folder is now in dir, append my path
-		strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
-		//strcat(dir, "\\Martin Fierz");
-		//strcat(dir, "\\Cake");
-		//strcat(dir, "\\cakelog.txt");
+		//strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
+		strcat(dir, "\\Martin Fierz");
+		strcat(dir, "\\Cake");
+		strcat(dir, "\\cakelog.txt");
 //		printf("\ncake logfile is %s", dir);
 	//	getch(); 
 
 		// TODO: check if any of this is necessary
-		//getcakedir(lstr);
-		//GetCurrentDirectory(256, dirname); 
-		//SetCurrentDirectory(lstr);
+		getcakedir(lstr);
+		GetCurrentDirectory(256, dirname); 
+		SetCurrentDirectory(lstr);
 
 		if (clear)
 			fp = fopen(dir, "w");
@@ -255,7 +255,7 @@ FILE *getlogfile(int clear)
 				fp = fopen(dir, "w");
 		}
 		
-		//SetCurrentDirectory(dirname); 
+		SetCurrentDirectory(dirname); 
 		
 		return fp;
 	}

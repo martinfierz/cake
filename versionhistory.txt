@@ -20,10 +20,12 @@ Match 70 similar
 Cake 1.86 RC1 (8658k) - Kingsrow(x64) 1.18f : W-L-D:269-965-3566  (27.88% relative, 42.75% absolute, 3.70 draw-loss)
 +:269 =:3564 -:965 unknown:2 +B:753 -B:481
 
+
 vs. kr 118
 Cake 1.86 RC2 (8279k) - Kingsrow(x64) 1.18 : W-L-D:970-567-2195 (171.1% relative, 55.40% absolute)
 +:970 =:2195 -:567 unknown:0 +B:423 -B:1114
-
+Cake 1.86 RC1 (8658k) - Kingsrow(x64) 1.18 : W-L-D:939-535-2258 (175.5% relative, 55.41% )
++:939 =:2257 -:535 unknown:1 +B:367 -B:1107
 
 29.5.2019:
 Use QS together with hash clear always

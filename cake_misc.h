@@ -2,7 +2,7 @@ void clearlogfile();
 FILE * getlogfile(int clear);
 int exitcake();
 void getcakedir(char *lstr);
-void createCakeFolder(void); 
+//void createCakeFolder(void); 
 int isforced(POSITION *p);
 int logtofile(FILE *fp, char *str);
 void movetonotation(POSITION *p, MOVE *m, char *str);

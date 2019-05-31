@@ -147,7 +147,7 @@ int initcake(char str[1024])
 		fclose(fp); 
 
 	// create Cake folder in personal documents
-	createCakeFolder(); 
+	//createCakeFolder(); 
 
 	return 1;
 	}
