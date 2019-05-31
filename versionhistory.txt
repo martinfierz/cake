@@ -3,11 +3,26 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
-1.6. rerun optimizer on better of two release candidates allowing adjustment even if delta < 1e-7, e.g. <1e-8
+1.6. rerun optimizer on better of two release candidates allowing adjustment even if delta < 1e-7, e.g. <1e-8?
 
-30.5. rerun optimizer on all matches up to match66 using repetitions, get new parameters for release candidate 2
+1.6. re-test QS on better of the two RC versions
 
-29.5.: rerun optimizer on all matches up to match66, get new parameters for release candidate 1!
+30.5. 
+
+29.5.: 
+rerun optimizer on all matches up to match66 using repetitions, get new parameters for release candidate 1
+rerun optimizer on all matches up to match66, get new parameters for release candidate 2!
+
+Match 69: best result ever since clearing hashtable: 
+Cake 1.86 RC2 (8279k) - Kingsrow(x64) 1.18f : W-L-D:241-933-3626   (25.83% relative, 42.79% absolute, 3.89 draw-loss)
++:241 =:3623 -:933 unknown:3 +B:712 -B:462
+Match 70 similar
+Cake 1.86 RC1 (8658k) - Kingsrow(x64) 1.18f : W-L-D:269-965-3566  (27.88% relative, 42.75% absolute, 3.70 draw-loss)
++:269 =:3564 -:965 unknown:2 +B:753 -B:481
+
+vs. kr 118
+Cake 1.86 RC2 (8279k) - Kingsrow(x64) 1.18 : W-L-D:970-567-2195 (171.1% relative, 55.40% absolute)
++:970 =:2195 -:567 unknown:0 +B:423 -B:1114
 
 
 29.5.2019:

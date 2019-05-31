@@ -145,6 +145,10 @@ int initcake(char str[1024])
 	cakeisinit=1;
 	if(fp != NULL)
 		fclose(fp); 
+
+	// create Cake folder in personal documents
+	createCakeFolder(); 
+
 	return 1;
 	}
 
@@ -653,6 +657,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	if (!cakeisinit) {
 		printf("\ninitializing Cake");
 		initcake(str);
+		// TODO: move getlogfile code here once, so that we know the name of 
+		// the logfile once and for all
 	}
 
 	// open the log file at the start of a search

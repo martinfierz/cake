@@ -203,59 +203,145 @@ void printboardtofile(POSITION *p, FILE *fp)
 	}
 
 
+void createCakeFolder(void) {
+	// function to be called from initCake which generates the \Martin Fierz\Cake subdirectory
+	// in personal folder that Cake needs for writing its logfile to. 
+
+	char dir[256]; 
+
+	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
+		// personal folder is now in dir, append my path
+		strcat(dir, "\\Martin Fierz");
+		CreateDirectoryA(dir, NULL);
+		strcat(dir, "\\Cake");
+		CreateDirectoryA(dir, NULL);
+	}
+}
+
+
 FILE *getlogfile(int clear)
 {
-	char lstr[256];
-	char dirname[256]; 
-	//wchar_t dir[256]; 
+	// returns a file pointer to the cake log file under 
+	// <personal documents>\martin fierz\Cake\cakelog.txt
+	// if clear is != 0 it erases the file, if clear is 0 it appends to file
+	// TODO: check if getcakedir, GetCurrentDirectory, SetCurrentDirectory 
+	// is necessary at all.
+
+	//char lstr[256];
+	//char dirname[256]; 
 	char dir[256]; 
 	FILE* fp; 
 
-	// Create the standard set of CheckerBoard directories under My Documents. 
+	// create a logfile in the personal folders path
 	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
 		// personal folder is now in dir, append my path
-		//wcscat(dir, L"\\Martin Fierz\\Cake\\cakelog.txt");
-		//strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
-		strcat(dir, "\\Martin Fierz");
-		strcat(dir, "\\Cake");
-		strcat(dir, "\\cakelog.txt");
+		strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
+		//strcat(dir, "\\Martin Fierz");
+		//strcat(dir, "\\Cake");
+		//strcat(dir, "\\cakelog.txt");
 //		printf("\ncake logfile is %s", dir);
 	//	getch(); 
 
-		getcakedir(lstr);
-		GetCurrentDirectory(256, dirname); 
-		SetCurrentDirectory(lstr);
+		// TODO: check if any of this is necessary
+		//getcakedir(lstr);
+		//GetCurrentDirectory(256, dirname); 
+		//SetCurrentDirectory(lstr);
 
 		if (clear)
-			//fp = fopen("C:\\code\\cakelog.txt", "w");
 			fp = fopen(dir, "w");
 		else {
-			//fp = fopen("C:\\code\\cakelog.txt", "a");
 			fp = fopen(dir, "a");
 			if (fp == NULL)
 				fp = fopen(dir, "w");
-				//fp = fopen("C:\\code\\cakelog.txt", "w");
 		}
 		
-		/*if (fp != NULL) {
-			printf("\nopened cake log file, writing something");
-			fprintf(fp, "cake log file");
-			fclose(fp); 
-			printf("\nlog file closed, check it! ");
-			getch(); 
-		}*/
-
-		SetCurrentDirectory(dirname); 
+		//SetCurrentDirectory(dirname); 
 		
 		return fp;
 	}
 	return NULL;
 }
 
+
+// ed's code below
+
+/*
+char* build_logfilename(char* enginename, char* filename)
+{
+	if (fullfilename[0] == 0) {
+
+		// Get path for the My Documents directory.
+		// On WinXP, this is \Documents and Settings\<user>\My Documents.
+		// On Vista, this is \Users\<user>\Documents.
+		 //
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, fullfilename))) {
+
+			// Create the directories in case they do not exist. 
+			PathAppend(fullfilename, "Ed Gilbert");
+			CreateDirectory(fullfilename, NULL);
+
+			PathAppend(fullfilename, enginename);
+			CreateDirectory(fullfilename, NULL);
+
+			PathAppend(fullfilename, filename);
+		}
+	}
+	return(fullfilename);
+}
+
+
+void init_logfile(char* enginename, char* filename)
+{
+	FILE* fp;
+
+	build_logfilename(enginename, filename);
+
+	// Erase any previous logfiles. 
+	fp = fopen(fullfilename, "w");
+	fclose(fp);
+}
+
+
+
+ // Write a message string to the log file.
+
+void log_msg(char* pvstr)
+{
+	FILE* fp;
+
+	fp = fopen(logfilename(), "a");
+	if (fp) {
+		fprintf(fp, "%s", pvstr);
+		fclose(fp);
+	}
+}
+
+
+void log_msg(const char* fmt, ...)
+{
+	FILE* fp;
+	va_list args;
+	va_start(args, fmt);
+
+	if (fmt == NULL)
+		return;
+
+	fp = fopen(logfilename(), "a");
+	if (fp == NULL)
+		return;
+
+	vfprintf(fp, fmt, args);
+	fclose(fp);
+}
+*/
+
+// ed's code above
+
+
+
 void clearlogfile(FILE* fp)
 {
-	//char lstr[256];
-
+	
 	if (fp != NULL) {
 		fprintf(fp, "Cake log file\n\n");
 		//fclose(fp);
@@ -292,17 +378,11 @@ void getcakedir(char *lstr)
 int logtofile(FILE *fp, char *str)
 {
 	// log a string to the engine logfile "cakelog.txt"
-	//FILE *fp;
-
-	//return; 
-
-	//printf("%s\n",str);
-	//fp = getlogfile();
+	
 	if(fp != NULL)
 		{
 		fprintf(fp,"\n%s",str);
 		fflush(fp); 
-		//fclose(fp);
 		return 1;
 		}
 	return 0;
@@ -363,7 +443,6 @@ void resetsearchinfo(SEARCHINFO *s)
 	int *rep = (int*)s->repcheck; 
 	memset(s, 0, sizeof(SEARCHINFO)); 
 	s->repcheck = (REPETITION *) rep; //malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
-	//s->repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
 	}
 
 int exitcake()

@@ -37,10 +37,15 @@ static int br[32] = { -10,-18,-14, -21, -6,-7,3,-1,
 static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6, -6, -8, -10, -8, -9, -15 };  // my adapted version
 */
 
+// RC1
+static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
+static int br[32] = { -9, -17, -12, -20, -6, -6, 3, 1, -6, -17, 8, -7, 8, 5, 15, 9, -12, -26, -11, -20, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13};
+static int tmod[25] = { 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
+
 // RC2:
-static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
-static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
-static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
+//static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
+//static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
+//static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
 
 // below RC1, was bad
 //static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
@@ -176,6 +181,7 @@ int optimalparams() {
 	*/
 	
 	// below: RC2
+	/*
 	v[devsinglecorner] = 3;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
@@ -241,7 +247,75 @@ int optimalparams() {
 	v[ungroundedcontact] = 2;
 	v[endangeredbridge] = 7;
 	v[endangeredbridge_kingdown] = 14;
-	
+	*/
+
+	// below: RC1
+	v[devsinglecorner] = 3;
+	v[intactdoublecorner] = 3;
+	v[oreoval] = 5;
+	v[idealdoublecornerval] = 7;
+	v[backrankpower1] = 41;
+	v[backrankpower2] = 44;
+	v[backrankpower3] = 78;
+	v[king_value] = 112;
+	v[nocrampval13] = 3;
+	v[nocrampval20] = 1;
+	v[dogholeval] = 19;
+	v[dogholemandownval] = 8;
+	v[mc_occupyval] = -2;
+	v[mc_attackval] = 2;
+	v[realdykeval] = 0;
+	v[greatdykeval] = 0;
+	v[promoteinone] = 12;
+	v[promoteintwo] = 8;
+	v[promoteinthree] = 3;
+	v[tailhookval] = 14;
+	v[kcval] = 6;
+	v[keval] = -4;
+	v[turnval] = -1;
+	v[kingcentermonopoly] = 3;
+	v[kingtrappedinsinglecornerval] = 35;
+	v[kingtrappedinsinglecornerbytwoval] = 12;
+	v[kingtrappedindoublecornerval] = 12;
+	v[dominatedkingval] = 22;
+	v[dominatedkingindcval] = 42;
+	v[kingproximityval] = 4;
+	v[immobilemanval] = -1;
+	v[kingholdstwomenval] = 13;
+	v[onlykingval] = 10;
+	v[roamingkingval] = 12;
+	v[man_value] = 94;
+	v[balancemult] = 3;
+	v[skewnessmult] = 8;
+	v[cramp12] = 2;
+	v[cramp13] = 23;
+	v[cramp20] = 5;
+	v[badstructure] = 6;
+	v[dogholeval2] = 19;
+	v[badstructure2] = 6;
+	v[badstructure3] = 8;
+	v[badstructure4] = 8;
+	v[badstructure5] = 14;
+	v[badstructure6] = 18;
+	v[badstructure7] = 55;
+	v[badstructure8] = 22;
+	v[badstructure9] = 9;
+	v[badstructure10] = 10;
+	v[badstructure11] = 22;
+	v[kingmanstones] = 11;
+	v[immobile_mult] = 2;
+	v[runaway_destroys_backrank] = 17;
+	v[king_blocks_king_and_man] = 78;
+	v[king_denied_center] = 0;
+	v[king_low_mobility_mult] = 3;
+	v[king_no_mobility] = -8;
+	v[experimental_king_cramp] = 27;
+	v[compensation] = 80;
+	v[compensation_mandown] = 36;
+	v[ungroundedcontact] = 2;
+	v[endangeredbridge] = 6;
+	v[endangeredbridge_kingdown] = 14;
+
 
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
@@ -2408,8 +2482,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=free2;
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			if(!(tmp&CENTER))
-				e->king -= v[king_denied_center];
+			//if(!(tmp&CENTER))
+			//	e->king -= v[king_denied_center];
 #endif
 				//e->king -= 2;
 			if(m<=4)
@@ -2448,8 +2522,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=(~attack);
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			if (!(tmp & CENTER))
-				e->king += v[king_denied_center]; 
+			//if (!(tmp & CENTER))
+			//	e->king += v[king_denied_center]; 
 #endif
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 
