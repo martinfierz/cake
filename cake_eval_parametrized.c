@@ -38,19 +38,15 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 */
 
 // RC1
-static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
-static int br[32] = { -9, -17, -12, -20, -6, -6, 3, 1, -6, -17, 8, -7, 8, 5, 15, 9, -12, -26, -11, -20, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13};
-static int tmod[25] = { 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
-
-// RC2:
-//static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
-//static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
-//static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
-
-// below RC1, was bad
 //static int ungroundedpenalty[13] = { -1, -1, 1, 4, 10, 15, 21, 27, 25, 25, 21, 21, 21};
 //static int br[32] = { -9, -17, -12, -20, -6, -6, 3, 1, -6, -17, 8, -7, 8, 5, 15, 9, -12, -26, -11, -20, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13};
 //static int tmod[25] = { 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
+
+// RC2:
+static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
+static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
+static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
+
 
 /* 		WHITE
 	28  29  30	31
@@ -181,7 +177,7 @@ int optimalparams() {
 	*/
 	
 	// below: RC2
-	/*
+	
 	v[devsinglecorner] = 3;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
@@ -247,10 +243,10 @@ int optimalparams() {
 	v[ungroundedcontact] = 2;
 	v[endangeredbridge] = 7;
 	v[endangeredbridge_kingdown] = 14;
-	*/
+	
 
 	// below: RC1
-	v[devsinglecorner] = 3;
+	/*v[devsinglecorner] = 3;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
 	v[idealdoublecornerval] = 7;
@@ -315,7 +311,7 @@ int optimalparams() {
 	v[ungroundedcontact] = 2;
 	v[endangeredbridge] = 6;
 	v[endangeredbridge_kingdown] = 14;
-
+	*/
 
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
@@ -2482,8 +2478,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=free2;
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			//if(!(tmp&CENTER))
-			//	e->king -= v[king_denied_center];
+			if(!(tmp&CENTER))
+				e->king -= v[king_denied_center];
 #endif
 				//e->king -= 2;
 			if(m<=4)
@@ -2522,8 +2518,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=(~attack);
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			//if (!(tmp & CENTER))
-			//	e->king += v[king_denied_center]; 
+			if (!(tmp & CENTER))
+				e->king += v[king_denied_center]; 
 #endif
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 

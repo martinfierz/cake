@@ -6,7 +6,7 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.86 RC1 QS (8658k)"
+#define VERSION "1.86 RC2 QS (8279k)"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"

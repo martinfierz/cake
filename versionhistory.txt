@@ -3,11 +3,13 @@ looking at games i think i should try adding
 -- repetitions don't seem to be recognized properly
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
-1.6. rerun optimizer on better of two release candidates allowing adjustment even if delta < 1e-7, e.g. <1e-8?
+1.6. tentative release?
 
-1.6. re-test QS on better of the two RC versions
+31.5. re-test with QS - once again wow wow wow (92 half points more!)
+Cake 1.86 RC1 QS (8658k) - Kingsrow(x64) 1.18f : W-L-D:283-887-3630   (31.91% relative, 43.71% absolute, 4.09 win loss)
++:283 =:3627 -:887 unknown:3 +B:704 -B:466
 
-30.5. 
+30.5. RC1 - practically identical to RC2 - I keep RC1, don't quite know why! 
 
 29.5.: 
 rerun optimizer on all matches up to match66 using repetitions, get new parameters for release candidate 1
