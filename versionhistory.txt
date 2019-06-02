@@ -1,13 +1,18 @@
 looking at games i think i should try adding
 
--- repetitions don't seem to be recognized properly
+
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
 1.6. tentative release?
 
+Cake 1.86 RC2 QS (8297k) - Kingsrow(x64) 1.18f : W-L-D:258-866-3676
+Cake 1.86 RC2 QS (8297k) - Kingsrow(x64) 1.18  : W-L-D:995-524-2213
+
 31.5. re-test with QS - once again wow wow wow (92 half points more!)
 Cake 1.86 RC1 QS (8658k) - Kingsrow(x64) 1.18f : W-L-D:283-887-3630   (31.91% relative, 43.71% absolute, 4.09 win loss)
 +:283 =:3627 -:887 unknown:3 +B:704 -B:466
+Cake 1.86 RC1 QS (8658k) - Kingsrow(x64) 1.18 : W-L-D:1008-533-2191
++:1008 =:2190 -:533 unknown:1 +B:416 -B:1125
 
 30.5. RC1 - practically identical to RC2 - I keep RC1, don't quite know why! 
 

@@ -169,10 +169,6 @@ void printboardtofile(POSITION *p, FILE *fp)
 	int b[32];
 	char c[15]="-wb      WB";
 
-	//FILE *Lfp;
-	
-	//Lfp = getlogfile();
-
 	if(fp == NULL)
 		return;
 
@@ -227,37 +223,26 @@ FILE *getlogfile(int clear)
 	// TODO: check if getcakedir, GetCurrentDirectory, SetCurrentDirectory 
 	// is necessary at all.
 
-	char lstr[256];		// todo: comment out
-	char dirname[256];	// todo: comment out
-	char dir[256]; 
+	//char lstr[256];		// todo: comment out
+	//char dirname[256];	// todo: comment out
+	static char dir[256] = ""; 
 	FILE* fp; 
 
 	// create a logfile in the personal folders path
-	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
-		// personal folder is now in dir, append my path
-		//strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
-		strcat(dir, "\\Martin Fierz");
-		strcat(dir, "\\Cake");
-		strcat(dir, "\\cakelog.txt");
-//		printf("\ncake logfile is %s", dir);
-	//	getch(); 
+	if (dir[0] == 0) {
+		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir)))
+			// personal folder is now in dir, append my path
+			strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
+	}
 
-		// TODO: check if any of this is necessary
-		getcakedir(lstr);
-		GetCurrentDirectory(256, dirname); 
-		SetCurrentDirectory(lstr);
-
-		if (clear)
+	if (clear)
+		fp = fopen(dir, "w");
+	else {
+		fp = fopen(dir, "a");
+		if (fp == NULL)
 			fp = fopen(dir, "w");
-		else {
-			fp = fopen(dir, "a");
-			if (fp == NULL)
-				fp = fopen(dir, "w");
-		}
 		
-		SetCurrentDirectory(dirname); 
-		
-		return fp;
+	return fp;
 	}
 	return NULL;
 }
@@ -347,24 +332,14 @@ void clearlogfile(FILE* fp)
 		//fclose(fp);
 	}
 	return; 
-
-	/* Create the standard set of CheckerBoard directories under My Documents. */
-	/*
-	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, lstr))) {
-		getcakedir(lstr);
-		SetCurrentDirectory(lstr);
-
-		cake_fp = fopen("cakelog.txt","w");
-
-	}
-	*/
 }
 
+/*
 void getcakedir(char *lstr)
 {
 	sprintf(lstr, "C:\\code"); 
 	return; 
-	/* Create the directories under My Documents. */
+	// Create the directories under My Documents. 
 	//WCHAR *s = (WCHAR)* "Martin Fierz";
 	//TCHAR *s = "Martin Fierz"; 
 	
@@ -373,11 +348,11 @@ void getcakedir(char *lstr)
 
 	//PathAppend(lstr, "Cake");
 	CreateDirectory(lstr, NULL);
-}
+}*/
 
 int logtofile(FILE *fp, char *str)
 {
-	// log a string to the engine logfile "cakelog.txt"
+	// log a string to the engine logfile 
 	
 	if(fp != NULL)
 		{
@@ -449,9 +424,6 @@ int exitcake()
 	{
 	// deallocate memory 
 	db_exit();
-	//if(cake_fp != NULL)
-	//	fclose(cake_fp); 
+
 	return 1;
 	}
-
-

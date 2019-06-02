@@ -89,6 +89,7 @@ main()
 		int v0, v1, v3; 
 		int delta; 
 		int qsvalue; 
+		double start, time; 
 		
 	
 		si.repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
@@ -96,6 +97,9 @@ main()
 		fp = fopen("c:\\code\\checkersdata\\taggedpositions.txt", "r");
 		fpout = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "w");
 		printf("\nloading...");
+
+		start = clock(); 
+
 		while (!feof(fp)) {
 			// load a position from file
 			fscanf(fp, "%u %u %u %u %i %i\n", &bm, &bk, &wm, &wk, &color, &eval);
@@ -146,8 +150,13 @@ main()
 				getch(); 
 			}*/
 			n++; 
+			//if (n == 10000)
+			//	break; 
 
 		}
+		time = ((clock() - start) / CLK_TCK);
+		printf("\n%i positions analyzed in %.2f seconds", n, time);
+
 		fclose(fp); 
 		fclose(fpout); 
 		return 0; 

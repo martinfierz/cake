@@ -793,7 +793,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 
 	if (difference != 0) {
-		logtofile(fp, "\n******very different position found, assuming new game");
+		//logtofile(fp, "\n******very different position found, assuming new game");
 		newgamestarts++;
 #ifndef NOHASHRESET
 		memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
@@ -805,8 +805,8 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		//for (i = 0; i < hashsize + HASHITER; i++)
 		//	hashtable[i].depth = 0; 
 	}
-	else
-		logtofile(fp, "\n******very similar position found");
+	//else
+	//	logtofile(fp, "\n******very similar position found");
 
 
 

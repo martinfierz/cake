@@ -157,10 +157,10 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(!cake_is_init)
 			{
-			sprintf(reply,"Cake %s\nApril 2019 by Martin Fierz\n\nEngine not initialized yet!",version);
+			sprintf(reply,"Cake %s\nJune 2019 by Martin Fierz\n\nEngine not initialized yet!",version);
 			return 1;
 			}
-		sprintf(reply,"Cake %s\nApril 2019 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
+		sprintf(reply,"Cake %s\nJune 2019 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
 #ifdef ETC
 		strcat(reply,"\n    - ETC");
 #endif
@@ -172,6 +172,9 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 #endif
 #ifdef EXTENDPV
 		strcat(reply,"\n    - XPV");
+#endif
+#ifdef QSEARCH
+		strcat(reply, "\n    - QS");
 #endif
 #ifdef LATEMOVEREDUCTION
 		strcat(reply,"\n    - LMR");
@@ -192,7 +195,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 #ifdef SPA_CUT
 		strcat(reply,"\n    - CUT");
 #endif
-
+		strcat(reply, "\n    - 8279k 135p"); 
 		// get book info
 		sprintf(Lstr,"\n\n%i moves in opening book",bookmovenum);
 		strcat(reply,Lstr);
