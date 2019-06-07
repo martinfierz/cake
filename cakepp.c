@@ -686,7 +686,12 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	// set time limits
 	si->maxtime = maximaltime;
-	si->aborttime = 4*maximaltime;
+#ifdef TIMEOPTIMIZED
+	si->aborttime = 2.5 * maximaltime;
+#else
+	//si->aborttime = 4 * maximaltime;
+	si->aborttime = 3 * maximaltime; 
+#endif
 	// if exact:
 	if(info&2)
 		si->aborttime = maximaltime;
@@ -914,10 +919,25 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			t = clock();
 
 			// iterative deepening loop break conditions: depend on search mode
+			// todo: make time based search mode smarter by looking at 
+			// ratio of last two iterations
 			if(d>0)
 				{
-				if( si->searchmode == TIME_BASED && ((clock()- si->start)/CLK_TCK>(si->maxtime/2)) ) 
+
+
+#ifdef TIMEOPTIMIZED
+				if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime * 0.57)))
 					break;
+				// don't allow going two 1-ply steps.
+				if (si->searchmode == TIME_BASED && ((d % 2) == 0))
+					break; 
+				if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime *0.38)))
+					d--;
+#else
+				//if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime / 2)))
+				if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime * 0.45)))
+					break;
+#endif
 				if( si->searchmode == DEPTH_BASED && d>=depthtosearch)
 					break;
 				if(si->searchmode == NODE_BASED && si->negamax>maxnodes)

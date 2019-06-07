@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 135
+#define PARAMS 144//142
 
 
 /* bitboard masks for moves in various directions */
@@ -69,19 +69,22 @@ static int params[PARAMS]; // parameters to optimize
 
 char strs[PARAMS][128] =  {
 	"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", "backrankpower1",
-	"backrankpower2", "backrankpower3", "king_value", "nocrampval13", "nocrampval20", "dogholeval", "dogholemandownval",
+	"backrankpower2", "backrankpower3", "backrankpower4", "backrankpower5", "king_value", "nocrampval13", "nocrampval20", 
+	"dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
 	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
-	"turnval", "kingcentermonopoly", "kingtrappedinsinglecornerval",
+	"turnval", "turnval_eg", "kingcentermonopoly", "kingtrappedinsinglecornerval",
 	"kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval", "dominatedkingval", "dominatedkingindcval",
-	"kingproximityval", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
-	"man_value", "balancemult", "skewnessmult", "cramp12", "cramp13", "cramp20", "badstructure", 
+	"kingproximityval1", "kingproximityval2", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
+	"man_value", "balancemult", "skewnessmult", "skewnessmult_eg", "cramp12", "cramp13", "cramp13_eg",
+	"cramp20", "badstructure", 
 	"dogholeval2", "badstructure2", /*"badstructuremax1", "badstructuremax2", "badstructuremin", */
 	"badstructure3", "badstructure4",
 	"badstructure5", "badstructure6", "badstructure7", "badstructure8",
 	"badstructure9", "badstructure10", "badstructure11",
-	/*"badstructure2stones",*/ "kingmanstones","immobile_mult", 
-	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", "king_no_mobility",
+	/*"badstructure2stones",*/ "kingmanstones","immobile_mult", "immobile_mult_kings",
+	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", 
+	"king_no_mobility",
 	"experimental_king_cramp", "compensation", "compensation_mandown",	
 	/*"compensation_mandown_norunaway",*/
 	"ungroundedcontact", "endangeredbridge", "endangeredbridge_kingdown",
@@ -104,7 +107,7 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c);
 void codeoutput() {
 	// write parameters as C code to file
 	FILE* fp;
-	int i; 
+	int i,j; 
 	int paramnum = 0; 
 	fp = fopen("C:\\code\\checkersdata\\codeoutput.txt", "w");
 
@@ -126,17 +129,26 @@ void codeoutput() {
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\n\nstatic int br[32] = {");
+	fprintf(fp, "\nstatic int br[32] = {");
 	for (i = paramnum - 25 - 32; i < paramnum - 25; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\n\nstatic int tmod[25] = {");
+	fprintf(fp, "\nstatic int tmod[25] = {");
 	for (i = paramnum - 25; i < paramnum; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
+
+	/*fprintf(fp, "\nstatic int blackbackrank[256] = {");
+	for (j = 0; j < 16; j++) {
+		for (i = 0; i < 16; i++) {
+			fprintf(fp, "%i,", params[arraystart + 13+25+32+ 16 * j + i]);
+		}
+		fprintf(fp, "\n");
+	}*/
+
 	fclose(fp); 
 }
 
@@ -162,13 +174,14 @@ int main()
 	int rejected = 0; 
 	int pos_num = 0; 
 	int quiet_pos_num = 0; 
-	int v0, v1, v3, staticeval; 
+	int /*v0, */v1, v3, staticeval; 
 	int iter[3] = { 1,0,2 };
 	int sameadjust; 
 	int adjust; 
 	int paramnum = 0; 
 	float influence[PARAMS];
 	float influence0[PARAMS]; 
+	char FEN[256]; 
 	
 
 	// if I want to check search times, run analyze_matchprogress()
@@ -203,6 +216,17 @@ int main()
 
 
 	getch(); 
+
+	// here, test specific positions: rattlesnake problem because of freewk < freebk, check again later
+	/*
+	sprintf(FEN, "W:W28,K15,13,K11,7:BK25,K22,12,5,4."); 
+	FENtoPosition(FEN, &p);
+	mc.bm = bitcount(p.bm);
+	mc.bk = bitcount(p.bk);
+	mc.wm = bitcount(p.wm);
+	mc.wk = bitcount(p.wk);
+	staticeval = evaluation(&p, &mc, 0, &delta, 0, 0);
+	getch(); */
 
 	// load either file with or without duplicates
     fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
@@ -407,7 +431,7 @@ int main()
 	printf("\n%i iterations made, no more improvement possible", iterations);
 	printf("\nerror after optimization is %.7f", minerror);
 	codeoutput();
-	printf("\nparameters written to c:\code\checkersdata\codeoutput.txt");
+	printf("\nparameters written to c:\\code\\checkersdata\\codeoutput.txt");
 
 	getch(); 
     return 0;
@@ -629,16 +653,18 @@ Cake 1.85_2017d(x64) played 12 - 16
 analysis : depth 19 / 34 / 19.3  time 2.70s  value = 2  nodes 9382738  3460kN / s  db 100 % cut 95.6% pv 12 - 16 32 - 27 16 - 20 24 - 19 15x24 28x19  4 - 8 25 - 21
 */
 
-int analyze_matchprogress(void) {
-	// read match progress file
+int analyze_matchlog(void) {
+	// read match log file
 	FILE* fp; 
 	char line[256]; 
 	int value, d1, d2;
 	float time, d3; 
 	float timesum_kr = 0, timesum_cake = 0; 
 	int n_kr = 0, n_cake = 0; 
+	float time_cake[100000];
+	float time_kingsrow[100000];
 
-	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog36'.txt", "r");
+	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog84.txt", "r");
 	while (!feof(fp)) {
 		fgets(line, 255, fp);
 		if (line[0] == 'a' && (line[10] == 'v' || line[33] == 'v')) {  // kingsrow
@@ -648,6 +674,7 @@ int analyze_matchprogress(void) {
 			if (d1 > 10 && d1 < 50
 				) {
 				timesum_kr += time;
+				time_kingsrow[n_kr] = time; 
 				n_kr++;
 			}
 			//printf("\n%i   %i/%.1f/%i   %.1f", value, d1, d3, d2, time);
@@ -659,14 +686,249 @@ int analyze_matchprogress(void) {
 			//printf("\n%i/%i/%.1f %.2f", d1,d2,d3,time);
 			if (d1 > 10 && d1 < 50) {
 				timesum_cake += time;
+				time_cake[n_cake] = time; 
 				n_cake++;
 			}
 			//getch(); 
 		}
 	}
+	fclose(fp); 
+	printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
 	printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
 	printf("\naverage time cake: %.3f", timesum_cake / n_cake);
+
+	// write data to file
+	fp = fopen("C:\\code\\checkersdata\\time_cake.txt", "w");
+	for (int i = 0; i < n_cake; i++)
+		fprintf(fp, "%.3f\n", time_cake[i]);
+	fclose(fp); 
+	fp = fopen("C:\\code\\checkersdata\\time_kingsrow.txt", "w");
+	for (int i = 0; i < n_cake; i++)
+		fprintf(fp, "%.3f\n", time_kingsrow[i]);
+	fclose(fp);
+
 	getch();
 	exit(0);
 	return 0; 
 }
+
+int analyze_matchprogress(void) {
+	// read match progress file
+	FILE* fp;
+	
+	int i; 
+	int ballot; 
+	char res1, res2; 
+	int n[2401]; 
+	int wins[2401]; 
+	char filename[128]; 
+
+#define NUMFILES 37
+
+	char files[NUMFILES][128] = { "match_progress61.txt",
+							"match_progress60.txt",
+							"match_progress14.txt",
+							"match_progress13.txt",
+							"match_progress17.txt",
+							"match_progress26.txt",
+							"match_progress22.txt",
+							"match_progress12.txt",
+							"match_progress35.txt",
+							"match_progress59.txt",
+"match_progress6.txt",
+"match_progress53.txt",
+"match_progress21.txt",
+"match_progress34.txt",
+"match_progress25.txt",
+"match_progress37.txt",
+"match_progress46.txt",
+"match_progress50.txt",
+"match_progress58.txt",
+"match_progress41.txt",
+"match_progress49.txt",
+"match_progress18.txt",
+"match_progress27.txt",
+"match_progress54.txt",
+"match_progress52.txt",
+"match_progress56.txt",
+"match_progress43.txt",
+"match_progress66.txt",
+"match_progress67.txt",
+"match_progress70.txt",
+"match_progress75.txt",
+"match_progress83.txt",
+"match_progress73.txt",
+"match_progress69.txt",
+"match_progress84.txt",
+"match_progress82.txt",
+"match_progress79.txt"
+	};
+	char directory[128] = "C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\";
+
+
+	for (i = 0; i < 2400; i++) {
+		n[i] = 0; 
+		wins[i] = 0; 
+	}
+
+	for (i = 0; i < NUMFILES; i++) {
+		sprintf(filename, "%s%s", directory, files[i]);
+		printf("\nanalyzing %s", filename);
+		fp = fopen(filename, "r");
+		if (fp == NULL) {
+			printf("\nfile not found %s", filename);
+		}
+		while (!feof(fp)) {
+			fscanf(fp, "%i:%c%c", &ballot, &res1, &res2);
+			//printf("\nballot %i result %c%c", ballot, res1, res2);
+			n[ballot] += 2;
+			if (res1 == '+' || res1 == '-')
+				wins[ballot]++;
+			if (res2 == '+' || res2 == '-')
+				wins[ballot]++;
+		}
+	}
+	fclose(fp);
+	//printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
+	//printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
+	//printf("\naverage time cake: %.3f", timesum_cake / n_cake);
+
+	// write data to file
+	fp = fopen("C:\\code\\checkersdata\\ballot_difficulty.txt", "w");
+	for (int i = 1; i <= 2400; i++)
+		fprintf(fp, "%i\t%.3f\n", i, (float)wins[i]/(float)(n[i]));
+	fclose(fp);
+	
+
+	getch();
+	exit(0);
+	return 0;
+}
+
+int FENtoPosition(char* FEN, POSITION* p)
+{
+	/* parses the FEN string in *FEN and places the result in p and color */
+	// example FEN string:
+	// W:W32,31,30,29,28,27,26,25,24,22,21:B23,12,11,10,8,7,6,5,4,3,2,1.
+	// returns 1 on success, 0 on failure.
+	char* token;
+	char* col, * white, * black;
+	char FENstring[256];
+	int i;
+	int number;
+	int32 one = 1;
+	int piece;
+	int length;
+	char colorchar = 'x';
+
+
+	// find the full stop in the FEN string which terminates it and 
+	// replace it with a 0 for termination
+	length = (int)strlen(FEN);
+	token = FEN;
+	i = 0;
+	while (token[i] != '.' && i < length)
+		i++;
+	token[i] = 0;
+
+	sprintf(FENstring, "%s", FEN);
+
+	// detect empty FEN string
+	if (strcmp(FENstring, "") == 0)
+		return 0;
+
+	/* parse color ,whitestring, blackstring*/
+	col = strtok(FENstring, ":");
+
+	if (col == NULL)
+		return 0;
+
+	if (strcmp(col, "W") == 0)
+		p->color = WHITE;
+	else
+		p->color = BLACK;
+
+	/* parse position: get white and black strings */
+
+	white = strtok(NULL, ":");
+	if (white == NULL)
+		return 0;
+
+	// check whether this was a normal fen string (white first, then black) or vice versa.
+	colorchar = white[0];
+	if (colorchar == 'B' || colorchar == 'b')
+	{
+		black = white;
+		white = strtok(NULL, ":");
+		if (white == NULL)
+			return 0;
+		// reversed fen string
+	}
+	else
+	{
+		black = strtok(NULL, ":");
+		if (black == NULL)
+			return 0;
+	}
+	// example FEN string:
+	// W:W32,31,30,29,28,27,26,25,24,22,21:B23,12,11,10,8,7,6,5,4,3,2,1.
+	// skip the W and B characters.
+	white++;
+	black++;
+
+
+	/* reset board */
+	p->bm = 0;
+	p->wm = 0;
+	p->bk = 0;
+	p->wk = 0;
+
+	/* parse white string */
+	token = strtok(white, ",");
+
+	while (token != NULL)
+	{
+		/* While there are tokens in "string" */
+		/* a token might be 18, or 18K */
+		piece = MAN;
+		if (token[0] == 'K')
+		{
+			token++;
+			piece = KING;
+		}
+		number = atoi(token);
+		/* ok, piece and number found, transform number to coors */
+		number = SquareToBit(number);
+
+		if (piece == MAN)
+			p->wm |= one << number;
+		else
+			p->wk |= one << number;
+		/* Get next token: */
+		token = strtok(NULL, ",");
+	}
+	/* parse black string */
+	token = strtok(black, ",");
+	while (token != NULL)
+	{
+		/* While there are tokens in "string" */
+		/* a token might be 18, or 18K */
+		piece = MAN;
+		if (token[0] == 'K')
+		{
+			piece = KING;
+			token++;
+		}
+		number = atoi(token);
+		/* ok, piece and number found, transform number to coors */
+		number = SquareToBit(number);
+		if (piece == MAN)
+			p->bm |= one << number;
+		else
+			p->bk |= one << number;
+		/* Get next token: */
+		token = strtok(NULL, ",");
+	}
+	return 1;
+}
+

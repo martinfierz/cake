@@ -3,9 +3,43 @@ looking at games i think i should try adding
 
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
-1.6. tentative release?
 
-Cake 1.86 RC2 QS (8297k) - Kingsrow(x64) 1.18f : W-L-D:258-866-3676
+4.+5.6. Trip to Graz and Graz
+towards Cake 1.87: 
+i notice that optimizer is buggy, because when i end it and restart it with the new optimal parameters,
+it gives a different result!?
+-- change computation of kingproximity
+-- changed computation of immobile men (ungrounded and behind another man)
+-- phase dependent skewness, cramp13 and turnval
+-- tried to make dogholeval and promoteinone phase-dependent but optimizer changed nothing
+result of time-optimized version: (match 82)
+Cake 1.87 beta - Kingsrow(x64) 1.18f : W-L-D:284-897-3619
++:284 =:3609 -:897 unknown:10 +B:724 -B:457
+average time kingsrow: 0.112
+average time cake: 0.131  - wow weird, what happened?? make a histogram?
+
+Time optimization turned off: (match83)
+Cake 1.87 beta noTO - Kingsrow(x64) 1.18f : W-L-D:311-900-3589  (34.55% relative, 43.86% absolute)
++:311 =:3586 -:900 unknown:3 +B:723 -B:488
+average time kingsrow: 0.112
+average time cake: 0.115  - much better!?
+
+Different attempt at time optimization: (match 84)
+--only change aborttime to 3x, and change start new iteration to 0.4x
+Cake 1.87 beta TO2 - Kingsrow(x64) 1.18f : W-L-D:315-802-3683
++:315 =:3683 -:802 unknown:0 +B:666 -B:451 
+much much much better!!   (39.38% relative, 44.93% absolute, 4.59 draw-loss)
+average time kingsrow: 0.107
+average time cake: 0.113
+
+
+in match82 against kr 1.18 it was (also time-optimized)
+average time kingsrow: 0.116
+average time cake: 0.117
+
+
+1.6. tentative release?
+Cake 1.86 RC2 QS (8297k) - Kingsrow(x64) 1.18f : W-L-D:258-866-3676 (29.79% relative, 43.67% absolute, 4.24 win loss)
 Cake 1.86 RC2 QS (8297k) - Kingsrow(x64) 1.18  : W-L-D:995-524-2213
 
 31.5. re-test with QS - once again wow wow wow (92 half points more!)

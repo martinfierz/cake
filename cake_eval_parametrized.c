@@ -38,9 +38,14 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 */
 
 // Cake 1.86 release
-static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
-static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
-static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
+//static int ungroundedpenalty[13] = { -1, -1, 1, 4, 9, 15, 20, 26, 24, 24, 21, 21, 21};
+//static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
+//static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
+
+
+static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 24, 21, 21, 21};
+static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
 
 int setparams(int* params, int n) {
 	int i; 
@@ -87,7 +92,7 @@ int optimalparams() {
 	int i; 
 
 	// below: Cake 1.86	
-	v[devsinglecorner] = 3;
+	/*v[devsinglecorner] = 3;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
 	v[idealdoublecornerval] = 7;
@@ -141,6 +146,7 @@ int optimalparams() {
 	v[badstructure11] = 22;
 	v[kingmanstones] = 11;
 	v[immobile_mult] = 2;
+	v[immobile_mult_kings] = 0; 
 	v[runaway_destroys_backrank] = 16;
 	v[king_blocks_king_and_man] = 78;
 	v[king_denied_center] = 1;
@@ -151,8 +157,84 @@ int optimalparams() {
 	v[compensation_mandown] = 36;
 	v[ungroundedcontact] = 2;
 	v[endangeredbridge] = 7;
+	v[endangeredbridge_kingdown] = 14;*/
+
+
+	v[devsinglecorner] = 4;
+	v[intactdoublecorner] = 3;
+	v[oreoval] = 5;
+	v[idealdoublecornerval] = 7;
+	v[backrankpower1] = 40;
+	v[backrankpower2] = 52;
+	v[backrankpower3] = 81;
+	v[backrankpower4] = 0;
+	v[backrankpower5] = 0;
+	v[king_value] = 110;
+	v[nocrampval13] = 5;
+	v[nocrampval20] = 1;
+	v[dogholeval] = 19;
+	v[dogholemandownval] = 8;
+	v[mc_occupyval] = -2;
+	v[mc_attackval] = 2;
+	v[realdykeval] = 0;
+	v[greatdykeval] = 0;
+	v[promoteinone] = 12;
+	v[promoteintwo] = 7;
+	v[promoteinthree] = 2;
+	v[tailhookval] = 13;
+	v[kcval] = 5;
+	v[keval] = -3;
+	v[turnval] = -2;
+	v[turnval_eg] = -1;
+	v[kingcentermonopoly] = 4;
+	v[kingtrappedinsinglecornerval] = 34;
+	v[kingtrappedinsinglecornerbytwoval] = 12;
+	v[kingtrappedindoublecornerval] = 11;
+	v[dominatedkingval] = 20;
+	v[dominatedkingindcval] = 43;
+	v[kingproximityval1] = 6;
+	v[kingproximityval2] = 4;
+	v[immobilemanval] = 0;
+	v[kingholdstwomenval] = 16;
+	v[onlykingval] = 10;
+	v[roamingkingval] = 12;
+	v[man_value] = 94;
+	v[balancemult] = 4;
+	v[skewnessmult] = 17;
+	v[skewnessmult_eg] = -3;
+	v[cramp12] = 3;
+	v[cramp13] = 27;
+	v[cramp13_eg] = 20;
+	v[cramp20] = 5;
+	v[badstructure] = 4;
+	v[dogholeval2] = 19;
+	v[badstructure2] = 3;
+	v[badstructure3] = 6;
+	v[badstructure4] = 7;
+	v[badstructure5] = 16;
+	v[badstructure6] = 14;
+	v[badstructure7] = 54;
+	v[badstructure8] = 24;
+	v[badstructure9] = 9;
+	v[badstructure10] = 10;
+	v[badstructure11] = 21;
+	v[kingmanstones] = 11;
+	v[immobile_mult] = 1;
+	v[immobile_mult_kings] = 4;
+	v[runaway_destroys_backrank] = 15;
+	v[king_blocks_king_and_man] = 75;
+	v[king_denied_center] = 1;
+	v[king_low_mobility_mult] = 3;
+	v[king_no_mobility] = -10;
+	v[experimental_king_cramp] = 28;
+	v[compensation] = 81;
+	v[compensation_mandown] = 37;
+	v[ungroundedcontact] = 1;
+	v[endangeredbridge] = 5;
 	v[endangeredbridge_kingdown] = 14;
-	
+
+
+
 	
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
@@ -177,6 +259,8 @@ int startparams() {
 	v[backrankpower1] = 15;
 	v[backrankpower2] = 15;
 	v[backrankpower3] = 15;
+	v[backrankpower4] = 0;
+	v[backrankpower5] = 0;
 	v[king_value] = 120;
 	v[nocrampval13] = 0; // 2;  // optimized 1;
 	v[nocrampval20] = 0; // 2;  // optimized 1;
@@ -199,7 +283,8 @@ int startparams() {
 	v[kingtrappedindoublecornerval] = 7;// 10;// 17;  // 10; optimized?
 	v[dominatedkingval] = 10;// 10;// 26; // 10; optimized?
 	v[dominatedkingindcval] = 20;// 10;// 58; // 10; optimized?
-	v[kingproximityval] = 0;// 4;// 7; // 4; optimized?
+	v[kingproximityval1] = 0;// 4;// 7; // 4; optimized?
+	v[kingproximityval2] = 0;// 4;// 7; // 4; optimized?
 	v[immobilemanval] = 0;// 2;// 3; // 2; optimized?
 	v[kingholdstwomenval] = 8;// 10;// 28;  // 10; optimized?
 	v[onlykingval] = 5;// 20;// 6; // 20; optimized?
@@ -1049,22 +1134,46 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		
 		// TODOTODO: I think below would be a more sensible 
 		// definition of immobiles!
-		immobile_black = ungrounded_black & ~(backward(free | white));
-		immobile_white = ungrounded_white & ~(forward(free | black));
+		//immobile_black = ungrounded_black & ~(backward(free | white));
+		//immobile_white = ungrounded_white & ~(forward(free | black));
 
 		// new immobile definition 22.4.2019 1.85g without free was a bit worse:
 		//immobile_black = p->bm & ~(backward(free));
 		//immobile_white = p->wm & ~(forward(free));
 
+
+		// 
+		immobile_black = ungrounded_black & leftbackward(ungrounded_black); 
+		immobile_white = ungrounded_white & leftforward(ungrounded_white); 
 		/*if (immobile_black) {
 			printboard(p);
 			printint32(immobile_black);
 			getch();
 		}*/
 
-		// TODO: more often than not these immobile men are on the back rank guarding the back rank!
+
+		// TODO: these are only doubly immobile men, I would also want to find
+		// singly immobile men, and add a penalty if the other side has kings
+		e->men += v[immobile_mult] * bitcount(immobile_white);
+		e->men -= v[immobile_mult] * bitcount(immobile_black); 
+		if(p->bk)
+			e->men += v[immobile_mult_kings] * bitcount(immobile_white);
+		if (p->wk)
+			e->men -= v[immobile_mult_kings] * bitcount(immobile_black);
+
+		
+
+		immobile_black = ungrounded_black & rightbackward(ungrounded_black);
+		immobile_white = ungrounded_white & rightforward(ungrounded_white);
 		e->men += v[immobile_mult] * bitcount(immobile_white);
 		e->men -= v[immobile_mult] * bitcount(immobile_black);
+		if (p->bk)
+			e->men += v[immobile_mult_kings] * bitcount(immobile_white);
+		if (p->wk)
+			e->men -= v[immobile_mult_kings] * bitcount(immobile_black);
+
+
+
 
 		// try same with ungrounded  (// new in Cake 1.85g2) didn't work
 		//e->men += bitcount(immobile_white & ungrounded_white);
@@ -1221,8 +1330,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			
 			index = -((br1+br2-br3-br4-br6+br7+br8));
 			index += ((wr1+wr2-wr3-wr4-wr6+wr7+wr8));
-			e->men += (v[skewnessmult]*index)/4;
+			//e->men += (v[skewnessmult] * index) / 4;
+			e->men += (((v[skewnessmult] * (pieces - 8) + v[skewnessmult_eg] * (24 - pieces))) * index) / 64;
 			
+
 			// adjust skewness for number of men - with few men on the board,
 			// it doesn't matter any more
 			//index = index * (mc->bm+mc->wm);
@@ -1245,6 +1356,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			
 			// and give a penalty - for sure here
 			e->men += v[dogholeval2];
+			//e->men += ((v[dogholeval2] * (pieces - 8) + v[dogholeval2_eg] * (24 - pieces)) / 16);
 			}
 		if( (p->wm&SQ5) && (p->bm&SQ1) ) //real doghole
 			{
@@ -1258,6 +1370,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			// give a penalty or not? - i don't know... 
 			if(ending==0) 
 				e->men += v[dogholeval];
+				//e->men += ((v[dogholeval] * (pieces - 8) + v[dogholeval_eg] * (24 - pieces)) / 16);
 			// give a real penalty if there is a white man on bit11 or bit 15,
 			//	because this man cannot go through!
 			if( (p->wm & (SQ9|SQ13) ) && (free&SQ10)) 
@@ -1270,8 +1383,9 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if(tmod[stones]>0) 
 				tempo-=6;
 			
-			if(ending == 0)
+			if(ending == 0)		// TODO: check if this is sensible - eg-val of doghole was 19 just as normal value!
 				e->men -= v[dogholeval];
+				//e->men -= ((v[dogholeval] * (pieces - 8) + v[dogholeval_eg] * (24 - pieces)) / 16);
 			if( (p->bm & (SQ24|SQ20) ) && (free&SQ23)) 
 				e->men -= v[dogholemandownval];
 			}
@@ -1282,6 +1396,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				tempo-=5;
 			
 			e->men -= v[dogholeval2];
+			//e->men -= ((v[dogholeval2] * (pieces - 8) + v[dogholeval2_eg] * (24 - pieces)) / 16);
 			}
 		
 		
@@ -1378,14 +1493,18 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		if (p->bm & SQ13)
 		{
 			if (p->wm & SQ17)
-				e->cramp += v[cramp13];
+				//e->cramp += v[cramp13];
+				e->cramp += ((v[cramp13] * (pieces - 8) + v[cramp13_eg] * (24 - pieces)) / 16);
+
 			if ((free & (SQ17 | SQ21)) == (SQ17 | SQ21))
 				e->cramp -= v[nocrampval13]; // cramping nothing - discourage a little
 		}
 		if (p->wm & SQ20)
 		{
 			if (p->bm & SQ16)
-				e->cramp -= v[cramp13];
+				//e->cramp -= v[cramp13];
+				e->cramp -= ((v[cramp13] * (pieces - 8) + v[cramp13_eg] * (24 - pieces)) / 16);
+
 			if ((free & (SQ12 | SQ16)) == (SQ12 | SQ16))
 				e->cramp += v[nocrampval13]; // cramping nothing - discourage a little
 		}
@@ -1628,19 +1747,33 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		// for bit 27 do some checks.
 		if( (p->bm) & RANK7)
 			{
-			if((p->bm)&(free>>4) & SQ28) 
-				{e->runaway+=v[promoteinone];potbk++;e->runaway-=6*tmod[stones];}
-			if((p->bm)&( (free>>3)|(free>>4) ) & SQ27) 
-				{e->runaway+=v[promoteinone];potbk++;e->runaway-=6*tmod[stones];}
-			if((p->bm)&( (free>>3)|(free>>4) ) & SQ26) 
-				{e->runaway+=v[promoteinone];potbk++;e->runaway-=6*tmod[stones];}
+			//m = ((v[promoteinone] * (pieces - 8) + v[promoteinone_eg] * (24 - pieces)) / 16);
+			if((p->bm)&(free>>4) & SQ28) {
+				e->runaway += v[promoteinone];
+				potbk++;
+				e->runaway-=6*tmod[stones];
+			}
+			if((p->bm)&( (free>>3)|(free>>4) ) & SQ27) 	{
+				e->runaway += v[promoteinone];
+				potbk++;
+				e->runaway-=6*tmod[stones];
+			}
+			if((p->bm)&( (free>>3)|(free>>4) ) & SQ26) 	{
+				e->runaway += v[promoteinone];
+				potbk++;
+				e->runaway-=6*tmod[stones];
+			}
 			/* should modify this for men on 27 which will be trapped in single corner!*/
 			if(p->bm & SQ25)
 				{
 				// man running into single corner - there's a danger of being trapped
 				if(!(p->wm & SQ30))
 					// no white man on 30 - no trapping
-					{e->runaway+=v[promoteinone];potbk++;e->runaway-=6*tmod[stones];}
+					{
+					e->runaway += v[promoteinone];
+					potbk++;
+					e->runaway-=6*tmod[stones];
+				}
 				else
 					{
 					
@@ -1663,7 +1796,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 								{
 								if(!(p->wm & SQ31))
 									{
-									e->runaway+=v[promoteinone];
+									e->runaway += v[promoteinone];
 									potbk++;
 									e->runaway-=6*tmod[stones];
 									}
@@ -1695,19 +1828,36 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 
 		if( (p->wm) & RANK2)
 			{
-			if((p->wm)&(free<<4)& SQ5)						
-				{e->runaway-=v[promoteinone];potwk++;e->runaway+=6*tmod[stones];}
+			//m = ((v[promoteinone] * (pieces - 8) + v[promoteinone_eg] * (24 - pieces)) / 16);
+			if((p->wm)&(free<<4)& SQ5)
+				{
+				e->runaway -= v[promoteinone];
+				potwk++;
+				e->runaway+=6*tmod[stones];
+			}
 			if((p->wm)&( (free<<3)|(free<<4) ) & SQ6) 
-				{e->runaway-=v[promoteinone];potwk++;e->runaway+=6*tmod[stones];}
+				{
+				e->runaway -= v[promoteinone];
+				potwk++;
+				e->runaway+=6*tmod[stones];
+			}
 			if((p->wm)&( (free<<3)|(free<<4) ) & SQ7) 
-				{e->runaway-=v[promoteinone];potwk++;e->runaway+=6*tmod[stones];}
+				{
+				e->runaway -= v[promoteinone];
+				potwk++;
+				e->runaway+=6*tmod[stones];
+			}
 			
 			if(p->wm & SQ8)
 				{
 				// man running into single corner - there's a danger of being trapped
 				if(!(p->bm & SQ3))
 					// no black man on 3 - no trapping
-					{e->runaway-=v[promoteinone];potwk++;e->runaway+=6*tmod[stones];}
+					{
+					e->runaway -= v[promoteinone];
+					potwk++;
+					e->runaway+=6*tmod[stones];
+				}
 				else
 					{
 					// wblack man on 3 0, real danger of trapping. 
@@ -1725,7 +1875,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 								{
 								if(!(p->bm&SQ2))
 									{
-									e->runaway-=v[promoteinone];
+									e->runaway -=  v[promoteinone];
 									potwk++;
 									e->runaway+=6*tmod[stones];
 									}
@@ -1771,7 +1921,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				potbk++;
 				e->runaway-=5*tmod[stones];
 				} // vtune: use &, in all others from here
-			if( (p->bm&BIT21) && (!(RA21L&white) || !(RA21R&white)) ) 
+			if( (p->bm&BIT21) && (!(RA21L & white) || !(RA21R&white)) ) 
 				{
 				e->runaway+=v[promoteintwo];
 				potbk++;
@@ -2292,19 +2442,31 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			tmp&=free2;
 			m=bitcount(tmp);
 #ifdef RARELYUSED
-			if(!(tmp&CENTER))
+			if (!(tmp & CENTER)) {
 				e->king -= v[king_denied_center];
+				/*printboard(p);
+				printint32(tmp);
+				printf("\nking denied center?");
+				getch();*/
+			}
 #endif
-			if(m<=4)
+			if(m<=4) {
 				e->king -= (v[king_low_mobility_mult] * (5 - m));
+				/*printboard(p);
+				printint32(tmp);
+				printf("\nking low mobility?");
+				getch();*/
+			}
 			// TODO printboard this and also <=4 - maybe only do this for kings not in center?
 			if(m<=1)
 				{
 				ki->freebk--; 
 				e->king -= v[king_no_mobility]; 
-				//printboard(p); 
-				//printint32(tmp); 
-				//getch(); 
+				/*printboard(p);
+				printint32(tmp);
+				printf("\nking no mobility?");
+				getch();*/
+			
 				}
 			}
 		
@@ -2425,17 +2587,24 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			// and why are bridgeheads evaluated separately?
 			// TODO: why not combine this with king mobility evaluation?
 		
+			// new 187: split into kingproximityval1 and kingproximityval2?
 			m = forward(p->bk) | backward(p->bk);
-			kingproximity += bitcount(m&ungrounded_white);
-			m |= (forward(m) | backward(m));
-			kingproximity += bitcount(m&ungrounded_white);
+			kingproximity = bitcount(m&ungrounded_white);
+			e->king_man += kingproximity * v[kingproximityval1];
+
+			m = (forward(m) | backward(m)) & (~m);
+			kingproximity = bitcount(m&ungrounded_white);
+			e->king_man += kingproximity * v[kingproximityval2];
 			
 			m = forward(p->wk) | backward(p->wk);
-			kingproximity -= bitcount(m&ungrounded_black);
-			m |= (forward(m) | backward(m));
-			kingproximity -= bitcount(m&ungrounded_black);
-			
-			e->king_man += kingproximity * v[kingproximityval];
+			kingproximity = bitcount(m&ungrounded_black);
+			e->king_man -= kingproximity * v[kingproximityval1];
+
+			m = (forward(m) | backward(m)) & (~m);
+			kingproximity = bitcount(m&ungrounded_black);
+			e->king_man -= kingproximity * v[kingproximityval2];
+
+			//e->king_man += kingproximity * v[kingproximityval];
 			}
 
 		
@@ -2480,7 +2649,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			the objective should be not to continue kinging for both sides. => the stronger side
 			should try to stop the men of the opponent with its kings */
 
-	
+		// todo: why only if stones <= 10?
 		if(ending) // number of total stones <=10
 			{
 			if(ki->freebk >= ki->freewk)
@@ -2767,10 +2936,16 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		}
 
 	// turn 
-	if(p->color == BLACK) 
-	   turn += v[turnval];
-	else 
-		turn -= v[turnval];
+	// new for Cake 1.87, make turn phase-dependent
+	// turnval for 24 pieces, turnval_eg for 8 pieces
+   if (p->color == BLACK) {
+	   turn += ((v[turnval] * (pieces - 8) + v[turnval_eg] * (24 - pieces)) / 16);
+	   ///7turn += v[turnval];
+   }
+   else {
+	   //turn -= v[turnval];
+	   turn += ((v[turnval] * (pieces - 8) + v[turnval_eg] * (24 - pieces)) / 16);
+   }
 	eval += turn;
  
 #ifdef SHOWEVAL
@@ -2988,13 +3163,34 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (match1(p.bm, 0x6E))
 				blackbackrankpower[u] = v[backrankpower3];// 40;// 0; //  40; optimized
 
+			// new in cake 1.87
+			if (match1(p.bm, (SQ2 | SQ3 | SQ5 | SQ7)))
+				blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]); 
+			if (match1(p.bm, (SQ2 | SQ3 | SQ5 | SQ6 | SQ7)))
+				blackbackrankpower[u] = max(v[backrankpower5], blackbackrankpower[u]); 
+
+
 			if (match1(p.wm, 0x70000000))
 				whitebackrankpower[u] = v[backrankpower1]; // 21;// 30;// 14;// 30; optimized
 			if (match1(p.wm, 0x72000000) || match1(p.wm, 0x74000000))
 				whitebackrankpower[u] = v[backrankpower2]; // 11;// 35;// 3; // 35; optimized
 			if (match1(p.wm, 0x76000000))
 				whitebackrankpower[u] = v[backrankpower3]; // 40;// 0;// 40; optimized
+
+
+			if (match1(p.bm, (SQ31 | SQ30 | SQ28 | SQ26)))
+				blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]);
+			if (match1(p.bm, (SQ31 | SQ30 | SQ28 | SQ27 | SQ26)))
+				blackbackrankpower[u] = max(v[backrankpower5], blackbackrankpower[u]);
 		}
+
+		// print arrays
+		/*for (int i = 0; i < 256; i++) {
+			if (i % 16 == 0)
+				printf("\n");
+			printf("%i ", blackbackrankeval[i]);
+		}
+		getch();*/
 
 		return 1;
 	}

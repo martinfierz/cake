@@ -176,8 +176,9 @@ main()
 			break;
 		printf("\nPosition %i: %s",n,FEN);
 		//sprintf(FEN, "B:W9,19,21,29,32:B7,10,11,12");
-		FENtoPosition(FEN, &p);
 
+		FENtoPosition(FEN, &p);
+		
 
 		printboard(&p);
 		start = clock();
