@@ -50,9 +50,15 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 //static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
 //static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
 
-static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 25, 21, 21, 21};
-static int br[32] = { -9, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 4, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-static int tmod[25] = { 0, 5, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
+//static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 25, 21, 21, 21};
+//static int br[32] = { -9, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 4, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+//static int tmod[25] = { 0, 5, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
+//static int kingmobility[10] = { -5,-4,-3,-2,-1,0,1,2,3,4 };
+
+static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 10, 15, 22, 21, 25, 21, 21, 21};
+static int br[32] = { -9, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -13, -27, -9, -20, -5, -7, 4, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+static int tmod[25] = { 0, 5, 3, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -5, -6, -7, -8, -11, -9, -10, -13};
+static int kingmobility[10] = { -5, -5, -13, -4, -2, 2, 3, 4, 4, 4};
 
 
 int setparams(int* params, int n) {
@@ -73,6 +79,10 @@ int setparams(int* params, int n) {
 		tmod[i] = params[arraystart + 13 + 32 + i];
 	}
 
+	for (i = 0; i < 10; i++) {
+		kingmobility[i] = params[arraystart + 13 + 32 + 25 + i];
+	}
+
 	return 0; 
 }
 
@@ -88,6 +98,9 @@ int getparams(int* params, int* n) {
 
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i];
+
+	for (i = 0; i < 10; i++)
+		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]; 
 
 	// then return all parameters
 	*n = arraystart; 
@@ -105,6 +118,10 @@ int getparams(int* params, int* n) {
 	*n = (arraystart + 13 + 32 + 25);
 	for (i = arraystart + 13 + 32; i < (*n); i++)
 		params[i] = v[i];
+
+	*n = (arraystart + 13 + 32 + 25 + 10);
+	for (i = arraystart + 13 + 32 + 25; i < (*n); i++)
+		params[i] = v[i]; 
 }
 
 int optimalparams() {
@@ -194,12 +211,12 @@ int optimalparams() {
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
 	v[idealdoublecornerval] = 7;
-	v[backrankpower1] = 40;
-	v[backrankpower2] = 52;
+	v[backrankpower1] = 39;
+	v[backrankpower2] = 51;
 	v[backrankpower3] = 81;
 	v[backrankpower4] = 24;
 	v[backrankpower5] = 0;
-	v[king_value] = 110;
+	v[king_value] = 108;
 	v[nocrampval13] = 5;
 	v[nocrampval20] = 1;
 	v[dogholeval] = 19;
@@ -212,23 +229,23 @@ int optimalparams() {
 	v[promoteintwo] = 7;
 	v[promoteinthree] = 2;
 	v[tailhookval] = 12;
-	v[kcval] = 6;
-	v[keval] = -3;
+	v[kcval] = 10;
+	v[keval] = -2;
 	v[turnval] = -2;
 	v[turnval_eg] = -1;
 	v[kingcentermonopoly] = 3;
-	v[kingtrappedinsinglecornerval] = 34;
-	v[kingtrappedinsinglecornerbytwoval] = 12;
-	v[kingtrappedindoublecornerval] = 11;
+	v[kingtrappedinsinglecornerval] = 31;
+	v[kingtrappedinsinglecornerbytwoval] = 9;
+	v[kingtrappedindoublecornerval] = 7;
 	v[dominatedkingval] = 20;
-	v[dominatedkingindcval] = 43;
+	v[dominatedkingindcval] = 45;
 	v[kingproximityval1] = 6;
 	v[kingproximityval2] = 4;
-	v[immobilemanval] = -1;
+	v[immobilemanval] = 0;
 	v[kingholdstwomenval] = 15;
-	v[onlykingval] = 10;
-	v[roamingkingval] = 12;
-	v[man_value] = 94;
+	v[onlykingval] = 9;
+	v[roamingkingval] = 9;
+	v[man_value] = 96;
 	v[balancemult] = 4;
 	v[skewnessmult] = 17;
 	v[skewnessmult_eg] = -3;
@@ -239,29 +256,29 @@ int optimalparams() {
 	v[badstructure] = 4;
 	v[dogholeval2] = 19;
 	v[badstructure2] = 3;
-	v[badstructure3] = 6;
+	v[badstructure3] = 5;
 	v[badstructure4] = 6;
 	v[badstructure5] = 16;
-	v[badstructure6] = 14;
+	v[badstructure6] = 16;
 	v[badstructure7] = 54;
-	v[badstructure8] = 24;
-	v[badstructure9] = 9;
-	v[badstructure10] = 9;
+	v[badstructure8] = 23;
+	v[badstructure9] = 8;
+	v[badstructure10] = 10;
 	v[badstructure11] = 20;
 	v[kingmanstones] = 11;
 	v[immobile_mult] = 1;
 	v[immobile_mult_kings] = 4;
 	v[runaway_destroys_backrank] = 14;
-	v[king_blocks_king_and_man] = 73;
-	v[king_denied_center] = 1;
+	v[king_blocks_king_and_man] = 71;
+	v[king_denied_center] = 0;
 	v[king_low_mobility_mult] = 4;
 	v[king_no_mobility] = -11;
-	v[experimental_king_cramp] = 29;
+	v[experimental_king_cramp] = 32;
 	v[compensation] = 77;
-	v[compensation_mandown] = 38;
+	v[compensation_mandown] = 39;
 	v[ungroundedcontact] = 1;
-	v[endangeredbridge] = 5;
-	v[endangeredbridge_kingdown] = 14;
+	v[endangeredbridge] = 6;
+	v[endangeredbridge_kingdown] = 15;
 
 	
 	for (i = 0; i < 13; i++)
@@ -272,6 +289,10 @@ int optimalparams() {
 
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i];
+
+	for (i = 0; i < 10; i++)
+		v[arraystart + i + 13 + 32 + 25] = kingmobility[i];
+
 	return 0; 
 }
 
@@ -359,6 +380,11 @@ int startparams() {
 
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i]/2;
+
+	for (i = 0; i < 10; i++)
+		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]/2;
+
+
 	return 0;
 }
 
@@ -2484,24 +2510,19 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				getch();*/
 			}
 #endif
-			if(m<=4) {
+
+			/*if(m<=4) {
 				e->king -= (v[king_low_mobility_mult] * (5 - m));
-				/*printboard(p);
-				printint32(tmp);
-				printf("\nking low mobility?");
-				getch();*/
 			}
 			// TODO printboard this and also <=4 - maybe only do this for kings not in center?
 			if(m<=1)
 				{
 				ki->freebk--; 
 				e->king -= v[king_no_mobility]; 
-				/*printboard(p);
-				printint32(tmp);
-				printf("\nking no mobility?");
-				getch();*/
-			
-				}
+				}*/
+			// limit m to 0...9
+			m = min(9, m); 
+			e->king += kingmobility[m]; 
 			}
 		
 		// remove kings that are already in center, these get no penalty
@@ -2533,17 +2554,18 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (!(tmp & CENTER))
 				e->king += v[king_denied_center]; 
 #endif
+			/*
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 
 			if(m<=1)
 				{
 				ki->freewk--; 
 				e->king += v[king_no_mobility]; 
-				/*printboard(p);
-				printint32(tmp);
-				printf("\nking no mobility?");
-				getch();*/
-				}
+				} */
+
+			m = min(9, m);
+			e->king -= kingmobility[m];
+
 			}
 
 		// king center monopoly : only one side can occupy center

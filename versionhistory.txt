@@ -3,6 +3,16 @@ looking at games i think i should try adding
 
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+9.6.2019
+try doing a kingmobility array!
+
+9.6.2019
+verified that TO2 is far better than noTO and TO by match against kr118 after seeing it in match vs 118f
+optimizer output fixed
+changed king mobility evaluation
+added a backrankpower4
+->cake 1.87 beta 2
+
 
 4.+5.6. Trip to Graz and Graz
 towards Cake 1.87: 

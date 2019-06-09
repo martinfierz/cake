@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 142
+#define PARAMS 152
 
 
 /* bitboard masks for moves in various directions */
@@ -97,7 +97,8 @@ char strs[PARAMS][128] =  {
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
 	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
-	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24"
+	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24",
+	"kmob0", "kmob1", "kmob2", "kmob3", "kmob4", "kmob5", "kmob6", "kmob7", "kmob8", "kmob9"
 };
 
 
@@ -445,19 +446,25 @@ void codeoutput(int recall) {
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 32; i < paramnum - 25 - 32; i++) {
+	for (i = paramnum - 13 - 25 - 32 - 10; i < paramnum - 25 - 32 -10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
 	fprintf(fp, "\nstatic int br[32] = {");
-	for (i = paramnum - 25 - 32; i < paramnum - 25; i++) {
+	for (i = paramnum - 25 - 32 -10; i < paramnum - 25-10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
 	fprintf(fp, "\nstatic int tmod[25] = {");
-	for (i = paramnum - 25; i < paramnum; i++) {
+	for (i = paramnum - 25-10; i < paramnum-10; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	fprintf(fp, "\nstatic int kingmobility[10] = {");
+	for (i = paramnum - 10; i < paramnum; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
