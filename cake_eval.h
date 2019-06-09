@@ -14,7 +14,10 @@ int materialevaluation(MATERIALCOUNT *m);
 
 int initializematerial(short materialeval[13][13][13][13]);
 int initializebackrank(char blackbackrankeval[256], char whitebackrankeval[256], char blackbackrankpower[256], char whitebackrankpower[256]);
-
+int setparams(int* params, int n);
+int optimalparams(void);
+int startparams(void); 
+int updateeval(void);
 
 #ifdef USEDB
 int dbwineval(POSITION *p, MATERIALCOUNT *mc);

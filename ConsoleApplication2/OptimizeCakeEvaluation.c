@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 144//142
+#define PARAMS 142
 
 
 /* bitboard masks for moves in various directions */
@@ -61,6 +61,7 @@
 #define RANK8 0xF0000000
 
 float sigmoid(int v, float c); 
+void codeoutput(int recall);
 
 int result_translated[4] = { 0, 1, -1, 0 };
 static int params[PARAMS]; // parameters to optimize
@@ -104,53 +105,6 @@ char strs[PARAMS][128] =  {
 
 float calc_error(int n, EVALUATEDPOSITION* ep, float c); 
 
-void codeoutput() {
-	// write parameters as C code to file
-	FILE* fp;
-	int i,j; 
-	int paramnum = 0; 
-	fp = fopen("C:\\code\\checkersdata\\codeoutput.txt", "w");
-
-	getparams(params, &paramnum);
-	// print parameters to show it's working
-	//for (i = 0; i < paramnum; i++)
-	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
-	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
-
-	for (i = 0; i < paramnum - 13 - 25 - 32; i++) {
-		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
-	}
-
-	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
-
-	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 32; i < paramnum - 25 - 32; i++) {
-		fprintf(fp, " %i,", params[i]);
-	}
-	fprintf(fp, "};");
-
-	fprintf(fp, "\nstatic int br[32] = {");
-	for (i = paramnum - 25 - 32; i < paramnum - 25; i++) {
-		fprintf(fp, " %i,", params[i]);
-	}
-	fprintf(fp, "};");
-
-	fprintf(fp, "\nstatic int tmod[25] = {");
-	for (i = paramnum - 25; i < paramnum; i++) {
-		fprintf(fp, " %i,", params[i]);
-	}
-	fprintf(fp, "};");
-
-	/*fprintf(fp, "\nstatic int blackbackrank[256] = {");
-	for (j = 0; j < 16; j++) {
-		for (i = 0; i < 16; i++) {
-			fprintf(fp, "%i,", params[arraystart + 13+25+32+ 16 * j + i]);
-		}
-		fprintf(fp, "\n");
-	}*/
-
-	fclose(fp); 
-}
 
 
 int main()
@@ -179,10 +133,11 @@ int main()
 	int sameadjust; 
 	int adjust; 
 	int paramnum = 0; 
+	int initialparams[PARAMS]; 
 	float influence[PARAMS];
 	float influence0[PARAMS]; 
-	char FEN[256]; 
-	
+	//char FEN[256]; 
+	FILE* log; 
 
 	// if I want to check search times, run analyze_matchprogress()
 	//analyze_matchprogress(); 
@@ -205,15 +160,21 @@ int main()
 	//getch(); 
 
 	//startparams(); 
-	optimalparams(); 
-	updateeval();
+	//optimalparams(); 
+	//updateeval();
 
 	getparams(params, &paramnum);
+
+	printf("\nPARAMS is %i, paramnum is %i", PARAMS, paramnum);
 	// print parameters to show it's working
-	for (i = 0; i < paramnum; i++)
+	for (i = 0; i < paramnum; i++) {
 		printf("\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
+		initialparams[i] = params[i]; 
+	}
 	printf("\nfound %i parameters to optimize", paramnum); 
 
+	// open optimizer logfile, save params
+	log = fopen("c:\\code\\checkersdata\\optimizerlog.txt", "w");
 
 	getch(); 
 
@@ -335,11 +296,16 @@ int main()
 
 	// initialize 
 	//initeval(); 
+	minerror = calc_error(n, ep, c);
+	printf("\ninitial error is %.7f", minerror);
+	fprintf(log, "\ninitial error is %.7f", minerror);
+
 	setparams(params, paramnum);
 	updateeval();
 	minerror = calc_error(n, ep, c);
-	printf("\ninitial error is %.6f", minerror);
-	printf("\nfound %i parameters to optimize", paramnum); 
+	printf("\nerror after setting all parameters is %.7f", minerror);
+	printf("\nfound %i parameters to optimize - hit key to continue", paramnum); 
+	getch(); 
 	while (iterations < 1000) {
 		changed = 0;
 		sameadjust = 0; 
@@ -396,22 +362,32 @@ int main()
 			}
 			if (adjust) {
 				changed++;
-				printf("\nadjusted %s from %i to %i (%.6f)", strs[j], oldparam, params[j], minerror);
+				printf("\n---------->>>> adjusted %s from %i to %i (%.6f)", strs[j], oldparam, params[j], minerror);
+				fprintf(log, "\n---------->>>> adjusted %s from %i to %i (%.6f)", strs[j], oldparam, params[j], minerror);
 			}
 			else {
 				printf("\n%s unchanged (%i)", strs[j], params[j]); 
 			}
 
 		}
-		printf("\niteration %i with %i changes-----------------", iterations, changed);
+		printf("\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
+		fprintf(log, "\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
 		iterations++; 
 
 		if (changed == 0)
 			break; 
 	}
 
+	// first write params directly
+	codeoutput(0);
+
+	// then write them after recalling from the eval
+	codeoutput(1);
+
 	// find out what the influence of this parameter is overall:
+	printf("\nmeasuring absolute influence of all parameters..."); 
 	for (i = 0; i < paramnum; i++) {
+		printf("."); 
 		oldparam = params[i];
 		params[i] = 0;
 		setparams(params, paramnum);
@@ -421,21 +397,82 @@ int main()
 		params[i] = oldparam;
 	}
 
-
+	fprintf(log, "\ninitial\toptimized");
 	fp = fopen("C:\\code\\checkersdata\\param_influence.txt", "w");
 	for (i = 0; i < paramnum; i++) {
 		printf("\n%i:\t%i\t(%s)  (+-%.3f, +-%.3f)", i, params[i], strs[i], 1000.0 * influence[i], 1000.0 * influence0[i]);
 		fprintf(fp, "%i\t%s\t%i\t%.3f\t%.3f\n", i, strs[i], params[i], 1000.0* influence[i], 1000.0* influence0[i]);
+		fprintf(log, "\n%i\t%i\t%s", initialparams[i], params[i], strs[i]); 
 	}
 	fclose(fp); 
 	printf("\n%i iterations made, no more improvement possible", iterations);
 	printf("\nerror after optimization is %.7f", minerror);
-	codeoutput();
+	fprintf(log, "\nerror after optimization is %.7f", minerror);
+	fclose(log); 
+	
 	printf("\nparameters written to c:\\code\\checkersdata\\codeoutput.txt");
 
 	getch(); 
     return 0;
 }
+
+void codeoutput(int recall) {
+	// write parameters as C code to file
+	FILE* fp;
+	int i; // , j;
+	int paramnum = 0;
+	
+
+	if (recall != 0) {
+		getparams(params, &paramnum);
+		fp = fopen("C:\\code\\checkersdata\\codeoutputrecalled.txt", "w");
+	}
+	else {
+		fp = fopen("C:\\code\\checkersdata\\codeoutput.txt", "w");
+		paramnum = PARAMS; 
+	}
+	
+	
+	// print parameters to show it's working
+	//for (i = 0; i < paramnum; i++)
+	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
+	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
+
+	for (i = 0; i < paramnum - 13 - 25 - 32; i++) {
+		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
+	}
+
+	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
+
+	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
+	for (i = paramnum - 13 - 25 - 32; i < paramnum - 25 - 32; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	fprintf(fp, "\nstatic int br[32] = {");
+	for (i = paramnum - 25 - 32; i < paramnum - 25; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	fprintf(fp, "\nstatic int tmod[25] = {");
+	for (i = paramnum - 25; i < paramnum; i++) {
+		fprintf(fp, " %i,", params[i]);
+	}
+	fprintf(fp, "};");
+
+	/*fprintf(fp, "\nstatic int blackbackrank[256] = {");
+	for (j = 0; j < 16; j++) {
+		for (i = 0; i < 16; i++) {
+			fprintf(fp, "%i,", params[arraystart + 13+25+32+ 16 * j + i]);
+		}
+		fprintf(fp, "\n");
+	}*/
+
+	fclose(fp);
+}
+
 
 float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 	int i;

@@ -6,11 +6,13 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.87 beta TO2"
+#define VERSION "1.87 beta noTO"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
 #endif
+
+#undef TIMEOPTIMIZED
 
 // two new flags to test logging and rep detection later on
 #define NEWREPDETECTION
