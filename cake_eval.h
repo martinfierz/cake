@@ -25,7 +25,7 @@ int dbwineval(POSITION *p, MATERIALCOUNT *mc);
 
 enum {
 	devsinglecorner = 0, intactdoublecorner, oreoval, idealdoublecornerval, backrankpower1,
-	backrankpower2, backrankpower3, /*backrankpower4, backrankpower5, */
+	backrankpower2, backrankpower3, backrankpower4, 
 	king_value, nocrampval13, nocrampval20, 
 	dogholeval,	dogholemandownval,
 	mc_occupyval, mc_attackval, realdykeval, greatdykeval,

@@ -3,6 +3,9 @@ looking at games i think i should try adding
 
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
+10.6.2019
+added pattern for wk on 4 vs bm 3,7,12 as trapped king; re-optimized, called beta4
+
 9.6.2019
 king mobility array added fixing up king mobility evaluation some more
 one obvious weakness is that wk on 4 vs bm 3,7,12 is not recognized as trapped making that value in the 

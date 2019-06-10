@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 152
+#define PARAMS 151
 
 
 /* bitboard masks for moves in various directions */
@@ -70,7 +70,7 @@ static int params[PARAMS]; // parameters to optimize
 
 char strs[PARAMS][128] =  {
 	"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", "backrankpower1",
-	"backrankpower2", "backrankpower3", /*"backrankpower4", "backrankpower5",*/ "king_value", "nocrampval13", "nocrampval20", 
+	"backrankpower2", "backrankpower3", "backrankpower4", "king_value", "nocrampval13", "nocrampval20", 
 	"dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
 	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
@@ -79,15 +79,14 @@ char strs[PARAMS][128] =  {
 	"kingproximityval1", "kingproximityval2", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
 	"man_value", "balancemult", "skewnessmult", "skewnessmult_eg", "cramp12", "cramp13", "cramp13_eg",
 	"cramp20", "badstructure", 
-	"dogholeval2", "badstructure2", /*"badstructuremax1", "badstructuremax2", "badstructuremin", */
+	"dogholeval2", "badstructure2", 
 	"badstructure3", "badstructure4",
 	"badstructure5", "badstructure6", "badstructure7", "badstructure8",
 	"badstructure9", "badstructure10", "badstructure11",
-	/*"badstructure2stones",*/ "kingmanstones","immobile_mult", "immobile_mult_kings",
+	"kingmanstones","immobile_mult", "immobile_mult_kings",
 	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", 
 	"king_no_mobility",
 	"experimental_king_cramp", "compensation", "compensation_mandown",	
-	/*"compensation_mandown_norunaway",*/
 	"ungroundedcontact", "endangeredbridge", "endangeredbridge_kingdown",
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
 	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
@@ -97,8 +96,8 @@ char strs[PARAMS][128] =  {
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
 	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
-	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24" /*,
-	"kmob0", "kmob1", "kmob2", "kmob3", "kmob4", "kmob5", "kmob6", "kmob7", "kmob8", "kmob9"*/
+	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24",
+	"kmob0", "kmob1", "kmob2", "kmob3", "kmob4", "kmob5", "kmob6", "kmob7", "kmob8", "kmob9"
 };
 
 
@@ -385,7 +384,7 @@ int main()
 	// then write them after recalling from the eval
 	codeoutput(1);
 
-	// find out what the influence of this parameter is overall:
+	// find out what the influence of the parameters is overall:
 	printf("\nmeasuring absolute influence of all parameters..."); 
 	for (i = 0; i < paramnum; i++) {
 		printf("."); 
@@ -422,6 +421,8 @@ void codeoutput(int recall) {
 	FILE* fp;
 	int i; // , j;
 	int paramnum = 0;
+
+	int br[256]; 
 	
 
 	if (recall != 0) {
@@ -463,19 +464,32 @@ void codeoutput(int recall) {
 	}
 	fprintf(fp, "};");
 
-	/*fprintf(fp, "\nstatic int kingmobility[10] = {");
+	fprintf(fp, "\nstatic int kingmobility[10] = {");
 	for (i = paramnum - 10; i < paramnum; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
-	fprintf(fp, "};");*/
+	fprintf(fp, "};");
 
-	/*fprintf(fp, "\nstatic int blackbackrank[256] = {");
-	for (j = 0; j < 16; j++) {
+
+	getblackbackrank(br); 
+	fprintf(fp, "\nstatic int blackbackrank[256] = {");
+	for (int j = 0; j < 16; j++) {
 		for (i = 0; i < 16; i++) {
-			fprintf(fp, "%i,", params[arraystart + 13+25+32+ 16 * j + i]);
+			fprintf(fp, "%i,", br[16 * j + i]);
 		}
 		fprintf(fp, "\n");
-	}*/
+	}
+	fprintf(fp, "};");
+
+	getwhitebackrank(br);
+	fprintf(fp, "\nstatic int whitebackrank[256] = {");
+	for (int j = 0; j < 16; j++) {
+		for (i = 0; i < 16; i++) {
+			fprintf(fp, "%i,", br[16 * j + i]);
+		}
+		fprintf(fp, "\n");
+	}
+	fprintf(fp, "};");
 
 	fclose(fp);
 }
