@@ -134,8 +134,8 @@ int optimalparams() {
 	v[backrankpower1] = 40;
 	v[backrankpower2] = 52;
 	v[backrankpower3] = 81;
-	v[backrankpower4] = 0;
-	v[backrankpower5] = 0;
+	//v[backrankpower4] = 0;
+	//v[backrankpower5] = 0;
 	v[king_value] = 110;
 	v[nocrampval13] = 5;
 	v[nocrampval20] = 1;
@@ -304,8 +304,8 @@ int startparams() {
 	v[backrankpower1] = 15;
 	v[backrankpower2] = 15;
 	v[backrankpower3] = 15;
-	v[backrankpower4] = 0;
-	v[backrankpower5] = 0;
+	//v[backrankpower4] = 0;
+	//v[backrankpower5] = 0;
 	v[king_value] = 120;
 	v[nocrampval13] = 0; // 2;  // optimized 1;
 	v[nocrampval20] = 0; // 2;  // optimized 1;

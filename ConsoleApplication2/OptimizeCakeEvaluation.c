@@ -70,7 +70,7 @@ static int params[PARAMS]; // parameters to optimize
 
 char strs[PARAMS][128] =  {
 	"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", "backrankpower1",
-	"backrankpower2", "backrankpower3", "backrankpower4", "backrankpower5", "king_value", "nocrampval13", "nocrampval20", 
+	"backrankpower2", "backrankpower3", /*"backrankpower4", "backrankpower5",*/ "king_value", "nocrampval13", "nocrampval20", 
 	"dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
 	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
@@ -97,8 +97,8 @@ char strs[PARAMS][128] =  {
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
 	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
-	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24",
-	"kmob0", "kmob1", "kmob2", "kmob3", "kmob4", "kmob5", "kmob6", "kmob7", "kmob8", "kmob9"
+	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24" /*,
+	"kmob0", "kmob1", "kmob2", "kmob3", "kmob4", "kmob5", "kmob6", "kmob7", "kmob8", "kmob9"*/
 };
 
 
