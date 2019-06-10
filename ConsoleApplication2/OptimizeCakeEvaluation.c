@@ -439,14 +439,14 @@ void codeoutput(int recall) {
 	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
 	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
 
-	for (i = 0; i < paramnum - 13 - 25 - 32; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - 32 -10; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 32 - 10; i < paramnum - 25 - 32 -10; i++) {
+	for (i = paramnum - 13 - 25 - 32 - 10; i < paramnum - 25 - 32 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");

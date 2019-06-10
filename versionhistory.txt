@@ -4,12 +4,14 @@ looking at games i think i should try adding
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 
 9.6.2019
-try doing a kingmobility array!
+king mobility array added fixing up king mobility evaluation some more
+one obvious weakness is that wk on 4 vs bm 3,7,12 is not recognized as trapped making that value in the 
+king mobility array too crazy, as it also applies to 3,11,12, where it should not be so high!
 
 9.6.2019
 verified that TO2 is far better than noTO and TO by match against kr118 after seeing it in match vs 118f
 optimizer output fixed
-changed king mobility evaluation
+changed king mobility evaluation (kings can move through other kings, kings in center can never be trapped)
 added a backrankpower4
 ->cake 1.87 beta 2
 

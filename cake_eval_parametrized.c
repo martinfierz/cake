@@ -2511,6 +2511,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			}
 #endif
 
+
 			/*if(m<=4) {
 				e->king -= (v[king_low_mobility_mult] * (5 - m));
 			}
@@ -2565,6 +2566,13 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 
 			m = min(9, m);
 			e->king -= kingmobility[m];
+
+			/*if (m == 2) {
+				printboard(p);
+				printint32(tmp);
+				printf("\nparticularly bad?");
+				getch();
+			}*/
 
 			}
 
