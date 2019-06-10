@@ -50,15 +50,10 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 //static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
 //static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
 
-//static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 25, 21, 21, 21};
-//static int br[32] = { -9, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 4, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-//static int tmod[25] = { 0, 5, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
-//static int kingmobility[10] = { -5,-4,-3,-2,-1,0,1,2,3,4 };
-
-static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 10, 15, 22, 21, 25, 21, 21, 21};
-static int br[32] = { -9, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -13, -27, -9, -20, -5, -7, 4, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-static int tmod[25] = { 0, 5, 3, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -5, -6, -7, -8, -11, -9, -10, -13};
-static int kingmobility[10] = { -5, -5, -13, -4, -2, 2, 3, 4, 4, 4};
+static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 21, 21, 25, 21, 21, 21};
+static int br[32] = { -9, -16, -10, -16, -3, -3, 7, 2, -6, -16, 10, -5, 9, 6, 16, 9, -13, -26, -9, -19, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+static int tmod[25] = { 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, -1, -1, -2, -3, -3, -4, -5, -6, -7, -8, -11, -9, -10, -12};
+static int kingmobility[10] = { -5, -5, -13, -4, -2, 2, 3, 4, 4, 4 };
 
 
 int setparams(int* params, int n) {
@@ -206,15 +201,14 @@ int optimalparams() {
 
 
 
-
-	v[devsinglecorner] = 4;
+	v[devsinglecorner] = 5;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
 	v[idealdoublecornerval] = 7;
-	v[backrankpower1] = 39;
-	v[backrankpower2] = 51;
-	v[backrankpower3] = 81;
-	v[backrankpower4] = 24;
+	v[backrankpower1] = 37;
+	v[backrankpower2] = 45;
+	v[backrankpower3] = 84;
+	v[backrankpower4] = 0;
 	v[backrankpower5] = 0;
 	v[king_value] = 108;
 	v[nocrampval13] = 5;
@@ -225,26 +219,26 @@ int optimalparams() {
 	v[mc_attackval] = 2;
 	v[realdykeval] = 0;
 	v[greatdykeval] = 0;
-	v[promoteinone] = 12;
-	v[promoteintwo] = 7;
-	v[promoteinthree] = 2;
-	v[tailhookval] = 12;
-	v[kcval] = 10;
-	v[keval] = -2;
+	v[promoteinone] = 11;
+	v[promoteintwo] = 6;
+	v[promoteinthree] = 1;
+	v[tailhookval] = 13;
+	v[kcval] = 6;
+	v[keval] = -1;
 	v[turnval] = -2;
 	v[turnval_eg] = -1;
-	v[kingcentermonopoly] = 3;
-	v[kingtrappedinsinglecornerval] = 31;
-	v[kingtrappedinsinglecornerbytwoval] = 9;
-	v[kingtrappedindoublecornerval] = 7;
-	v[dominatedkingval] = 20;
-	v[dominatedkingindcval] = 45;
+	v[kingcentermonopoly] = 4;
+	v[kingtrappedinsinglecornerval] = 33;
+	v[kingtrappedinsinglecornerbytwoval] = 10;
+	v[kingtrappedindoublecornerval] = 9;
+	v[dominatedkingval] = 21;
+	v[dominatedkingindcval] = 46;
 	v[kingproximityval1] = 6;
-	v[kingproximityval2] = 4;
-	v[immobilemanval] = 0;
-	v[kingholdstwomenval] = 15;
-	v[onlykingval] = 9;
-	v[roamingkingval] = 9;
+	v[kingproximityval2] = 5;
+	v[immobilemanval] = 1;
+	v[kingholdstwomenval] = 17;
+	v[onlykingval] = 12;
+	v[roamingkingval] = 11;
 	v[man_value] = 96;
 	v[balancemult] = 4;
 	v[skewnessmult] = 17;
@@ -253,29 +247,29 @@ int optimalparams() {
 	v[cramp13] = 27;
 	v[cramp13_eg] = 20;
 	v[cramp20] = 5;
-	v[badstructure] = 4;
+	v[badstructure] = 3;
 	v[dogholeval2] = 19;
-	v[badstructure2] = 3;
-	v[badstructure3] = 5;
-	v[badstructure4] = 6;
+	v[badstructure2] = 4;
+	v[badstructure3] = 8;
+	v[badstructure4] = 5;
 	v[badstructure5] = 16;
-	v[badstructure6] = 16;
+	v[badstructure6] = 17;
 	v[badstructure7] = 54;
-	v[badstructure8] = 23;
+	v[badstructure8] = 24;
 	v[badstructure9] = 8;
 	v[badstructure10] = 10;
 	v[badstructure11] = 20;
 	v[kingmanstones] = 11;
 	v[immobile_mult] = 1;
 	v[immobile_mult_kings] = 4;
-	v[runaway_destroys_backrank] = 14;
-	v[king_blocks_king_and_man] = 71;
+	v[runaway_destroys_backrank] = 15;
+	v[king_blocks_king_and_man] = 73;
 	v[king_denied_center] = 0;
 	v[king_low_mobility_mult] = 4;
 	v[king_no_mobility] = -11;
-	v[experimental_king_cramp] = 32;
-	v[compensation] = 77;
-	v[compensation_mandown] = 39;
+	v[experimental_king_cramp] = 33;
+	v[compensation] = 78;
+	v[compensation_mandown] = 40;
 	v[ungroundedcontact] = 1;
 	v[endangeredbridge] = 6;
 	v[endangeredbridge_kingdown] = 15;
@@ -2474,7 +2468,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		// eat a man!
 
 		// remove kings that are already in center, these get no penalty
-		ki->untrappedbk &= (~CENTER); 
+		//ki->untrappedbk &= (~CENTER); 
 		while(ki->untrappedbk)
 			{
 			// peel off untrapped kings and analyze them
@@ -2488,7 +2482,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			attack |= attack_forwardjump(p->wk,free2);
 
 			// new cake 187: add own kings to free squares so kings can "move through" own kings
-			free2 |= p->bk; 
+			//free2 |= p->bk; 
 
 			// simulate 3 moves with king on tmp only over non-attacked squares
 			tmp|=(forward(tmp)|backward(tmp));
@@ -2512,7 +2506,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 #endif
 
 
-			/*if(m<=4) {
+			if(m<=4) {
 				e->king -= (v[king_low_mobility_mult] * (5 - m));
 			}
 			// TODO printboard this and also <=4 - maybe only do this for kings not in center?
@@ -2520,14 +2514,14 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				{
 				ki->freebk--; 
 				e->king -= v[king_no_mobility]; 
-				}*/
+				}
 			// limit m to 0...9
-			m = min(9, m); 
-			e->king += kingmobility[m]; 
+			//m = min(9, m); 
+			//e->king += kingmobility[m]; 
 			}
 		
 		// remove kings that are already in center, these get no penalty
-		ki->untrappedwk &= (~CENTER); 
+		//ki->untrappedwk &= (~CENTER); 
 		while(ki->untrappedwk)
 			{
 			// peel off untrapped kings and analyze them
@@ -2538,7 +2532,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			attack |= attack_backwardjump(p->bk,free2);
 
 			// new cake 187: add own kings to free squares so kings can "move through" own kings
-			free2 |= p->wk;
+			//free2 |= p->wk;
 
 			// simulate 3 moves with king on tmp only over non-attacked squares
 			tmp|=(forward(tmp)|backward(tmp));
@@ -2555,17 +2549,17 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (!(tmp & CENTER))
 				e->king += v[king_denied_center]; 
 #endif
-			/*
+			
 			if(m<=4)
 				e->king += (v[king_low_mobility_mult]*(5-m)); 
 			if(m<=1)
 				{
 				ki->freewk--; 
 				e->king += v[king_no_mobility]; 
-				} */
+				} 
 
-			m = min(9, m);
-			e->king -= kingmobility[m];
+			//m = min(9, m);
+			//e->king -= kingmobility[m];
 
 			/*if (m == 2) {
 				printboard(p);
@@ -3237,8 +3231,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				blackbackrankpower[u] = v[backrankpower3];// 40;// 0; //  40; optimized
 
 			// new in cake 1.87
-			if (match1(p.bm, (SQ2 | SQ3 | SQ5 | SQ7)))
-				blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]); 
+			//if (match1(p.bm, (SQ2 | SQ3 | SQ5 | SQ7)))
+			//	blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]); 
 			//if (match1(p.bm, (SQ2 | SQ3 | SQ5 | SQ6 | SQ7)))
 			//	blackbackrankpower[u] = max(v[backrankpower5], blackbackrankpower[u]); 
 
@@ -3251,8 +3245,8 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				whitebackrankpower[u] = v[backrankpower3]; // 40;// 0;// 40; optimized
 
 
-			if (match1(p.bm, (SQ31 | SQ30 | SQ28 | SQ26)))
-				blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]);
+			//if (match1(p.bm, (SQ31 | SQ30 | SQ28 | SQ26)))
+			//	blackbackrankpower[u] = max(v[backrankpower4], blackbackrankpower[u]);
 			//if (match1(p.bm, (SQ31 | SQ30 | SQ28 | SQ27 | SQ26)))
 			//	blackbackrankpower[u] = max(v[backrankpower5], blackbackrankpower[u]);
 		}
