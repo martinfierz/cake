@@ -42,18 +42,16 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 //static int br[32] = { -9, -17, -12, -20, -5, -6, 4, 1, -5, -17, 9, -7, 8, 5, 15, 9, -12, -26, -10, -21, -6, -9, 4, -3, -7, -21, 8, -15, 11, 7, 19, 13 };
 //static int tmod[25] = { 0, 4, 2, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15 };
 
+// Cake 1.87 where TO2 was doing sensationally well
+static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 24, 21, 21, 21};
+static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
 
-//static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 24, 21, 21, 21};
-//static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-//static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
-//static int ungroundedpenalty[13] = { 1, 1, 2, 3, 7, 11, 15, 22, 22, 24, 21, 21, 21};
-//static int br[32] = { -8, -16, -9, -17, -3, -4, 7, 3, -6, -16, 10, -6, 9, 6, 16, 9, -12, -27, -9, -20, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-//static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -8, -11, -9, -9, -13};
-
-static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 21, 21, 25, 21, 21, 21};
-static int br[32] = { -9, -16, -10, -16, -3, -3, 7, 2, -6, -16, 10, -5, 9, 6, 16, 9, -13, -26, -9, -19, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
-static int tmod[25] = { 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, -1, -1, -2, -3, -3, -4, -5, -6, -7, -8, -11, -9, -10, -12};
-static int kingmobility[10] = { -5, -5, -13, -4, -2, 2, 3, 4, 4, 4 };
+// latest version with king mobility, not doing so well any more??
+//static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 21, 21, 25, 21, 21, 21};
+//static int br[32] = { -9, -16, -10, -16, -3, -3, 7, 2, -6, -16, 10, -5, 9, 6, 16, 9, -13, -26, -9, -19, -5, -7, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+//static int tmod[25] = { 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, -1, -1, -2, -3, -3, -4, -5, -6, -7, -8, -11, -9, -10, -12};
+//static int kingmobility[10] = { -5, -5, -13, -4, -2, 2, 3, 4, 4, 4 };
 
 
 int setparams(int* params, int n) {
@@ -74,9 +72,9 @@ int setparams(int* params, int n) {
 		tmod[i] = params[arraystart + 13 + 32 + i];
 	}
 
-	for (i = 0; i < 10; i++) {
-		kingmobility[i] = params[arraystart + 13 + 32 + 25 + i];
-	}
+//	for (i = 0; i < 10; i++) {
+//		kingmobility[i] = params[arraystart + 13 + 32 + 25 + i];
+//	}
 
 	return 0; 
 }
@@ -94,29 +92,32 @@ int getparams(int* params, int* n) {
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i];
 
-	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]; 
+	//for (i = 0; i < 10; i++)
+	//	v[arraystart + i + 13 + 32 + 25] = kingmobility[i]; 
 
 	// then return all parameters
 	*n = arraystart; 
 	for (i = 0; i < (*n); i++)
 		params[i] = v[i]; 
 
+	// ungrounded array
 	*n = (arraystart + 13); 
 	for (i = arraystart; i < (*n); i++)
 		params[i] = v[i];
 
+	// back rank array
 	*n = (arraystart + 13 + 32);
 	for (i = arraystart + 13; i < (*n); i++)
 		params[i] = v[i]; 
 
+	// tmod array
 	*n = (arraystart + 13 + 32 + 25);
 	for (i = arraystart + 13 + 32; i < (*n); i++)
 		params[i] = v[i];
 
-	*n = (arraystart + 13 + 32 + 25 + 10);
-	for (i = arraystart + 13 + 32 + 25; i < (*n); i++)
-		params[i] = v[i]; 
+	//*n = (arraystart + 13 + 32 + 25 + 10);
+	//for (i = arraystart + 13 + 32 + 25; i < (*n); i++)
+	//	params[i] = v[i]; 
 }
 
 int optimalparams() {
@@ -124,8 +125,8 @@ int optimalparams() {
 	int i; 
 
 
-// below: Cake 1.87 optimized once
-	/*
+// below: Cake 1.87 optimized once, doing very well with TO2
+	
 	v[devsinglecorner] = 4;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
@@ -197,10 +198,11 @@ int optimalparams() {
 	v[compensation_mandown] = 37;
 	v[ungroundedcontact] = 1;
 	v[endangeredbridge] = 5;
-	v[endangeredbridge_kingdown] = 14;*/
+	v[endangeredbridge_kingdown] = 14;
 
 
-
+	/* v 1.87 beta 3, not doing well 
+	
 	v[devsinglecorner] = 5;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
@@ -272,7 +274,7 @@ int optimalparams() {
 	v[compensation_mandown] = 40;
 	v[ungroundedcontact] = 1;
 	v[endangeredbridge] = 6;
-	v[endangeredbridge_kingdown] = 15;
+	v[endangeredbridge_kingdown] = 15;*/
 
 	
 	for (i = 0; i < 13; i++)
@@ -284,8 +286,8 @@ int optimalparams() {
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i];
 
-	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i];
+	//for (i = 0; i < 10; i++)
+	//	v[arraystart + i + 13 + 32 + 25] = kingmobility[i];
 
 	return 0; 
 }
@@ -375,8 +377,8 @@ int startparams() {
 	for (i = 0; i < 25; i++)
 		v[arraystart + i + 13 + 32] = tmod[i]/2;
 
-	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]/2;
+	//for (i = 0; i < 10; i++)
+	//	v[arraystart + i + 13 + 32 + 25] = kingmobility[i]/2;
 
 
 	return 0;

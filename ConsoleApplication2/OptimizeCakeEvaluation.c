@@ -463,11 +463,11 @@ void codeoutput(int recall) {
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\nstatic int kingmobility[10] = {");
+	/*fprintf(fp, "\nstatic int kingmobility[10] = {");
 	for (i = paramnum - 10; i < paramnum; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
-	fprintf(fp, "};");
+	fprintf(fp, "};");*/
 
 	/*fprintf(fp, "\nstatic int blackbackrank[256] = {");
 	for (j = 0; j < 16; j++) {
