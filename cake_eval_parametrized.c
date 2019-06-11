@@ -20,7 +20,27 @@ char  blackbackrankeval[256],whitebackrankeval[256];			// not static because it'
 static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man down situations
 
 
-#define PARAMS 150
+
+/*static int whitebackrank[256] = { -4,-7,-4,-7,-4,-7,-4,-7,-9,-12,-9,-12,-9,-12,-9,-12,
+-1,-3,-1,-3,-1,-3,-1,-3,-6,-8,-6,-8,-6,-8,-6,-8,
+2,0,2,6,2,0,2,6,-3,-5,-3,1,-3,-5,-3,1,
+14,16,21,16,14,16,21,16,9,11,16,11,9,11,16,11,
+-4,-5,-4,-5,-4,-5,-4,-5,-9,-10,-9,-10,-9,-10,-9,-10,
+15,13,15,13,15,13,15,13,10,8,10,8,10,8,10,8,
+12,10,12,16,17,15,17,21,7,5,7,11,12,10,12,16,
+21,24,28,24,26,29,33,29,16,19,23,19,21,24,28,24,
+-15,-25,-15,-25,-15,-25,-15,-25,-15,-25,-15,-25,-15,-25,-15,-25,
+-16,-23,-16,-23,-16,-23,-16,-23,-16,-23,-16,-23,-16,-23,-16,-23,
+-3,-8,-3,-2,-3,-8,-3,-2,-3,-8,-3,-2,-3,-8,-3,-2,
+6,8,13,8,6,8,13,8,6,8,13,8,6,8,13,8,
+-16,-19,-16,-19,-16,-19,-16,-19,-16,-19,-16,-19,-16,-19,-16,-19,
+-5,-15,-5,-15,-5,-15,-5,-15,-5,-15,-5,-15,-5,-15,-5,-15,
+3,-2,3,4,8,3,8,9,3,-2,3,4,8,3,8,9,
+9,12,16,12,14,17,21,17,9,12,16,12,14,17,21,17
+};*/
+
+
+#define PARAMS 375
 int v[PARAMS];
 
 #define RARELYUSED
@@ -48,10 +68,51 @@ static int tmod[25] = { 0,6 ,3, 2, 1, 1, 1, 0, 0, 0, 0, -1, -1,-2,-2,-3,-4,-4,-6
 //static int tmod[25] = { 0, 4, 2, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -6, -8, -10, -8, -9, -15};
 
 // latest version with king mobility, not doing so well any more??
-static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 20, 21, 26, 21, 21, 21 };
-static int br[32] = { -9, -15, -9, -16, -3, -3, 7, 3, -6, -16, 10, -5, 9, 6, 16, 9, -12, -25, -10, -19, -5, -8, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+//static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 20, 21, 26, 21, 21, 21 };
+//static int br[32] = { -9, -15, -9, -16, -3, -3, 7, 3, -6, -16, 10, -5, 9, 6, 16, 9, -12, -25, -10, -19, -5, -8, 5, -2, -8, -23, 8, -15, 11, 8, 19, 12};
+/*static int backrank[256] = { -4,-15,-4,-16,2,-3,12,3,-1,-16,15,-5,14,6,21,9,
+-9,-15,-9,-16,-3,-3,7,3,-6,-16,10,-5,9,6,16,9,
+-4,-15,-4,-16,2,-3,17,8,-1,-16,15,-5,14,6,26,14,
+-9,-15,-9,-16,-3,-3,12,8,-6,-16,10,-5,9,6,21,14,
+-4,-15,-4,-16,2,-3,12,3,-1,-16,15,-5,21,13,28,16,
+-9,-15,-9,-16,-3,-3,7,3,-6,-16,10,-5,16,13,23,16,
+-4,-15,-4,-16,2,-3,17,8,-1,-16,15,-5,21,13,33,21,
+-9,-15,-9,-16,-3,-3,12,8,-6,-16,10,-5,16,13,28,21,
+-7,-25,-5,-19,0,-8,10,-2,-3,-23,13,-15,16,8,24,12,
+-12,-25,-10,-19,-5,-8,5,-2,-8,-23,8,-15,11,8,19,12,
+-7,-25,-5,-19,0,-8,15,3,-3,-23,13,-15,16,8,29,17,
+-12,-25,-10,-19,-5,-8,10,3,-8,-23,8,-15,11,8,24,17,
+-7,-25,-5,-19,6,-2,16,4,-3,-23,13,-15,16,8,24,12,
+-12,-25,-10,-19,1,-2,11,4,-8,-23,8,-15,11,8,19,12,
+-7,-25,-5,-19,6,-2,21,9,-3,-23,13,-15,16,8,29,17,
+-12,-25,-10,-19,1,-2,16,9,-8,-23,8,-15,11,8,24,17
+};
 static int tmod[25] = { 0, 4, 3, 1, 1, 0, 0, 0, 0, 0, 0, -1, -1, -2, -3, -3, -4, -5, -6, -7, -8, -11, -9, -10, -12};
 static int kingmobility[10] = { -5, -6, -9, -5, -2, 2, 3, 4, 4, 4};
+*/
+
+// 351 param version below
+static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 20, 21, 26, 21, 21, 21 }; 
+static int tmod[25] = { 0, 4, 2, 1, 0, -1, 0, -1, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -7, -11, -7, -9, -11};
+static int kingmobility[10] = { -5, -6, -10, -5, -3, 1, 2, 4, 4, 4 };
+static int backrank[256] = { -1, -12, -5, -16, 1, -5, 12, 6, -1, -20, 15, -7, 10, 6, 26, 15, 
+-8, -15, -16, -20, -2, -6, 4, 1, -9, -20, -1, -17, 9, 4, 17, 8, 
+-10, -21, -6, -14, 1, -6, 16, 5, 0, -17, 16, -4, 15, 9, 25, 15, 
+-14, -18, -17, -22, -5, -1, 11, -7, -7, -22, 4, -11, 11, 9, 18, 6, 
+-11, -28, 2, -19, -3, -7, 12, 7, -3, -17, 18, -4, 16, 8, 29, 19, 
+-12, -26, -12, -24, 0, -4, 10, 3, -5, -11, 9, -10, 18, 8, 26, 15, 
+-15, -26, -3, -12, 0, -3, 16, 11, -2, -11, 18, 6, 27, 19, 28, 24, 
+-11, -18, -6, -16, 5, 6, 13, 3, 5, -5, 15, 0, 27, 18, 28, 20, 
+-4, -24, -9, -24, -2, -11, 11, -3, -7, -27, 9, -19, 5, 1, 20, 10, 
+-13, -25, -20, -31, -6, -14, 0, -14, -16, -33, -10, -33, 8, -4, 14, 5,
+-13, -28, -2, -13, 4, -7, 19, 3, -4, -22, 15, -7, 14, 8, 26, 16, 
+-20, -30, -12, -19, 1, -1, 11, 2, -10, -29, 6, -25, 13, 13, 22, 13, 
+-12, -33, 0, -25, 0, -7, 15, 4, -1, -23, 19, -13, 19, -2, 22, 16, 
+-23, -34, -19, -33, -1, -8, 9, 3, -3, -21, 2, -22, 13, 2, 24, 12, 
+-15, -25, 4, -6, 7, 2, 21, 12, 2, -15, 21, 5, 22, 15, 29, 24, 
+-14, -25, -2, -10, 10, 8, 17, 10, 2, -6, 16, -16, 23, 15, 30, 23 };
+
+
 
 
 int setparams(int* params, int n) {
@@ -64,16 +125,16 @@ int setparams(int* params, int n) {
 		ungroundedpenalty[i] = params[arraystart + i];
 	}
 
-	for (i = 0; i < 32; i++) {
-		br[i] = params[arraystart + 13 + i];
+	for (i = 0; i < 256; i++) {
+		backrank[i] = params[arraystart + 13 + i];
 	}
 
 	for (i = 0; i < 25; i++) {
-		tmod[i] = params[arraystart + 13 + 32 + i];
+		tmod[i] = params[arraystart + 13 + 256 + i];
 	}
 
 	for (i = 0; i < 10; i++) {
-		kingmobility[i] = params[arraystart + 13 + 32 + 25 + i];
+		kingmobility[i] = params[arraystart + 13 + 256 + 25 + i];
 	}
 
 	return 0; 
@@ -100,14 +161,16 @@ int getparams(int* params, int* n) {
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
 
-	for (i = 0; i < 32; i++)
-		v[arraystart + i + 13] = br[i];
+//	for (i = 0; i < 32; i++)
+//		v[arraystart + i + 13] = br[i];
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13] = backrank[i];
 
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 32] = tmod[i];
+		v[arraystart + i + 13 + 256] = tmod[i];
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]; 
+		v[arraystart + i + 13 + 256 + 25] = kingmobility[i]; 
 
 	// then return all parameters
 	*n = arraystart; 
@@ -120,18 +183,18 @@ int getparams(int* params, int* n) {
 		params[i] = v[i];
 
 	// back rank array
-	*n = (arraystart + 13 + 32);
+	*n = (arraystart + 13 + 256);
 	for (i = arraystart + 13; i < (*n); i++)
 		params[i] = v[i]; 
 
 	// tmod array
-	*n = (arraystart + 13 + 32 + 25);
-	for (i = arraystart + 13 + 32; i < (*n); i++)
+	*n = (arraystart + 13 + 256 + 25);
+	for (i = arraystart + 13 + 256; i < (*n); i++)
 		params[i] = v[i];
 
 	// king mobility array
-	*n = (arraystart + 13 + 32 + 25 + 10);
-	for (i = arraystart + 13 + 32 + 25; i < (*n); i++)
+	*n = (arraystart + 13 + 256 + 25 + 10);
+	for (i = arraystart + 13 + 256 + 25; i < (*n); i++)
 		params[i] = v[i]; 
 }
 
@@ -218,7 +281,7 @@ int optimalparams() {
 	*/
 
 
-
+	/* cake 1.87 beta 151 params 
 	v[devsinglecorner] = 5;
 	v[intactdoublecorner] = 3;
 	v[oreoval] = 5;
@@ -289,19 +352,91 @@ int optimalparams() {
 	v[compensation_mandown] = 40;
 	v[ungroundedcontact] = 1;
 	v[endangeredbridge] = 6;
-	v[endangeredbridge_kingdown] = 14;
+	v[endangeredbridge_kingdown] = 14; */
+	v[devsinglecorner] = 5;
+	v[intactdoublecorner] = 3;
+	v[oreoval] = 5;
+	v[idealdoublecornerval] = 7;
+	v[backrankpower1] = 34;
+	v[backrankpower2] = 47;
+	v[backrankpower3] = 83;
+	v[backrankpower4] = 0;
+	v[king_value] = 107;
+	v[nocrampval13] = 5;
+	v[nocrampval20] = 1;
+	v[dogholeval] = 19;
+	v[dogholemandownval] = 8;
+	v[mc_occupyval] = -2;
+	v[mc_attackval] = 2;
+	v[realdykeval] = 0;
+	v[greatdykeval] = 0;
+	v[promoteinone] = 12;
+	v[promoteintwo] = 6;
+	v[promoteinthree] = 2;
+	v[tailhookval] = 12;
+	v[kcval] = 7;
+	v[keval] = -1;
+	v[turnval] = -2;
+	v[turnval_eg] = -1;
+	v[kingcentermonopoly] = 2;
+	v[kingtrappedinsinglecornerval] = 30;
+	v[kingtrappedinsinglecornerbytwoval] = 4;
+	v[kingtrappedindoublecornerval] = 7;
+	v[dominatedkingval] = 16;
+	v[dominatedkingindcval] = 47;
+	v[kingproximityval1] = 7;
+	v[kingproximityval2] = 5;
+	v[immobilemanval] = 1;
+	v[kingholdstwomenval] = 17;
+	v[onlykingval] = 11;
+	v[roamingkingval] = 10;
+	v[man_value] = 96;
+	v[balancemult] = 4;
+	v[skewnessmult] = 17;
+	v[skewnessmult_eg] = -3;
+	v[cramp12] = 3;
+	v[cramp13] = 29;
+	v[cramp13_eg] = 14;
+	v[cramp20] = 5;
+	v[badstructure] = 3;
+	v[dogholeval2] = 19;
+	v[badstructure2] = 3;
+	v[badstructure3] = 7;
+	v[badstructure4] = 8;
+	v[badstructure5] = 20;
+	v[badstructure6] = 12;
+	v[badstructure7] = 54;
+	v[badstructure8] = 23;
+	v[badstructure9] = 9;
+	v[badstructure10] = 9;
+	v[badstructure11] = 20;
+	v[kingmanstones] = 11;
+	v[immobile_mult] = 1;
+	v[immobile_mult_kings] = 4;
+	v[runaway_destroys_backrank] = 17;
+	v[king_blocks_king_and_man] = 72;
+	v[king_denied_center] = 0;
+	v[king_low_mobility_mult] = 4;
+	v[king_no_mobility] = -11;
+	v[experimental_king_cramp] = 34;
+	v[compensation] = 78;
+	v[compensation_mandown] = 39;
+	v[ungroundedcontact] = 1;
+	v[endangeredbridge] = 6;
+	v[endangeredbridge_kingdown] = 15;
+
 	
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
 
-	for (i = 0; i < 32; i++)
-		v[arraystart + i + 13] = br[i]; 
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13] = backrank[i]; 
 
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 32] = tmod[i];
+		v[arraystart + i + 13 + 256] = tmod[i];
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i];
+		v[arraystart + i + 13 + 256 + 25] = kingmobility[i];
 
 	return 0; 
 }
@@ -384,14 +519,14 @@ int startparams() {
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i] / 2; 
 
-	for (i = 0; i < 32; i++)
-		v[arraystart + i + 13] = br[i] / 2; 
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13] = backrank[i] / 2; 
 
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 32] = tmod[i]/2;
+		v[arraystart + i + 13 + 356] = tmod[i]/2;
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 32 + 25] = kingmobility[i]/2;
+		v[arraystart + i + 13 + 256 + 25] = kingmobility[i]/2;
 
 
 	return 0;
@@ -422,6 +557,14 @@ int initeval(void) {
 	optimalparams();
 	initializematerial(materialeval);
 	initializebackrank(blackbackrankeval, whitebackrankeval, blackbackrankpower, whitebackrankpower);
+	
+	for (int i = 0; i < 256; i++) {
+		blackbackrankeval[i] = backrank[i];
+		whitebackrankeval[i] = backrank[reverse(i)];
+	}
+		
+		//printf("\n%i %i", i, reverse(i)); 
+		//printf("%i=%i=%i=%i\n", blackbackrankeval[i], blackbackrank[i], whitebackrankeval[reverse(i)], whitebackrank[reverse(i)]);
 	return 1;
 	}
 
@@ -429,6 +572,13 @@ int updateeval(void) {
 	// updates the eval once new parameters have been set
 	initializematerial(materialeval);
 	initializebackrank(blackbackrankeval, whitebackrankeval, blackbackrankpower, whitebackrankpower);
+
+	for (int i = 0; i < 256; i++) {
+		blackbackrankeval[i] = backrank[i];
+		whitebackrankeval[i] = backrank[reverse(i)];
+	}
+
+
 	return 1;
 }
 
@@ -3159,7 +3309,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			index = p.bm & 0x0000000F;
 			if (p.bm & BIT7)
 				index += 16;
-			blackbackrankeval[u] = br[index];
+			//blackbackrankeval[u] = br[index];
 
 			index = 0;
 			if (p.wm & BIT31)
@@ -3173,7 +3323,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (p.wm & BIT24)
 				index += 16;
 
-			whitebackrankeval[u] = br[index];
+			//whitebackrankeval[u] = br[index];
 
 			/* 		WHITE
 				28  29  30	31
@@ -3187,6 +3337,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 					BLACK */
 
 					/* oreo */
+			/*
 			if (match1(p.bm, SQ2 | SQ3 | SQ7))
 			{
 				blackbackrankeval[u] += v[oreoval];
@@ -3195,10 +3346,10 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			{
 				whitebackrankeval[u] += v[oreoval];
 			}
+			*/
 
 
-
-
+			/*
 			// developed single corner
 			// TODO: make this more fine-grained: if men on 4 and 8, subtract something. if
 			//		 only man on 4, but not on 8, subtract less
@@ -3217,7 +3368,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			if (match1(p.wm, (SQ27 | SQ28 | SQ31)) && !(p.wm & SQ32))
 				whitebackrankeval[u] += v[intactdoublecorner];
 
-
+			*/
 			// ideal double corner
 		/* 		WHITE
 			28  29  30	31
@@ -3229,6 +3380,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			 4   5	6	 7
 		   0   1   2   3
 				BLACK */
+			/*
 			if ((p.bm & BIT3) && (p.bm & BIT2) && (p.bm & BIT6) && (!(p.bm & BIT7)))
 				blackbackrankeval[u] += v[idealdoublecornerval];//2!!
 			// maybe also allow 2,6,7 &!3 to be ideal?
@@ -3241,7 +3393,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 				blackbackrankeval[u] += v[intactdoublecorner];//2!!
 			if ((p.wm & BIT24) && (p.wm & BIT29) && (p.wm & BIT25) && (!(p.wm & BIT28)))
 				whitebackrankeval[u] += v[intactdoublecorner];//2!!	
-
+			*/
 
 
 			// backrankpower gives the power of the back rank to withstand onslaught
@@ -3310,7 +3462,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 			 4   5	6	 7
 		   0   1   2   3
 				BLACK */
-	/*
+	
 	int reverse(int x) {
 		// return a reverted 8-bit pattern, i.e. if you have pattern
 		// e.g. 00001111 return 11110000, or if you have 11000000 return 00000011
@@ -3318,7 +3470,7 @@ int fineevaluation(EVALUATION *e, POSITION *p, MATERIALCOUNT *mc, KINGINFO *ki, 
 		int i; 
 		for (i = 0; i < 8; i++) {
 			if (x & (1 << i))
-				index += (1 << (8 - i)); 
+				index += (1 << (7 - i)); 
 		}
 		return index; 
-	}  */
+	}  

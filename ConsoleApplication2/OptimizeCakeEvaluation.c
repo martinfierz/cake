@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 151
+#define PARAMS 375
 
 
 /* bitboard masks for moves in various directions */
@@ -90,10 +90,49 @@ char strs[PARAMS][128] =  {
 	"ungroundedcontact", "endangeredbridge", "endangeredbridge_kingdown",
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
 	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
+	
 	"br0", "br1", "br2", "br3", "br4", "br5", "br6", "br7",
 	"br8", "br9", "br10", "br11", "br12", "br13", "br14", "br15",
 	"br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23",
 	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
+
+	"br32", "br33", "br34", "br35", "br36", "br37", "br38", "br39",
+	"br40", "br41", "br42", "br43", "br44", "br45", "br46", "br47",
+	"br48", "br49", "br50", "br51", "br52", "br53", "br54", "br55",
+	"br56", "br57", "br58", "br59", "br60", "br61", "br62", "br63",
+
+	"br64", "br65", "br66", "br67", "br68", "br69", "br70", "br71",
+	"br72", "br73", "br74", "br75", "br76", "br77", "br78", "br79",
+	"br80", "br81", "br82", "br83", "br84", "br85", "br86", "br87",
+	"br88", "br89", "br90", "br91", "br92", "br93", "br94", "br95",
+
+		"br96", "br97", "br98", "br99", "br100", "br101", "br102", "br103",
+	"br104", "br105", "br106", "br107", "br108", "br109", "br110", "br111",
+	"br112", "br113", "br114", "br115", "br116", "br117", "br118", "br119",
+	"br120", "br121", "br122", "br123", "br124", "br125", "br126", "br127",
+
+		"br128", "br129", "br130", "br131", "br132", "br133", "br134", "br135",
+	"br136", "br137", "br138", "br139", "br140", "br141", "br142", "br143",
+	"br144", "br145", "br146", "br147", "br148", "br149", "br150", "br151",
+	"br152", "br153", "br154", "br155", "br156", "br157", "br158", "br159",
+
+		"br160", "br161", "br162", "br163", "br164", "br165", "br166", "br167",
+	"br168", "br169", "br170", "br171", "br172", "br173", "br174", "br175",
+	"br176", "br177", "br178", "br179", "br180", "br181", "br182", "br183",
+	"br184", "br185", "br186", "br187", "br188", "br189", "br190", "br191",
+
+		"br192", "br193", "br194", "br195", "br196", "br197", "br198", "br199",
+	"br200", "br201", "br202", "br203", "br204", "br205", "br206", "br207",
+	"br208", "br209", "br210", "br211", "br212", "br213", "br214", "br215",
+	"br216", "br217", "br218", "br219", "br220", "br221", "br222", "br223",
+
+		"br224", "br225", "br226", "br227", "br228", "br229", "br230", "br231",
+	"br232", "br233", "br234", "br235", "br236", "br237", "br238", "br239",
+	"br240", "br241", "br242", "br243", "br244", "br245", "br246", "br247",
+	"br248", "br249", "br250", "br251", "br252", "br253", "br254", "br255",
+
+
+
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
 	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
 	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24",
@@ -440,21 +479,23 @@ void codeoutput(int recall) {
 	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
 	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
 
-	for (i = 0; i < paramnum - 13 - 25 - 32 -10; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - 256 -10; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 32 - 10; i < paramnum - 25 - 32 - 10; i++) {
+	for (i = paramnum - 13 - 25 - 256 - 10; i < paramnum - 25 - 32 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\nstatic int br[32] = {");
-	for (i = paramnum - 25 - 32 -10; i < paramnum - 25-10; i++) {
+	fprintf(fp, "\nstatic int backrank[256] = {");
+	for (i = paramnum - 25 - 256 -10; i < paramnum - 25-10; i++) {
 		fprintf(fp, " %i,", params[i]);
+		if ((i - paramnum + 25 + 256 + 10) % 16 == 0)
+			fprintf(fp, "\n");
 	}
 	fprintf(fp, "};");
 
