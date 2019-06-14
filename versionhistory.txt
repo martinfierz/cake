@@ -2,9 +2,27 @@ looking at games i think i should try adding
 
 
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
+14.6.2019
+try a TO-MTD version which will break search in MTD
+
 
 10.6.2019
-added pattern for wk on 4 vs bm 3,7,12 as trapped king; re-optimized, called beta4
+added pattern for wk on 4 vs bm 3,7,12 as trapped king; re-optimized, called beta4 (375.8729)
+Cake 1.87 beta (375.8279) - Kingsrow(x64) 1.18 : W-L-D:1040-510-2182  (match91, 203.9%, 57.1% absolute)
++:1040 =:2180 -:510 unknown:2 +B:387 -B:1163  
+best result ever except strange TO2 result - let's assume that that was an outlier and this is real :-)
+
+result against kr 118f is disappointing:
+Cake 1.87 beta (375.8279) - Kingsrow(x64) 1.18f : W-L-D:264-875-3661  (43.64% overall, 30.17% win%, 4.18 draw-loss)
++:264 =:3652 -:875 unknown:9 +B:695 -B:444
+
+TO version
+Cake 1.87 beta TO (375.8279) - Kingsrow(x64) 1.18f : W-L-D:264-850-3686  (43.90%,   31.05 win%, 4.33 draw-loss)
++:264 =:3684 -:850 unknown:2 +B:676 -B:438   slightly better as I would somehow expect
+
+TO version vs. kr 118
+Cake 1.87 beta TO (375.8279) - Kingsrow(x64) 1.18 : W-L-D:1079-499-2154  (match  216%, record good)  (match94)
++:1079 =:2150 -:499 unknown:4 +B:436 -B:1142
 
 9.6.2019
 king mobility array added fixing up king mobility evaluation some more
@@ -13,6 +31,10 @@ king mobility array too crazy, as it also applies to 3,11,12, where it should no
 
 9.6.2019
 verified that TO2 is far better than noTO and TO by match against kr118 after seeing it in match vs 118f
+
+Cake 1.87 beta TO2 - Kingsrow(x64) 1.18 : W-L-D:1091-492-2149
++:1091 =:2147 -:492 unknown:2 +B:416 -B:1167
+
 optimizer output fixed
 changed king mobility evaluation (kings can move through other kings, kings in center can never be trapped)
 added a backrankpower4

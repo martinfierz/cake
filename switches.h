@@ -6,13 +6,13 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.87 beta (375.8279)"
+#define VERSION "1.87 beta TO (375.8279)"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
 #endif
 
-#undef TIMEOPTIMIZED
+#define TIMEOPTIMIZED
 
 // two new flags to test logging and rep detection later on
 #define NEWREPDETECTION
@@ -51,6 +51,7 @@
 #define NOPRUNE						// new: if this is defined, the eval will be able 
 									// to tell the search not to prune by expanding the pruning window
 #define NOPRUNEWINDOW 50			// this is how much delta is set to in the noprune case
+									// seems to have little effect on nodes
 
 #define STOREEXACTDEPTH
 #undef  EVALOFF						// return 0 in eval ca
@@ -74,8 +75,9 @@
 #define MAXTRUNC 3*FRAC				//2*FRAC	// maximum truncation per ply 
 #define TRUNCLEVELHARD 120			//100			// TRUNCLEVEL was 30 for 1.42
 #define TRUNCLEVELSOFT 30			// new double truncation scheme!
-#define TRUNCDIVHARD 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
+#define TRUNCDIVHARD 16 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
 #define TRUNCDIVSOFT 32 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
+									// changing truncdivsoft to 16 -> ~70% nodes = lots of potential!
 
 #define ETC							// use enhanced transposition cutoffs 
 #define ETCDEPTH FRAC*2				//maybe 3 is better.	if depth>etcdepth do ETC 
@@ -83,6 +85,11 @@
 #define MAXDEPTH 99					// maximal number of plies cake++ can search 
 #define LAZYEVALWINDOW 400			// if materialeval is more than this outside of alpha-beta window, 
 #define FINEEVALWINDOW 200			// do only materialeval; LAZY for only material, FINE for material+selftrapeval
+									// note 11.6.2019: changing fineevalwindow to 150 makes noticeable chang
+									// in testcake nodes, changing lazyevalwindow to 300 is 99.9% = non-noticeable
+									// fineevalwindow 175 is close to 99%
+
+
 
 #define HISTORYOFFSET 10		
 #define ASPIRATIONWINDOW 60			// aspiration window size for windowed search
@@ -136,4 +143,4 @@
 #undef LATEMOVEREDUCTION			// use late move reduction
 #undef LATEMOVEREDUCTIONROOT
 #define LATEMOVEMINDEPTH 2*FRAC		// minimal remaining search depth to use LMR
-#define LATEMOVEDEPTH 2				// reduce late moves by 1/4 a ply times this
+#define LATEMOVEDEPTH 4				// reduce late moves by 1/4 a ply times this

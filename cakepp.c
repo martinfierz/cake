@@ -1660,7 +1660,7 @@ int safemoves(POSITION *p)
 	{
 	// safemoves returns the number of "safe" moves for
 	// color - given that there are no capture moves!
-	// it is only called when there are no kings on the board, therfore there is
+	// it is only called when there are no kings on the board, therefore there is
 	// nothing about kings in the code below.
 
 	int32 tmp;

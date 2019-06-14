@@ -421,6 +421,8 @@ int main()
 	codeoutput(0);
 
 	// then write them after recalling from the eval
+	// TODO: test what happens if I outcomment this, is influence then OK?
+	// if yes, what does this mean for my code correctness???
 	codeoutput(1);
 
 	// find out what the influence of the parameters is overall:
