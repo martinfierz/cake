@@ -1144,12 +1144,14 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 	
 		if(g<beta)
 			{
+			// minimal window search failed low - perhaps not good to trust this result?
 			upperbound=g;
 			// TODO: move sprintfs into a #ifdef FULLOG clause
 			sprintf(Lstr1,"value<%i",beta);
 			}
 		else
 			{
+			// minimal window search failed high, perhaps OK to trust this result?
 			lowerbound=g;
 			//lowerbound = beta;
 			sprintf(Lstr1,"value>%i",beta-1);
@@ -1159,7 +1161,14 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		time = ( (clock() - si->start)/CLK_TCK);
 		getpv(si, p, Lstr2);
 
-		// TODO: move line below into fullog
+#ifdef TO_MTD
+		if (si->searchmode == TIME_BASED && time > (si->maxtime * 1.25))
+			break;
+		// TODO: only do this if we ever had a fail high; and/or check what happens if si->play?
+#endif
+
+
+
 		searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
 #ifdef FULLLOG
 		sprintf(Lstr,"\n -> %s",si->out);

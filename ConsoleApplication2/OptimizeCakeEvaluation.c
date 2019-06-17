@@ -13,7 +13,7 @@
 #include "switches.h"
 #include "structs.h"
 #include "consts.h"
-#include "cake_eval.h"
+#include "..\\cake_eval.h"
 
 #define WHITE 1
 #define BLACK 2
@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 375
+#define PARAMS 376
 
 
 /* bitboard masks for moves in various directions */
@@ -66,18 +66,20 @@ void codeoutput(int recall);
 int result_translated[4] = { 0, 1, -1, 0 };
 static int params[PARAMS]; // parameters to optimize
 
-
+int active_set[PARAMS]; // specify which parameters are used in optimization.
 
 char strs[PARAMS][128] =  {
-	"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", "backrankpower1",
-	"backrankpower2", "backrankpower3", "backrankpower4", "king_value", "nocrampval13", "nocrampval20", 
+	"man_value", "king_value", "piecedown_9", "piecedown_11", "twokingbonus_10", "twokingbonus_12",
+	"exchangebias",
+	/*"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", */"backrankpower1",
+	"backrankpower2", "backrankpower3", "backrankpower4", "nocrampval13", "nocrampval20", 
 	"dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
 	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
 	"turnval", "turnval_eg", "kingcentermonopoly", "kingtrappedinsinglecornerval",
 	"kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval", "dominatedkingval", "dominatedkingindcval",
 	"kingproximityval1", "kingproximityval2", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
-	"man_value", "balancemult", "skewnessmult", "skewnessmult_eg", "cramp12", "cramp13", "cramp13_eg",
+    "balancemult", "skewnessmult", "skewnessmult_eg", "cramp12", "cramp13", "cramp13_eg",
 	"cramp20", "badstructure", 
 	"dogholeval2", "badstructure2", 
 	"badstructure3", "badstructure4",
@@ -324,6 +326,7 @@ int main()
 	
 	
 
+
 	//for (i = 0; i < PARAMSOPT; i++)
 	//	params[i] = 0;
 	//params[7] = 130; // keep only king value
@@ -339,12 +342,35 @@ int main()
 	printf("\ninitial error is %.7f", minerror);
 	fprintf(log, "\ninitial error is %.7f", minerror);
 
-	setparams(params, paramnum);
+
+	// reset all parameters to 0
+	/*for (i = 0; i < PARAMS; i++)
+		params[i] = 0;
+	params[man_value] = 100; 
+	params[king_value] = 130; 
+	params[exchangebias] = 25; */
+	startparams(); 
 	updateeval();
+	getparams(params, &paramnum);
+
+	//setparams(params, paramnum);
+	//updateeval();
 	minerror = calc_error(n, ep, c);
 	printf("\nerror after setting all parameters is %.7f", minerror);
 	printf("\nfound %i parameters to optimize - hit key to continue", paramnum); 
 	getch(); 
+
+
+	/*deactivate_all(); 
+	active_set[man_value] = 1;
+	active_set[king_value] = 1;
+	active_set[piecedown_9] = 1;
+	active_set[piecedown_11] = 1;
+	active_set[twokingbonus_10] = 1;
+	active_set[twokingbonus_12] = 1;
+	active_set[exchangebias] = 1; */
+	activate_all(); 
+
 	while (iterations < 1000) {
 		changed = 0;
 		sameadjust = 0; 
@@ -354,6 +380,10 @@ int main()
 				notadjust[j] = 0;
 				continue;
 			}*/
+
+			// skip if parameter not activated
+			if (active_set[j] == 0)
+				continue; 
 	
 			// save old value	
 			oldparam = params[j];
@@ -423,12 +453,16 @@ int main()
 	// then write them after recalling from the eval
 	// TODO: test what happens if I outcomment this, is influence then OK?
 	// if yes, what does this mean for my code correctness???
-	codeoutput(1);
+	//codeoutput(1);
 
 	// find out what the influence of the parameters is overall:
 	printf("\nmeasuring absolute influence of all parameters..."); 
 	for (i = 0; i < paramnum; i++) {
-		printf("."); 
+		// skip if parameter not activated
+		if (active_set[i] == 0)
+			continue;
+		
+		printf(".");
 		oldparam = params[i];
 		params[i] = 0;
 		setparams(params, paramnum);
@@ -455,6 +489,16 @@ int main()
 
 	getch(); 
     return 0;
+}
+
+int activate_all() {
+	for (int i = 0; i < PARAMS; i++)
+		active_set[i] = 1;
+}
+
+int deactivate_all() {
+	for (int i = 0; i < PARAMS; i++)
+		active_set[i] = 0;
 }
 
 void codeoutput(int recall) {
@@ -488,7 +532,7 @@ void codeoutput(int recall) {
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 256 - 10; i < paramnum - 25 - 32 - 10; i++) {
+	for (i = paramnum - 13 - 25 - 256 - 10; i < paramnum - 25 - 256 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
@@ -514,6 +558,7 @@ void codeoutput(int recall) {
 	fprintf(fp, "};");
 
 
+	/*
 	getblackbackrank(br); 
 	fprintf(fp, "\nstatic int blackbackrank[256] = {");
 	for (int j = 0; j < 16; j++) {
@@ -532,7 +577,7 @@ void codeoutput(int recall) {
 		}
 		fprintf(fp, "\n");
 	}
-	fprintf(fp, "};");
+	fprintf(fp, "};");*/
 
 	fclose(fp);
 }

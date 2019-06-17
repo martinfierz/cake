@@ -1,9 +1,23 @@
 looking at games i think i should try adding
 
 
+16.6.2019
+-- 4 new material modifiers, and backrank4, and re-optimized:
+Cake 1.87 beta TO (376.8279) - Kingsrow(x64) 1.18f : W-L-D:294-861-3645  (44.09% total, 34.15% win ratio, 4.23 draw-loss)
++:294 =:3636 -:861 unknown:9 +B:678 -B:477  (match97)
+Cake 1.87 beta TO (376.8279) - Kingsrow(x64) 1.18 : W-L-D:985-502-2245
++:985 =:2240 -:502 unknown:5 +B:366 -B:1121
+
+strange - against 1.18f the result is good, against 1.18 it's not so good...
+
+
 -- when a new best move is available in mtd(f) and I hit ! then the move of the last iteration is used
 14.6.2019
-try a TO-MTD version which will break search in MTD
+try a TO-MTD version which will break search in MTD (done for kr118, rep for kr 118f)
+
+TO-MTDF-version:  (match95)
+Cake 1.87 beta TO-MTD (375.827... - Kingsrow(x64) 1.18 : W-L-D:1065-491-2176 (similar, uncertain if this is any good)
++:1065 =:2174 -:491 unknown:2 +B:411 -B:1145
 
 
 10.6.2019
@@ -23,6 +37,8 @@ Cake 1.87 beta TO (375.8279) - Kingsrow(x64) 1.18f : W-L-D:264-850-3686  (43.90%
 TO version vs. kr 118
 Cake 1.87 beta TO (375.8279) - Kingsrow(x64) 1.18 : W-L-D:1079-499-2154  (match  216%, record good)  (match94)
 +:1079 =:2150 -:499 unknown:4 +B:436 -B:1142
+
+
 
 9.6.2019
 king mobility array added fixing up king mobility evaluation some more
