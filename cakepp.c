@@ -935,7 +935,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 					d--;
 #else
 				//if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime / 2)))
-				if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime * 0.45)))
+				if (si->searchmode == TIME_BASED && ((clock() - si->start) / CLK_TCK > (si->maxtime * 0.4)))
 					break;
 #endif
 				if( si->searchmode == DEPTH_BASED && d>=depthtosearch)

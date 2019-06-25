@@ -1,6 +1,15 @@
 looking at games i think i should try adding
 
 
+23.6.2019
+backrank-eg added and optimized; 
+Cake 1.87 beta TO (632.8279) - Kingsrow(x64) 1.18f : W-L-D:271-804-3725 (33.7% win ratio, 44.45% overall, 4.63 draw/loss)
++:271 =:3719 -:804 unknown:6 +B:658 -B:417
+Cake 1.87 beta TO (632.8279) - Kingsrow(x64) 1.18 : W-L-D:994-500-2238
++:994 =:2236 -:500 unknown:2 +B:386 -B:1108
+
+
+
 16.6.2019
 -- 4 new material modifiers, and backrank4, and re-optimized:
 Cake 1.87 beta TO (376.8279) - Kingsrow(x64) 1.18f : W-L-D:294-861-3645  (44.09% total, 34.15% win ratio, 4.23 draw-loss)
@@ -18,6 +27,8 @@ try a TO-MTD version which will break search in MTD (done for kr118, rep for kr 
 TO-MTDF-version:  (match95)
 Cake 1.87 beta TO-MTD (375.827... - Kingsrow(x64) 1.18 : W-L-D:1065-491-2176 (similar, uncertain if this is any good)
 +:1065 =:2174 -:491 unknown:2 +B:411 -B:1145
+
+
 
 
 10.6.2019

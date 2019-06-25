@@ -37,8 +37,8 @@
 #define CAPT 50
 #define HISTORY	300			//300
 #define MINHASH 100
-#define DEVSINGLE 4
-#define GIVEUPOREO 10
+//#define DEVSINGLE 4
+//#define GIVEUPOREO 10
 
 
 #pragma warning( disable : 4146 ) // disable warning that i compute -x for an unsigned int x

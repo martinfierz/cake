@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 376
+#define PARAMS 632
 
 
 /* bitboard masks for moves in various directions */
@@ -133,6 +133,45 @@ char strs[PARAMS][128] =  {
 	"br240", "br241", "br242", "br243", "br244", "br245", "br246", "br247",
 	"br248", "br249", "br250", "br251", "br252", "br253", "br254", "br255",
 
+	"br_eg0", "br_eg1", "br_eg2", "br_eg3", "br_eg4", "br_eg5", "br_eg6", "br_eg7",
+	"br_eg8", "br_eg9", "br_eg10", "br_eg11", "br_eg12", "br_eg13", "br_eg14", "br_eg15",
+	"br_eg16", "br_eg17", "br_eg18", "br_eg19", "br_eg20", "br_eg21", "br_eg22", "br_eg23",
+	"br_eg24", "br_eg25", "br_eg26", "br_eg27", "br_eg28", "br_eg29", "br_eg30", "br_eg31",
+
+	"br_eg32", "br_eg33", "br_eg34", "br_eg35", "br_eg36", "br_eg37", "br_eg38", "br_eg39",
+	"br_eg40", "br_eg41", "br_eg42", "br_eg43", "br_eg44", "br_eg45", "br_eg46", "br_eg47",
+	"br_eg48", "br_eg49", "br_eg50", "br_eg51", "br_eg52", "br_eg53", "br_eg54", "br_eg55",
+	"br_eg56", "br_eg57", "br_eg58", "br_eg59", "br_eg60", "br_eg61", "br_eg62", "br_eg63",
+
+	"br_eg64", "br_eg65", "br_eg66", "br_eg67", "br_eg68", "br_eg69", "br_eg70", "br_eg71",
+	"br_eg72", "br_eg73", "br_eg74", "br_eg75", "br_eg76", "br_eg77", "br_eg78", "br_eg79",
+	"br_eg80", "br_eg81", "br_eg82", "br_eg83", "br_eg84", "br_eg85", "br_eg86", "br_eg87",
+	"br_eg88", "br_eg89", "br_eg90", "br_eg91", "br_eg92", "br_eg93", "br_eg94", "br_eg95",
+
+	"br_eg96", "br_eg97", "br_eg98", "br_eg99", "br_eg100", "br_eg101", "br_eg102", "br_eg103",
+	"br_eg104", "br_eg105", "br_eg106", "br_eg107", "br_eg108", "br_eg109", "br_eg110", "br_eg111",
+	"br_eg112", "br_eg113", "br_eg114", "br_eg115", "br_eg116", "br_eg117", "br_eg118", "br_eg119",
+	"br_eg120", "br_eg121", "br_eg122", "br_eg123", "br_eg124", "br_eg125", "br_eg126", "br_eg127",
+
+	"br_eg128", "br_eg129", "br_eg130", "br_eg131", "br_eg132", "br_eg133", "br_eg134", "br_eg135",
+	"br_eg136", "br_eg137", "br_eg138", "br_eg139", "br_eg140", "br_eg141", "br_eg142", "br_eg143",
+	"br_eg144", "br_eg145", "br_eg146", "br_eg147", "br_eg148", "br_eg149", "br_eg150", "br_eg151",
+	"br_eg152", "br_eg153", "br_eg154", "br_eg155", "br_eg156", "br_eg157", "br_eg158", "br_eg159",
+
+	"br_eg160", "br_eg161", "br_eg162", "br_eg163", "br_eg164", "br_eg165", "br_eg166", "br_eg167",
+	"br_eg168", "br_eg169", "br_eg170", "br_eg171", "br_eg172", "br_eg173", "br_eg174", "br_eg175",
+	"br_eg176", "br_eg177", "br_eg178", "br_eg179", "br_eg180", "br_eg181", "br_eg182", "br_eg183",
+	"br_eg184", "br_eg185", "br_eg186", "br_eg187", "br_eg188", "br_eg189", "br_eg190", "br_eg191",
+
+	"br_eg192", "br_eg193", "br_eg194", "br_eg195", "br_eg196", "br_eg197", "br_eg198", "br_eg199",
+	"br_eg200", "br_eg201", "br_eg202", "br_eg203", "br_eg204", "br_eg205", "br_eg206", "br_eg207",
+	"br_eg208", "br_eg209", "br_eg210", "br_eg211", "br_eg212", "br_eg213", "br_eg214", "br_eg215",
+	"br_eg216", "br_eg217", "br_eg218", "br_eg219", "br_eg220", "br_eg221", "br_eg222", "br_eg223",
+
+	"br_eg224", "br_eg225", "br_eg226", "br_eg227", "br_eg228", "br_eg229", "br_eg230", "br_eg231",
+	"br_eg232", "br_eg233", "br_eg234", "br_eg235", "br_eg236", "br_eg237", "br_eg238", "br_eg239",
+	"br_eg240", "br_eg241", "br_eg242", "br_eg243", "br_eg244", "br_eg245", "br_eg246", "br_eg247",
+	"br_eg248", "br_eg249", "br_eg250", "br_eg251", "br_eg252", "br_eg253", "br_eg254", "br_eg255",
 
 
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
@@ -174,6 +213,7 @@ int main()
 	int sameadjust; 
 	int adjust; 
 	int paramnum = 0; 
+	int allactive = 1; 
 	int initialparams[PARAMS]; 
 	float influence[PARAMS];
 	float influence0[PARAMS]; 
@@ -349,9 +389,18 @@ int main()
 	params[man_value] = 100; 
 	params[king_value] = 130; 
 	params[exchangebias] = 25; */
-	startparams(); 
+	//startparams(); 
+	optimalparams(); 
+	getparams(params, &paramnum); 
+
+	for (i = 0; i < 256; i++) {
+		params[arraystart + i + 13 + 256] = 0;
+		params[arraystart + i + 13] = 0;
+	}
+
+	setparams(params, paramnum);
 	updateeval();
-	getparams(params, &paramnum);
+	
 
 	//setparams(params, paramnum);
 	//updateeval();
@@ -375,15 +424,12 @@ int main()
 		changed = 0;
 		sameadjust = 0; 
 		for (j = 0; j < paramnum; j++) {  // for all params do
-			// skip optimizing this parameter once if it wasn't adjusted on last iteration
-			/*if (notadjust[j]) {
-				notadjust[j] = 0;
-				continue;
-			}*/
-
 			// skip if parameter not activated
-			if (active_set[j] == 0)
-				continue; 
+			if (active_set[j] == 0) {
+				printf("\nskipping parameter %i", j);
+				allactive = 0; 
+				continue;
+			}
 	
 			// save old value	
 			oldparam = params[j];
@@ -435,16 +481,24 @@ int main()
 				fprintf(log, "\n---------->>>> adjusted %s from %i to %i (%.6f)", strs[j], oldparam, params[j], minerror);
 			}
 			else {
-				printf("\n%s unchanged (%i)", strs[j], params[j]); 
+				printf("\n%s unchanged (%i)", strs[j], params[j]);
+				fprintf(log, "\n%s unchanged (%i) - setting inactive!", strs[j], params[j]);
+				active_set[j] = 0;
 			}
-
 		}
 		printf("\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
 		fprintf(log, "\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
 		iterations++; 
 
-		if (changed == 0)
+		if (changed == 0 && allactive)
 			break; 
+		if (changed == 0) {
+			printf("\nno changes on this iteration, but not all active - reactivating all");
+			fprintf(log, "\nno changes on this iteration, but not all active - reactivating all");
+			allactive = 1;
+			activate_all();
+		}
+			
 	}
 
 	// first write params directly
@@ -454,7 +508,7 @@ int main()
 	// TODO: test what happens if I outcomment this, is influence then OK?
 	// if yes, what does this mean for my code correctness???
 	//codeoutput(1);
-
+	activate_all();
 	// find out what the influence of the parameters is overall:
 	printf("\nmeasuring absolute influence of all parameters..."); 
 	for (i = 0; i < paramnum; i++) {
@@ -525,25 +579,35 @@ void codeoutput(int recall) {
 	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
 	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
 
-	for (i = 0; i < paramnum - 13 - 25 - 256 -10; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - 256 -256 -10; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 256 - 10; i < paramnum - 25 - 256 - 10; i++) {
+	for (i = paramnum - 13 - 25 - 256 -256 - 10; i < paramnum - 25 - -256 - 256 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
 	fprintf(fp, "\nstatic int backrank[256] = {");
-	for (i = paramnum - 25 - 256 -10; i < paramnum - 25-10; i++) {
+	for (i = paramnum - 25 - 256 -256 -10; i < paramnum - 25 - 256 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 		if ((i - paramnum + 25 + 256 + 10) % 16 == 0)
 			fprintf(fp, "\n");
 	}
 	fprintf(fp, "};");
+
+	fprintf(fp, "\nstatic int backrank_eg[256] = {");
+	for (i = paramnum - 25 - 256 - 10; i < paramnum - 25 - 10; i++) {
+		fprintf(fp, " %i,", params[i]);
+		if ((i - paramnum + 25 + 256 + 10) % 16 == 0)
+			fprintf(fp, "\n");
+	}
+	fprintf(fp, "};");
+
+
 
 	fprintf(fp, "\nstatic int tmod[25] = {");
 	for (i = paramnum - 25-10; i < paramnum-10; i++) {
@@ -590,6 +654,7 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 	int staticeval;
 	int delta;
 	float res, error, errorsum = 0;
+	int num = 0; 
 	
 
 	for (i = 0; i < n; i++) {
@@ -604,6 +669,7 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 		mc.wm = bitcount(p.wm);
 		mc.wk = bitcount(p.wk);
 		staticeval = evaluation(&p, &mc, 0, &delta, 0, 0);
+		num++; 
 		//errorsum += abs(staticeval - ep[i].value);
 
 		//printboard(&p); 
@@ -630,7 +696,7 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 		//getch();
 
 	}
-	errorsum = errorsum / (float)n; 
+	errorsum = errorsum / (float)num; 
 	//printf("\n***** %.6f",errorsum);
 	
 	return errorsum;

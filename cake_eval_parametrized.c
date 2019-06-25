@@ -16,7 +16,8 @@
 
 // tables for evaluation
 static short materialeval[13][13][13][13];						// bm bk wm wk
-char  blackbackrankeval[256],whitebackrankeval[256];			// not static because it's used too in movegen for move ordering
+char  blackbackrankeval[256], whitebackrankeval[256];			// not static because it's used too in movegen for move ordering
+char  blackbackrankeval_eg[256], whitebackrankeval_eg[256];			// not static because it's used too in movegen for move ordering
 static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man down situations
 
 
@@ -40,7 +41,7 @@ static char  blackbackrankpower[256], whitebackrankpower[256];	// used for man d
 };*/
 
 
-#define PARAMS 376
+#define PARAMS 632
 int v[PARAMS];
 
 #define RARELYUSED
@@ -94,13 +95,16 @@ static int kingmobility[10] = { -5, -6, -9, -5, -2, 2, 3, 4, 4, 4};
 // 351 param version below
 //static int ungroundedpenalty[13] = { 2, 1, 2, 3, 7, 10, 14, 20, 21, 26, 21, 21, 21 }; 
 
-static int ungroundedpenalty[13] = { 3, 2, 2, 3, 5, 7, 9, 15, 11, 26, 21, 21, 21 };
+//static int ungroundedpenalty[13] = { 3, 2, 2, 3, 5, 7, 9, 15, 11, 26, 21, 21, 21 };
+static int ungroundedpenalty[13] = { 2, 1, 2, 4, 7, 9, 11, 16, 13, 26, 21, 21, 21 };
+
 
 //static int tmod[25] = { 0, 4, 2, 1, 0, -1, 0, -1, 0, 0, 0, -1, -1, -2, -2, -3, -4, -4, -6, -7, -7, -11, -7, -9, -11};
 //static int kingmobility[10] = { -5, -6, -10, -5, -3, 1, 2, 4, 4, 4 };
-static int tmod[25] = { 0, 4, 1, 0, -1, -1, -1, -1, -1, -1, -1, -2, -1, -2, -2, -3, -4, -4, -6, -7, -7, -10, -7, -8, -12, };
-static int kingmobility[10] = { -5, -7, -11, -5, -2, 1, 2, 4, 4, 4, };
-
+//static int tmod[25] = { 0, 4, 1, 0, -1, -1, -1, -1, -1, -1, -1, -2, -1, -2, -2, -3, -4, -4, -6, -7, -7, -10, -7, -8, -12, };
+//static int kingmobility[10] = { -5, -7, -11, -5, -2, 1, 2, 4, 4, 4, };
+static int tmod[25] = { 0, 4, 1, 0, -1, -1, -1, -2, -1, -1, -1, -2, -2, -3, -3, -4, -5, -5, -7, -7, -8, -11, -8, -9, -12, };
+static int kingmobility[10] = { -5, -8, -12, -8, -4, -1, 1, 2, 3, 3};
 
 /*
 static int backrank[256] = { -1, -12, -5, -16, 1, -5, 12, 6, -1, -20, 15, -7, 10, 6, 26, 15, 
@@ -119,24 +123,40 @@ static int backrank[256] = { -1, -12, -5, -16, 1, -5, 12, 6, -1, -20, 15, -7, 10
 -23, -34, -19, -33, -1, -8, 9, 3, -3, -21, 2, -22, 13, 2, 24, 12, 
 -15, -25, 4, -6, 7, 2, 21, 12, 2, -15, 21, 5, 22, 15, 29, 24, 
 -14, -25, -2, -10, 10, 8, 17, 10, 2, -6, 16, -16, 23, 15, 30, 23 };*/
-static int backrank[256] = { 1,
- -13, -5, -18, 1, -7, 10, 5, -3, -21, 12, -11, 7, 3, 25, 16, -8,
- -15, -17, -22, -4, -8, 1, 2, -12, -23, -4, -18, 6, 2, 17, 7, -10,
- -24, -6, -15, 0, -8, 16, 5, -4, -20, 16, -3, 13, 9, 25, 15, -17,
- -21, -18, -24, -6, -1, 12, -9, -10, -23, 4, -15, 10, 9, 19, 8, -11,
- -31, 0, -20, -5, -10, 12, 9, -5, -19, 17, -4, 14, 6, 29, 21, -13,
- -27, -12, -26, -1, -4, 11, 7, -7, -13, 9, -11, 16, 7, 28, 17, -17,
- -28, -3, -11, -1, -3, 20, 13, -4, -12, 19, 8, 28, 21, 32, 27, -14,
- -19, -3, -13, 6, 8, 16, 6, 5, -7, 16, 1, 28, 20, 31, 24, -3,
- -25, -11, -27, -2, -14, 10, -4, -9, -30, 8, -21, 2, -1, 20, 9, -15,
- -27, -21, -32, -7, -14, -1, -14, -18, -36, -11, -34, 5, -5, 15, 5, -16,
- -28, -2, -13, 3, -6, 19, 6, -7, -23, 13, -6, 15, 10, 28, 18, -22,
- -33, -11, -16, -2, -3, 13, 2, -14, -29, 6, -26, 12, 13, 24, 14, -14,
- -36, -2, -28, -1, -10, 14, 5, -3, -24, 18, -13, 17, -2, 24, 17, -26,
- -35, -19, -32, -1, -9, 11, 5, -4, -21, 2, -22, 12, 2, 25, 14, -16,
- -25, 6, -4, 8, 5, 25, 16, 1, -16, 23, 6, 25, 15, 33, 28, -16,
- -26, -1, -9, 12, 10, 21, 14, 0, -7, 17, -14, 24, 18, 33, 28};
-
+static int backrank[256] = { 8,
+ -9, -3, -10, 10, -3, 9, -10, 6, -11, 4, -17, 11, 0, 12, 1, 3,
+ -9, -12, -18, 2, -4, -5, -4, 5, -10, -12, -26, 11, -1, 1, -3, 0,
+ -14, -2, -12, 6, -12, 6, -3, 1, -13, 0, -18, 9, -1, 8, -1, -9,
+ -15, -8, -21, -5, -3, 1, -12, -2, -19, -12, -15, 3, 1, -1, -4, -1,
+ -18, 1, -12, -1, -4, 4, -8, 3, -6, 5, -11, 10, 0, 11, 1, 0,
+ -15, -9, -18, 9, -4, 3, -7, 3, -3, 1, -15, 8, -3, 7, 1, -5,
+ -17, -4, -16, 1, -6, 4, -6, -4, -8, 4, -7, 14, 5, 10, 4, -1,
+ -13, -5, -14, 1, -1, 0, -6, 1, -11, -1, -9, 10, 4, 6, 2, 4,
+ -10, 4, -19, 10, -5, 8, -6, 5, -16, -7, -21, 8, -2, 10, 0, 6,
+ -12, -17, -30, 6, -9, -6, -11, 1, -19, -10, -27, 14, -8, 2, -1, -4,
+ -16, 6, -13, 12, -7, 8, -5, 7, -11, 4, -13, 14, 0, 10, 2, -8,
+ -17, -12, -21, -1, -4, -5, -5, -4, -19, -7, -27, 5, 1, 5, 1, -2,
+ -24, -3, -21, 0, -9, -3, -6, 5, -17, 3, -16, 11, 0, 8, -1, -7,
+ -22, -15, -22, 4, -10, -1, -4, 1, -11, -10, -25, 7, -3, 6, -1, -8,
+ -15, -3, -14, 1, -4, 8, -1, -1, -11, 5, -9, 9, 0, 12, 5, -4,
+ -23, -11, -18, 3, -2, 1, -2, -3, -11, -4, -19, 7, 2, 8, 4};
+static int backrank_eg[256] = { 3,
+ -3, 0, -7, 1, -1, 5, 9, 1, -7, 9, 1, 4, 3, 12, 11, -2,
+ -4, -5, -8, 0, -3, 3, 1, -5, -10, 4, 3, 1, 1, 11, 7, -3,
+ -8, -3, -5, 0, 0, 7, 1, 1, -5, 12, 9, 5, 5, 11, 8, -4,
+ -8, -9, -6, -1, -3, 6, -2, -3, -8, 9, -2, 5, 1, 14, 6, -3,
+ -11, 2, -8, -2, -4, 5, 9, -1, -11, 10, 2, 6, 3, 12, 13, -5,
+ -11, -4, -12, -5, -3, 3, 7, -5, -11, 4, 0, 6, 6, 13, 8, -6,
+ -10, -1, -3, -2, -2, 7, 10, 0, -6, 9, 10, 9, 8, 11, 14, -7,
+ -7, -2, -5, 1, 1, 7, 3, 3, 4, 11, 5, 10, 5, 16, 16, 1,
+ -10, -5, -10, -2, -6, 3, -1, -4, -13, 10, -4, 0, -2, 6, 1, -7,
+ -12, -7, -8, -6, -8, 1, -11, -10, -17, -3, -9, -6, -2, 8, -6, -5,
+ -12, -5, -6, -4, -3, 5, 3, -7, -13, 6, 2, -2, 2, 7, 4, -9,
+ -15, -3, 0, -1, -4, 10, -2, -8, -14, 9, 5, 3, 0, 9, -1, -5,
+ -13, 1, -10, 0, -4, 11, 4, -2, -8, 12, -2, 6, -7, 5, 13, -12,
+ -16, -6, -14, -5, -4, 5, -2, -4, -13, 9, 5, 0, -3, 10, 3, -7,
+ -11, 3, 4, 2, 1, 6, 6, 1, -9, 10, 17, 5, 9, 0, 11, -9,
+ -7, 6, 6, 2, 2, 9, 5, 2, 3, 20, 23, 7, -2, 11, 12};
 
 
 
@@ -154,12 +174,16 @@ int setparams(int* params, int n) {
 		backrank[i] = params[arraystart + 13 + i];
 	}
 
+	for (i = 0; i < 256; i++) {
+		backrank_eg[i] = params[arraystart + 13 + 256 + i];
+	}	
+
 	for (i = 0; i < 25; i++) {
-		tmod[i] = params[arraystart + 13 + 256 + i];
+		tmod[i] = params[arraystart + 13 + 256 + 256 + i];
 	}
 
 	for (i = 0; i < 10; i++) {
-		kingmobility[i] = params[arraystart + 13 + 256 + 25 + i];
+		kingmobility[i] = params[arraystart + 13 + 256 + 256 + 25 + i];
 	}
 
 	return 0; 
@@ -191,11 +215,14 @@ int getparams(int* params, int* n) {
 	for (i = 0; i < 256; i++)
 		v[arraystart + i + 13] = backrank[i];
 
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13 + 256] = backrank_eg[i];
+
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 256] = tmod[i];
+		v[arraystart + i + 13 + 256 + 256] = tmod[i];
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 256 + 25] = kingmobility[i]; 
+		v[arraystart + i + 13 + 256 + 256 + 25] = kingmobility[i]; 
 
 	// then return all parameters
 	*n = arraystart; 
@@ -212,13 +239,18 @@ int getparams(int* params, int* n) {
 	for (i = arraystart + 13; i < (*n); i++)
 		params[i] = v[i]; 
 
+	// back rank endgame array
+	*n = (arraystart + 13 + 256 + 256);
+	for (i = arraystart + 13; i < (*n); i++)
+		params[i] = v[i];
+
 	// tmod array
-	*n = (arraystart + 13 + 256 + 25);
+	*n = (arraystart + 13 + 256 + 256 + 25);
 	for (i = arraystart + 13 + 256; i < (*n); i++)
 		params[i] = v[i];
 
 	// king mobility array
-	*n = (arraystart + 13 + 256 + 25 + 10);
+	*n = (arraystart + 13 + 256 + 256 + 25 + 10);
 	for (i = arraystart + 13 + 256 + 25; i < (*n); i++)
 		params[i] = v[i]; 
 }
@@ -380,90 +412,96 @@ int optimalparams() {
 	v[endangeredbridge_kingdown] = 14; */
 
 
+	
+
 	v[man_value] = 94;
 	v[king_value] = 106;
-	v[piecedown_9] = 11;
-	v[piecedown_11] = 3;
-	v[twokingbonus_10] = -6;
-	v[twokingbonus_12] = 2;
-	v[exchangebias] = 21;
-	v[backrankpower1] = 31;
+	v[piecedown_9] = 13;
+	v[piecedown_11] = 2;
+	v[twokingbonus_10] = -8;
+	v[twokingbonus_12] = 3;
+	v[exchangebias] = 23;
+	v[backrankpower1] = 29;
 	v[backrankpower2] = 44;
-	v[backrankpower3] = 76;
-	v[backrankpower4] = 23;
-	v[nocrampval13] = 5;
+	v[backrankpower3] = 80;
+	v[backrankpower4] = 26;
+	v[nocrampval13] = 6;
 	v[nocrampval20] = 1;
 	v[dogholeval] = 16;
-	v[dogholemandownval] = 6;
-	v[mc_occupyval] = 0;
-	v[mc_attackval] = 3;
+	v[dogholemandownval] = 5;
+	v[mc_occupyval] = -3;
+	v[mc_attackval] = 2;
 	v[realdykeval] = 0;
 	v[greatdykeval] = 0;
-	v[promoteinone] = 11;
-	v[promoteintwo] = 5;
-	v[promoteinthree] = 1;
+	v[promoteinone] = 9;
+	v[promoteintwo] = 3;
+	v[promoteinthree] = -1;
 	v[tailhookval] = 13;
-	v[kcval] = 5;
-	v[keval] = -3;
-	v[turnval] = -2;
+	v[kcval] = 7;
+	v[keval] = -2;
+	v[turnval] = -3;
 	v[turnval_eg] = -1;
-	v[kingcentermonopoly] = 3;
-	v[kingtrappedinsinglecornerval] = 30;
-	v[kingtrappedinsinglecornerbytwoval] = 5;
-	v[kingtrappedindoublecornerval] = 7;
+	v[kingcentermonopoly] = 1;
+	v[kingtrappedinsinglecornerval] = 34;
+	v[kingtrappedinsinglecornerbytwoval] = 8;
+	v[kingtrappedindoublecornerval] = 10;
 	v[dominatedkingval] = 19;
-	v[dominatedkingindcval] = 33;
+	v[dominatedkingindcval] = 39;
 	v[kingproximityval1] = 6;
 	v[kingproximityval2] = 5;
 	v[immobilemanval] = 1;
-	v[kingholdstwomenval] = 17;
-	v[onlykingval] = 8;
-	v[roamingkingval] = 7;
+	v[kingholdstwomenval] = 18;
+	v[onlykingval] = 9;
+	v[roamingkingval] = 8;
 	v[balancemult] = 4;
-	v[skewnessmult] = 12;
-	v[skewnessmult_eg] = -3;
-	v[cramp12] = 4;
-	v[cramp13] = 30;
-	v[cramp13_eg] = 15;
+	v[skewnessmult] = 18;
+	v[skewnessmult_eg] = 0;
+	v[cramp12] = 2;
+	v[cramp13] = 29;
+	v[cramp13_eg] = 13;
 	v[cramp20] = 6;
-	v[badstructure] = 4;
-	v[dogholeval2] = 16;
-	v[badstructure2] = 3;
-	v[badstructure3] = 4;
-	v[badstructure4] = 3;
-	v[badstructure5] = 17;
-	v[badstructure6] = 16;
+	v[badstructure] = 3;
+	v[dogholeval2] = 18;
+	v[badstructure2] = 2;
+	v[badstructure3] = 6;
+	v[badstructure4] = 1;
+	v[badstructure5] = 14;
+	v[badstructure6] = 13;
 	v[badstructure7] = 50;
-	v[badstructure8] = 21;
+	v[badstructure8] = 23;
 	v[badstructure9] = 8;
-	v[badstructure10] = 10;
-	v[badstructure11] = 18;
+	v[badstructure10] = 8;
+	v[badstructure11] = 20;
 	v[kingmanstones] = 9;
-	v[immobile_mult] = 1;
-	v[immobile_mult_kings] = 4;
-	v[runaway_destroys_backrank] = 15;
-	v[king_blocks_king_and_man] = 74;
+	v[immobile_mult] = 2;
+	v[immobile_mult_kings] = 2;
+	v[runaway_destroys_backrank] = 18;
+	v[king_blocks_king_and_man] = 75;
 	v[king_denied_center] = -1;
 	v[king_low_mobility_mult] = 0;
 	v[king_no_mobility] = 0;
-	v[experimental_king_cramp] = 32;
-	v[compensation] = 67;
-	v[compensation_mandown] = 38;
+	v[experimental_king_cramp] = 36;
+	v[compensation] = 75;
+	v[compensation_mandown] = 32;
 	v[ungroundedcontact] = 1;
-	v[endangeredbridge] = 7;
-	v[endangeredbridge_kingdown] = 13;
-	
+	v[endangeredbridge] = 5;
+	v[endangeredbridge_kingdown] = 11;
+
+
 	for (i = 0; i < 13; i++)
 		v[arraystart + i] = ungroundedpenalty[i];
 
 	for (i = 0; i < 256; i++)
-		v[arraystart + i + 13] = backrank[i]; 
+		v[arraystart + i + 13] = backrank[i];
+	
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13 + 256] = backrank_eg[i];
 
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 256] = tmod[i];
+		v[arraystart + i + 13 + 256 + 256] = tmod[i];
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 256 + 25] = kingmobility[i];
+		v[arraystart + i + 13 + 256 + 256 + 25] = kingmobility[i];
 
 	return 0; 
 }
@@ -553,13 +591,16 @@ int startparams() {
 		v[arraystart + i] = ungroundedpenalty[i] / 2; 
 
 	for (i = 0; i < 256; i++)
-		v[arraystart + i + 13] = backrank[i] / 2; 
+		v[arraystart + i + 13] = backrank[i] / 2;
+	
+	for (i = 0; i < 256; i++)
+		v[arraystart + i + 13 + 256] = backrank_eg[i] / 2;
 
 	for (i = 0; i < 25; i++)
-		v[arraystart + i + 13 + 256] = tmod[i]/2;
+		v[arraystart + i + 13 + 256 + 256] = tmod[i]/2;
 
 	for (i = 0; i < 10; i++)
-		v[arraystart + i + 13 + 256 + 25] = kingmobility[i]/2;
+		v[arraystart + i + 13 + 256 + 256 + 25] = kingmobility[i]/2;
 
 
 	return 0;
@@ -592,8 +633,15 @@ int initeval(void) {
 	initializebackrank(blackbackrankeval, whitebackrankeval, blackbackrankpower, whitebackrankpower);
 	
 	for (int i = 0; i < 256; i++) {
+		backrank[i] = v[arraystart + i + 13]; 
+		backrank_eg[i] = v[arraystart + i + 13 + 256]; 
+	}
+
+	for (int i = 0; i < 256; i++) {
 		blackbackrankeval[i] = backrank[i];
 		whitebackrankeval[i] = backrank[reverse(i)];
+		blackbackrankeval_eg[i] = backrank_eg[i]; 
+		whitebackrankeval_eg[i] = backrank_eg[reverse(i)];
 	}
 		
 		//printf("\n%i %i", i, reverse(i)); 
@@ -607,8 +655,15 @@ int updateeval(void) {
 	initializebackrank(blackbackrankeval, whitebackrankeval, blackbackrankpower, whitebackrankpower);
 
 	for (int i = 0; i < 256; i++) {
+		backrank[i] = v[arraystart + i + 13];
+		backrank_eg[i] = v[arraystart + i + 13 + 256];
+	}
+
+	for (int i = 0; i < 256; i++) {
 		blackbackrankeval[i] = backrank[i];
 		whitebackrankeval[i] = backrank[reverse(i)];
+		blackbackrankeval_eg[i] = backrank_eg[i];
+		whitebackrankeval_eg[i] = backrank_eg[reverse(i)];
 	}
 
 
@@ -828,10 +883,20 @@ int evaluation(POSITION *p, MATERIALCOUNT *mc, int alpha, int *delta, int captur
 	// TODO: could add a second lazy exit here
 
 	// get backrankeval
-	e.backrank = (blackbackrankeval[p->bm & 0xFF] - whitebackrankeval[p->wm >> 24]); 
+	// old backrankeval without phase
+//	e.backrank = (blackbackrankeval[p->bm & 0xFF] - whitebackrankeval[p->wm >> 24]); 
+	// new backrankeval with phase
+	int pieces = mc->bm + mc->bk + mc->wm + mc->wk;
+	e.backrank = (blackbackrankeval[p->bm & 0xFF] * (pieces - 8) + blackbackrankeval_eg[p->bm & 0xFF] * (24 - pieces));
+	e.backrank -= (whitebackrankeval[p->wm >> 24] * (pieces - 8) + whitebackrankeval_eg[p->wm >> 24] * (24 - pieces));
+
+	
 	if(p->color == WHITE)
 		e.backrank = -e.backrank;
-	eval += e.backrank;
+	eval += (e.backrank/8);
+
+	
+
 
 	
 	assert(ki.freebk >= 0);
