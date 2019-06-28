@@ -146,16 +146,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\checkerboard17\PDNparser.h" />
     <ClInclude Include="..\boolean.h" />
     <ClInclude Include="..\cake_eval.h" />
     <ClInclude Include="..\cake_misc.h" />
-    <ClInclude Include="..\move_gen.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="switches.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\checkerboard17\PDNparser.c" />

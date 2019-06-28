@@ -1131,6 +1131,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 #endif
 	double time;
 	char Lstr1[1024]="",Lstr2[1024]="";
+	int failedhigh = 0; 
 	
 	g = firstguess;  // or g = 0?
 	upperbound = MATE;
@@ -1153,6 +1154,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 			{
 			// minimal window search failed high, perhaps OK to trust this result?
 			lowerbound=g;
+			failedhigh = 1; 
 			//lowerbound = beta;
 			sprintf(Lstr1,"value>%i",beta-1);
 			// TODO: if fastupdate I should set best here if si->play is not set!
@@ -1162,7 +1164,7 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 		getpv(si, p, Lstr2);
 
 #ifdef TO_MTD
-		if (si->searchmode == TIME_BASED && time > (si->maxtime * 1.25))
+		if (si->searchmode == TIME_BASED && time > (1.5*si->maxtime) && failedhigh)
 			break;
 		// TODO: only do this if we ever had a fail high; and/or check what happens if si->play?
 #endif

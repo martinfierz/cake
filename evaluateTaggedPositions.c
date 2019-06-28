@@ -136,7 +136,8 @@ main()
 
 
 			//printf("\n%s", str);
-			printf("\n(%i) eval is %i %i %i", n, v0,v1,v3);
+			if(n % 1000 == 0)
+				printf("\n(%i) eval is %i %i %i", n, v0,v1,v3);
 			/*if (eval == WIN)
 				printf(" (black won)");
 			if (eval == DRAW)

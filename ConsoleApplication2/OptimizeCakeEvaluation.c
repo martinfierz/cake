@@ -224,7 +224,7 @@ int main()
 	//analyze_matchprogress(); 
 
 
-	ep = malloc(sizeof(EVALUATEDPOSITION) * 10000000);
+	ep = malloc(sizeof(EVALUATEDPOSITION) * 13000000);
 
 	// initialize eval
 	initeval();
@@ -393,10 +393,11 @@ int main()
 	optimalparams(); 
 	getparams(params, &paramnum); 
 
+	/*
 	for (i = 0; i < 256; i++) {
 		params[arraystart + i + 13 + 256] = 0;
 		params[arraystart + i + 13] = 0;
-	}
+	}*/
 
 	setparams(params, paramnum);
 	updateeval();

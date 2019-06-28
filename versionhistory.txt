@@ -1,5 +1,10 @@
 looking at games i think i should try adding
 
+25.6.2019
+try TO2 once again hoping for a miracle: but none happens
+Cake 1.87 beta TO2 (632.8279) - Kingsrow(x64) 1.18 : W-L-D:1006-511-2215
++:1006 =:2212 -:511 unknown:3 +B:388 -B:1129
+
 
 23.6.2019
 backrank-eg added and optimized; 

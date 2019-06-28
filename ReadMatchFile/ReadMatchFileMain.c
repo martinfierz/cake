@@ -83,11 +83,11 @@ typedef struct
 	
 } SHORTGAME;
 
-#define MAXGAMES 700000
+#define MAXGAMES 1000000
 SHORTGAME* gamelist;
 
 
-#define NUMFILES 67
+#define NUMFILES 102
 #define NUMFILESREP 5
 
 // repeat identical matches should be 46,53,54 and 50,52
@@ -160,7 +160,42 @@ char files[NUMFILES][128] = { "match1.pdn",
 "match63.pdn",
 "match64.pdn",
 "match65.pdn",
-"match66.pdn"
+"match66.pdn",
+"match67.pdn",
+"match69.pdn",
+"match70.pdn",
+"match71.pdn",
+"match72.pdn",
+"match73.pdn",
+"match74.pdn",
+"match76.pdn",
+"match77.pdn",
+"match78.pdn",
+"match79.pdn",
+"match80.pdn",
+"match81.pdn",
+"match82.pdn",
+"match83.pdn",
+"match84.pdn",
+"match85.pdn",
+"match86.pdn",
+"match88.pdn",
+"match89.pdn",
+"match90.pdn",
+"match91.pdn",
+"match92.pdn",
+"match93.pdn",
+"match94.pdn",
+"match95.pdn",
+"match96.pdn",
+"match97.pdn",
+"match98.pdn",
+"match99.pdn",
+"match100.pdn",
+"match101.pdn",
+"match102.pdn",
+"match103.pdn",
+"match104.pdn"
 };
 char directory[64] = "C:\\code\\checkersdata\\";
 
