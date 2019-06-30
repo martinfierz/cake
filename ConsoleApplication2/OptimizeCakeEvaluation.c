@@ -21,7 +21,7 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 632
+#define PARAMS 376
 
 
 /* bitboard masks for moves in various directions */
@@ -133,6 +133,7 @@ char strs[PARAMS][128] =  {
 	"br240", "br241", "br242", "br243", "br244", "br245", "br246", "br247",
 	"br248", "br249", "br250", "br251", "br252", "br253", "br254", "br255",
 
+	/*
 	"br_eg0", "br_eg1", "br_eg2", "br_eg3", "br_eg4", "br_eg5", "br_eg6", "br_eg7",
 	"br_eg8", "br_eg9", "br_eg10", "br_eg11", "br_eg12", "br_eg13", "br_eg14", "br_eg15",
 	"br_eg16", "br_eg17", "br_eg18", "br_eg19", "br_eg20", "br_eg21", "br_eg22", "br_eg23",
@@ -171,7 +172,7 @@ char strs[PARAMS][128] =  {
 	"br_eg224", "br_eg225", "br_eg226", "br_eg227", "br_eg228", "br_eg229", "br_eg230", "br_eg231",
 	"br_eg232", "br_eg233", "br_eg234", "br_eg235", "br_eg236", "br_eg237", "br_eg238", "br_eg239",
 	"br_eg240", "br_eg241", "br_eg242", "br_eg243", "br_eg244", "br_eg245", "br_eg246", "br_eg247",
-	"br_eg248", "br_eg249", "br_eg250", "br_eg251", "br_eg252", "br_eg253", "br_eg254", "br_eg255",
+	"br_eg248", "br_eg249", "br_eg250", "br_eg251", "br_eg252", "br_eg253", "br_eg254", "br_eg255",*/
 
 
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
@@ -580,33 +581,33 @@ void codeoutput(int recall) {
 	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
 	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
 
-	for (i = 0; i < paramnum - 13 - 25 - 256 -256 -10; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - 256 -10; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 256 -256 - 10; i < paramnum - 25 - -256 - 256 - 10; i++) {
+	for (i = paramnum - 13 - 25 - 256  - 10; i < paramnum - 25 - 256  - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
 	fprintf(fp, "\nstatic int backrank[256] = {");
-	for (i = paramnum - 25 - 256 -256 -10; i < paramnum - 25 - 256 - 10; i++) {
+	for (i = paramnum - 25 - 256 -10; i < paramnum - 25  - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 		if ((i - paramnum + 25 + 256 + 10) % 16 == 0)
 			fprintf(fp, "\n");
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\nstatic int backrank_eg[256] = {");
+	/*fprintf(fp, "\nstatic int backrank_eg[256] = {");
 	for (i = paramnum - 25 - 256 - 10; i < paramnum - 25 - 10; i++) {
 		fprintf(fp, " %i,", params[i]);
 		if ((i - paramnum + 25 + 256 + 10) % 16 == 0)
 			fprintf(fp, "\n");
 	}
-	fprintf(fp, "};");
+	fprintf(fp, "};");*/
 
 
 
