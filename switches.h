@@ -6,7 +6,7 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.87TO (376.12M) trunchard"
+#define VERSION "1.87TO (376.12M) truncsoft"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
@@ -74,10 +74,10 @@
 
 #define NEWTRUNCATION				// use new, eval-based truncation?
 #define MAXTRUNC 3*FRAC				//2*FRAC	// maximum truncation per ply 
-#define TRUNCLEVELHARD 100			//100			// TRUNCLEVEL was 30 for 1.42
+#define TRUNCLEVELHARD 80// 100			//100			// TRUNCLEVEL was 30 for 1.42
 #define TRUNCLEVELSOFT 30			// new double truncation scheme!
 #define TRUNCDIVHARD 12 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
-#define TRUNCDIVSOFT 32 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
+#define TRUNCDIVSOFT 24 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
 									// changing truncdivsoft to 16 -> ~70% nodes = lots of potential!
 
 #define ETC							// use enhanced transposition cutoffs 
