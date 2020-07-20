@@ -12,5 +12,6 @@ void printboardtofile(POSITION *p, FILE*fp);
 void resetsearchinfo(SEARCHINFO *s);
 void searchinfotostring(char *out, int depth, double time, char *valuestring, char *pvstring, SEARCHINFO *counter);
 int SquareToBit(int square);
+void setsuffix(char* str);
 
 

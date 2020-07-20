@@ -5,7 +5,7 @@
 #include "boolean.h"
 
 
-static char bitsinword[65536];
+//static char bitsinword[65536];
 
 /*
 void initbool()

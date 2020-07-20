@@ -328,9 +328,9 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 		return DB_UNKNOWN;	
 
 	if(bm)
-		bmrank = MSB(p.bm)/4;
+		bmrank = MSB(p.bm)/4;				// candidate for faster MSB
 	if(wm)
-		wmrank = (31-LSB(p.wm))/4;	
+		wmrank = (31-LSB(p.wm))/4;			// candidate for faster LSB
 	
 	// if this position is dominated by the "wrong" side, we have to
 	// reverse it!
@@ -404,7 +404,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	y=p.bm;
 	while(y)
 		{
-		x=LSB(y);
+		x=LSB(y);					// candidate for faster LSB
 		y=y^(1<<x);
 		bmindex+=bicoef[x][i];
 		i++;
@@ -415,7 +415,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	y=p.wm;
 	while(y)
 		{
-		x=MSB(y);
+		x=MSB(y);			// candidate for faster MSB
 		y=y^(1<<x);
 		x=31-x;
 		wmindex+=bicoef[x][i];
@@ -427,7 +427,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	y=p.bk;
 	while(y)
 		{
-		x=LSB(y);
+		x=LSB(y);		// candidate for faster LSB
 		y=y^(1<<x);
 		// next line is the count of men on squares 0....x-1, as x-1 of a 0000010000000 number is 0000000111111111
 		x-=bitcount((p.bm|p.wm)&((1<<x)-1)); 
@@ -440,7 +440,7 @@ int dblookup(POSITION *q, int cl, MATERIALCOUNT *matcount)
 	y=p.wk;
 	while(y)
 		{
-		x=LSB(y);
+		x=LSB(y);			// candidate for faster LSB
 		y^=(1<<x);
 		x-=bitcount((p.bm|p.bk|p.wm) & ( (1<<x)-1 ) );
 		wkindex+=bicoef[x][i];

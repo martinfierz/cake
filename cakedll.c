@@ -157,10 +157,10 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(!cake_is_init)
 			{
-			sprintf(reply,"Cake %s\nJune 2019 by Martin Fierz\n\nEngine not initialized yet!",version);
+			sprintf(reply,"Cake %s\nJanuary 2020 by Martin Fierz\n\nEngine not initialized yet!",version);
 			return 1;
 			}
-		sprintf(reply,"Cake %s\nJune 2019 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
+		sprintf(reply,"Cake %s\nJanuary 2020 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
 #ifdef ETC
 		strcat(reply,"\n    - ETC");
 #endif
@@ -192,10 +192,8 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 #ifdef SPA
 		strcat(reply,"\n    - SPA");
 #endif
-#ifdef SPA_CUT
-		strcat(reply,"\n    - CUT");
-#endif
-		strcat(reply, "\n    - 8279k 135p"); 
+
+		strcat(reply, "\n\noptimized with 8279k 135p"); 
 		// get book info
 		sprintf(Lstr,"\n\n%i moves in opening book",bookmovenum);
 		strcat(reply,Lstr);
@@ -211,7 +209,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 	if(strcmp(command,"help")==0)
 		{
-		sprintf(reply,"cakeM.htm");
+		sprintf(reply,"cake188.htm");
 		return 1;
 		}
 

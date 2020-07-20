@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\app_instance.c" />
     <ClCompile Include="..\bookht.c" />
     <ClCompile Include="..\boolean.c" />
     <ClCompile Include="..\cakepp.c" />
@@ -33,6 +34,7 @@
     <ClCompile Include="..\testcake.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\app_instance.h" />
     <ClInclude Include="..\boolean.h" />
     <ClInclude Include="..\cakepp.h" />
     <ClInclude Include="..\cake_book.h" />

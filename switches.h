@@ -6,14 +6,18 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.87TO (376.12M) truncsoft"
+#define VERSION "1.88"   //(376.12M) LMR2"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
 #endif
 
+
+
 #define TIMEOPTIMIZED
 #undef TO_MTD
+
+#undef GLOBALMOVESTACK
 
 // two new flags to test logging and rep detection later on
 #define NEWREPDETECTION
@@ -24,26 +28,26 @@
 #include "consts.h"
 
 #define SAFE
+#define SAFEMOVENUM 2 // 2
 
 #undef FASTUPDATE
+
+#undef PROMOTEEXTEND
+#define NEW_SINGLEEXTEND
 
 #define QSEARCH
 #define MAXQS 1
 #define QSEARCHLEVEL 150
 #undef QS_SQUEEZE
+#define QS_SQUEEZE_NEW
 
 // compile options for cake
 // add a bookgen function?
 #define BOOKGEN
 
-// enable position learning?
-#undef LEARNSAVE	// save learned positions
-#undef LEARNUSE	// use learned positions
-
-//#define HEURISTICDBSAVE // save positions that were evaluated with 9-12 pieces
-#undef HEURISTICDBSAVE
-
 #define COARSEGRAINING      		// use evaluation coarse graining 
+#define GRAINSIZE 2					// 2 with this grain size 
+
 #define IMMEDIATERETURNONFORCED		// if defined, cake will not think about forced moves
 #define BOOK						// use opening book
 #define CHECKTIME					// check if time is > than breaktime and abort if yes
@@ -66,26 +70,28 @@
 #define MOSTATIC					// use static move ordering
 #define MOTESTCAPT					// order moves to back of list which lead to a capture for opponent
 #define MOTESTCAPT2					// order moves to front of list which lead to threat of capture for sidetomove
-#define GRAINSIZE 2					// 2 with this grain size 
 
-#define QLEVEL 200	// 200			// qlevel gives the value an eval must be out of the window to be used
-#define QLEVEL2 60	// 60			// if the side not to move has a capture
+
+#define QLEVEL 200//200	// 200			// qlevel gives the value an eval must be out of the window to be used
+#define QLEVEL2 60//60//60	// 60			// if the side not to move has a capture
 						
 
 #define NEWTRUNCATION				// use new, eval-based truncation?
 #define MAXTRUNC 3*FRAC				//2*FRAC	// maximum truncation per ply 
-#define TRUNCLEVELHARD 80// 100			//100			// TRUNCLEVEL was 30 for 1.42
+#define TRUNCLEVELHARD 100 // 80// 100			//100			// TRUNCLEVEL was 30 for 1.42
 #define TRUNCLEVELSOFT 30			// new double truncation scheme!
-#define TRUNCDIVHARD 12 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
-#define TRUNCDIVSOFT 24 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
+#define TRUNCDIVHARD 12 //12 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
+#define TRUNCDIVSOFT 16//32 //16 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
 									// changing truncdivsoft to 16 -> ~70% nodes = lots of potential!
+
+#define FUTILITY
 
 #define ETC							// use enhanced transposition cutoffs 
 #define ETCDEPTH FRAC*2				//maybe 3 is better.	if depth>etcdepth do ETC 
 
 #define MAXDEPTH 99					// maximal number of plies cake++ can search 
-#define LAZYEVALWINDOW 400			// if materialeval is more than this outside of alpha-beta window, 
-#define FINEEVALWINDOW 200			// do only materialeval; LAZY for only material, FINE for material+selftrapeval
+#define LAZYEVALWINDOW 200 // 400			// if materialeval is more than this outside of alpha-beta window, 
+#define FINEEVALWINDOW 100 //200			// do only materialeval; LAZY for only material, FINE for material+selftrapeval
 									// note 11.6.2019: changing fineevalwindow to 150 makes noticeable chang
 									// in testcake nodes, changing lazyevalwindow to 300 is 99.9% = non-noticeable
 									// fineevalwindow 175 is close to 99%
@@ -97,9 +103,9 @@
 #define SINGLEEXTEND FRAC/2			// extension for forced move 
 #define CLDEPTH 5					// if depth < CLDEPTH // 5
 
-#define HASHSIZE 0x00800000			// 64 MB default hashtable size  (was 64 if you something has changed somewhere...)
+#define HASHSIZE 0x01000000			// 64 MB default hashtable size  (was 64 if you something has changed somewhere...)
 
-#define HASHITER 2					// 2 probes in the hashtable
+#define HASHITER 4					// 4 probes in the hashtable
 
 #define ALWAYSSTORE					// overwrite hashentries even if the new one has less depth? 
 									// if yes, define this
@@ -111,15 +117,15 @@
 
 #define MTD
 #define EXTENDPV					// extend nodes marked as ispv
-#define EXTENDPVDEPTH 1				// by this amount
+#define EXTENDPVDEPTH 2 // 1				// by this amount
 
 #undef SPA							// use SPA - if this is not defined, no SPA-specific code is
 									// generated
-#define SPASIZE 33554432			// 32 million entries in the SPA table - need 6 bytes per entry.
-									// => 192 MB SPA table size
+#define SPASIZE 33554432			// 32 million entries in the SPA table - need 8 bytes per entry.
+									// => 256 MB SPA table size
 #undef SPA_CUT						// use SPA table to cutoff at interior nodes
 #define SPA_CUT_DEPTH 10*FRAC		// depth below which to use SPA cuts
-#define SPAITER 4
+#define SPAITER 32
 
 #undef BOOKHT						// use book hashtable - if this is not defined, no bookht code
 									// is generated.
@@ -139,9 +145,17 @@
 
 #define IITERD						// use internal iterative deepening
 #define IIDDEPTH 6*FRAC				// only use it when the remaining depth is > this
-#define IIDREDUCE 4*FRAC			// and reduce by this amount for IID search 
+#define IIDREDUCE 4*FRAC //4*FRAC			// and reduce by this amount for IID search 
 
-#undef LATEMOVEREDUCTION			// use late move reduction
+#define LATEMOVEREDUCTION			// use late move reduction
+#undef LMR_AGGRESSIVE // use a very aggressive version of LMR
+
 #undef LATEMOVEREDUCTIONROOT
-#define LATEMOVEMINDEPTH 2*FRAC		// minimal remaining search depth to use LMR
+#define LATEMOVEMINDEPTH 10*FRAC		// search depth above which to use LMR
 #define LATEMOVEDEPTH 4				// reduce late moves by 1/4 a ply times this
+#define LATEMOVENUM 3
+#define LATEMOVENUM2 8
+
+#ifdef LMR_AGGRESSIVE
+#define LATEMOVEMINDEPTH 0*FRAC 		// search depth above which to use LMR
+#endif

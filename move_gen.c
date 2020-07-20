@@ -26,16 +26,17 @@
 //#define C3 0x00666600   // alternate definition
 #define C1 0xF181818F   /* edge squares */
 #define PROM 30     /*20*/    /* a promotion */
-#define PROM1 8   /*18 */    /* far down the board */
-#define PROM2 3   /*16 */
+#define PROM1 15 // 8   /*18 */    /* far down the board */
+#define PROM2 3 //3   /*16 */
+#define PROMNEW 5
 //#define GIVEUPBACK 12 /*12*/
 #define MANC3VAL 2
 #define MANC4VAL 4
 #define KINGC3VAL 5
-#define KINGC4VAL 10
-#define KINGC1VAL -10
+#define KINGC4VAL 8//10
+#define KINGC1VAL -10//-10
 #define CAPT 50
-#define HISTORY	300			//300
+#define HISTORY	300 // 250 // 200 // 300			//300
 #define MINHASH 100
 //#define DEVSINGLE 4
 //#define GIVEUPOREO 10
@@ -107,7 +108,8 @@ int numberofmoves(MOVE m[MAXMOVES])
 		}
 
 	// we should never arrive here...
-	assert(0);
+	//assert(0);
+	
 
 	return MAXMOVES;
 	}
@@ -272,7 +274,7 @@ int makemovelist(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES],int values
             movelist[n].bk=tmp&WBR; /*if stone moves to WBR (white back rank) it's a king*/
             movelist[n].wm=0;
             movelist[n].wk=0;
-				values[n]=0;
+			values[n]=0;
             n++;
       		m=m&(m-1);   /* clears least significant bit of m */
       		}
@@ -298,11 +300,11 @@ int makemovelist(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES],int values
    			{
             tmp=(m&-m);
             tmp=tmp|(tmp>>4);
-				movelist[n].bm=tmp&NWBR;
+			movelist[n].bm=tmp&NWBR;
             movelist[n].bk=tmp&WBR;
             movelist[n].wm=0;
             movelist[n].wk=0;
-				values[n]=0;
+			values[n]=0;
             n++;
       		m=m&(m-1);
       		}
@@ -344,8 +346,10 @@ int makemovelist(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES],int values
 					break;
                		}
             	}
-            }
+			}
          }
+
+	  
 #endif
 
 /* do a static evaluation of the moves */
@@ -595,7 +599,8 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 	int32 from,to;
 	int32 black;
 	int i;
-	extern char blackbackrankeval[256];
+	extern char blackbr_mo[256];
+	int f, t; 
 	
 	black = p->bm|p->bk;
 
@@ -608,8 +613,11 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 
 #ifdef MOHISTORY
 		/* history...*/
-		if(si->hashstores>MINHASH) 
-			eval+=( (HISTORY*si->history[LSB(from)][LSB(to)]) / (si->hashstores));  // vtune: if is loopindependent - take out
+		if (si->hashstores > MINHASH) {
+			_BitScanForward(&f, from); 
+			_BitScanForward(&t, to); 
+			eval += ((HISTORY * si->history[f][t]) / (si->hashstores));  	// candidate for faster LSB
+		}
 #endif
 
 #ifdef MOSTATIC
@@ -637,12 +645,20 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 			if(to&C3)
       			eval+=MANC3VAL;
    		
-			if(to&0x0F000000)
-      			eval+=PROM1;
+			if (to & 0x0F000000) {
+				eval += PROM1;
+			}
 			else
 				{
-				if(to&0x00F00000)
-         			eval+=PROM2;
+				if (to & 0x00F00000) {
+					eval += PROM2;
+					//if (((forward(to) | twoforward(to) | twoleftforward(to) | tworightforward(to) ) & (p->wm)) == 0) {
+					//	eval += PROMNEW; 
+						//printboard(p); 
+						//printint32(to); 
+						//getch(); 
+					//}
+				}
 				else if(to&C4)
       				eval+=MANC4VAL;
 				}
@@ -657,8 +673,8 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 			if(from & 0xFF)
 				{
 				/* man giving up back rank */
-				eval -= blackbackrankeval[p->bm & 0xFF];
-				eval += blackbackrankeval[ (p->bm ^ ml[i].bm) & 0xFF];
+				eval -= blackbr_mo[p->bm & 0xFF] / 2;
+				eval += blackbr_mo[ (p->bm ^ ml[i].bm) & 0xFF] / 2;
 				}
 			else
 				{
@@ -735,8 +751,9 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 	int32 from,to;
 	int32 white;
 	int i;
+	int f, t; 
 
-	extern char whitebackrankeval[256];
+	extern char whitebr_mo[256];
 	
 	white = p->wm|p->wk;
 
@@ -748,8 +765,12 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 		to=((ml[i].wm)|(ml[i].wk))&(~white);
 #ifdef MOHISTORY
 		/* history...*/
-		if(si->hashstores > MINHASH)
-			eval+=( (HISTORY*si->history[LSB(from)][LSB(to)]) / (si->hashstores));
+		if (si->hashstores > MINHASH) {
+			_BitScanForward(&f, from); 
+			_BitScanForward(&t, to); 
+
+			eval += ((HISTORY * si->history[f][t]) / (si->hashstores));		// candidate for faster LSB
+		}
 #endif
 
 #ifdef MOSTATIC
@@ -779,8 +800,8 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 				{
       			if(from & 0xFF000000)
 					{
-					eval -= whitebackrankeval[p->wm >> 24];
-					eval += whitebackrankeval[ (p->wm ^ ml[i].wm) >> 24];
+					eval -= whitebr_mo[p->wm >> 24] / 2;
+					eval += whitebr_mo[ (p->wm ^ ml[i].wm) >> 24] / 2;
 					}
 				else if(from&C4)
       				eval -= MANC4VAL;
@@ -1204,12 +1225,333 @@ int makeQSmovelist(POSITION *p, MOVE movelist[MAXMOVES])
 			movelist[n].bk = 0;
 			movelist[n].wm = tmp&NBBR;
 			movelist[n].wk = tmp&BBR;
+			/*if ((movelist[n].wm && movelist[n].wk)||(p->wm&p->wk)) {
+				printboard(p);
+				printint32(movelist[n].wk | movelist[n].wm);
+				printint32(p->wm);
+				printint32(p->wk);
+				getch();
+				}*/
 			n++;
 			}
 		}
 
 	return n;
 	}
+
+
+
+int makeSqueezemovelist(POSITION* p, MOVE* movelist) {
+	int32 tmp;
+	int32 occupied = p->bm | p->bk | p->wm | p->wk;
+	int32 free = ~occupied;
+	int32 black = p->bm | p->bk;
+	int32 white = p->wm | p->wk;
+	int32 squeeze;
+	int n = 0;
+
+	// notes to self: ~EDGE seems wrong - pieces moving from back rank can also make a squeeze!
+
+	if (p->color == BLACK) {
+		// find black men  that can move right forward and squeeze a white man!
+
+
+		//       WHITE
+		//  	28  29  30  31
+		//	 24  ~w  ~w  27
+		//	   20  fr  22  23
+		//	 16  17  wm  ~W!
+		//	   12  13  fr  15
+		//	  8   b  bm  oc
+		//	    4   5   6   7
+		//	  0   1   2   3
+		//	      BLACK
+
+		squeeze = (p->bm ) & (~EDGE|SQ1|SQ2|SQ3) & leftbackward(free) & ((twoleftbackward(~white) & (occupied >> 1)) | ROW7) &
+			(black << 1 | rightbackward(occupied)) & twobackward(p->wm) &
+			twobackward(rightbackward(free)) &
+			~twobackward(twobackward(white)) & ~tworightbackward(twobackward(white));
+
+		while (squeeze) {
+			// peel off squeezing men one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= rightforward(tmp);
+			movelist[n].bm = tmp;
+			movelist[n].bk = 0;
+			movelist[n].wm = 0;
+			movelist[n].wk = 0;
+			n++;
+			
+			/*if (tmp & ROW8) {
+				printboard(p);
+				printf("\nblack appears to have a right forward squeeze");
+				printint32(tmp);
+				getch();
+			}*/
+		}
+
+
+
+
+		// find black men or kings that can move left forward and squeeze a white man!
+		squeeze = p->bm & (~EDGE|SQ1|SQ2|SQ3) & rightbackward(free) & ((tworightbackward(~white) & (occupied << 1)) | ROW2) &
+			(black >> 1 | leftbackward(occupied)) & twobackward(p->wm) &
+			twobackward(leftbackward(free)) &
+			~twobackward(twobackward(white)) & ~twoleftbackward(twobackward(white));
+
+		// squeeze left forward
+//       WHITE
+//  	28  29  30  31
+//	 24  25  ~w  ~w
+//	   20  21  fr  23
+//	 16  ~W! wm  19
+//	   12  fr  14  15
+//	  8   oc  bm  b
+//	    4   5   6   7
+//	  0   1   2   3
+//	      BLACK
+
+		while (squeeze) {
+			// peel off squeezing men one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= leftforward(tmp);
+			movelist[n].bm = tmp;
+			movelist[n].bk = 0;
+			movelist[n].wm = 0;
+			movelist[n].wk = 0;
+			n++;
+			/*if (tmp & ROW1) {
+				printboard(p);
+				printf("\nblack appears to have a left forward squeeze");
+				printint32(tmp);
+				getch();
+			}*/
+		}
+
+		// find black kings moving left backwards that fork two men
+		squeeze = p->bk & rightforward(free) & twoforward(p->wm) & tworightforward(p->wm) &
+			tworightforward(rightforward(free)) & twoforward(leftforward(free)); 
+
+		// fork left backward
+//       WHITE
+//     28  bk  30  31
+//	 24  25  26  27
+//	   wm  wm  22  23
+//	 fr  17 fr  19
+//	   12  13  14  15
+//	  8   9  10  11
+//	    4   5   6   7
+//	  0   1   2   3
+//	      BLACK
+
+		while (squeeze) {
+			// peel off forking one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= leftbackward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = tmp;
+			movelist[n].wm = 0;
+			movelist[n].wk = 0;
+			n++;
+			///*if (tmp & ROW1) {
+			//	printboard(p);
+			//	printf("\nblack appears to have a left backward fork");
+			//	printint32(tmp);
+			//	getch();
+			//}*/
+		}
+
+
+
+		// find black kings moving right backwards that fork two men
+		squeeze = p->bk & leftforward(free) & twoforward(p->wm) & twoleftforward(p->wm) &
+			twoleftforward(leftforward(free)) & twoforward(rightforward(free));
+
+		// fork left backward
+//       WHITE
+//     bk  29  30  31
+//	 24  25  26  27
+//	   wm  wm  22  23
+//	 fr  17 fr  19
+//	   12  13  14  15
+//	  8   9  10  11
+//	    4   5   6   7
+//	  0   1   2   3
+//	      BLACK
+
+		while (squeeze) {
+			// peel off forking one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= rightbackward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = tmp;
+			movelist[n].wm = 0;
+			movelist[n].wk = 0;
+			n++;
+			//if (tmp & ROW1) {
+			//printboard(p);
+			//printf("\nblack appears to have a right backward fork");
+			//printint32(tmp);
+			//getch();
+			//}*/
+		}
+
+
+
+	}  else {  // color is WHITE
+	
+		// find white men or kings that can move right backward and squeeze a black man!
+
+
+		//       WHITE
+		//  	28  29  30  31
+		//	 24  w  wm  oc
+		//	   20  21  fr  23
+		//	 16  17  bm  ~B!
+		//	   12  fr  14  15
+		//	  8   ~B  ~B 11
+		//	    4   5   6   7
+		//	  0   1   2   3
+		//	      BLACK
+
+		squeeze = (p->wm) & (~EDGE|SQ32|SQ31|SQ30) & leftforward(free) & ((twoleftforward(~black) & (occupied >> 1)) | ROW7) &
+			(white << 1 | rightforward(occupied)) & twoforward(p->bm) &
+			twoforward(rightforward(free)) &
+			~twoforward(twoforward(black)) & ~tworightforward(twoforward(black));
+
+		while (squeeze) {
+			// peel off squeezing men one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= rightbackward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = 0;
+			movelist[n].wm = tmp;
+			movelist[n].wk = 0;
+			n++;
+			/*if (tmp & ROW8) {
+				printboard(p);
+				printf("\nwhite appears to have a right backward squeeze");
+				printint32(tmp);
+				getch();
+			}*/
+		}
+
+
+		// find white men or kings that can move left backward and squeeze a black man!
+
+
+		//       WHITE
+		//  	28  29  30  31
+		//	 24  oc  wm  w
+		//	   20  fr  22  23
+		//	 16  ~B! bm  19
+		//	   12  13  fr  15
+		//	  8   9  ~B  ~B
+		//	    4   5   6   7
+		//	  0   1   2   3
+		//	      BLACK
+
+		squeeze = (p->wm) & (~EDGE|SQ30|SQ31|SQ32) & rightforward(free) & ((tworightforward(~black) & (occupied << 1)) | ROW2) &
+			(white >> 1 | leftforward(occupied)) & twoforward(p->bm) &
+			twoforward(leftforward(free)) &
+			~twoforward(twoforward(black)) & ~twoleftforward(twoforward(black));
+
+		while (squeeze) {
+			// peel off squeezing men one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= leftbackward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = 0;
+			movelist[n].wm = tmp;
+			movelist[n].wk = 0;
+			n++;
+			/*if (tmp & ROW1) {
+				printboard(p);
+				printf("\nwhite appears to have a left backward squeeze");
+				printint32(tmp);
+				getch();
+			}*/
+		}	
+
+		// find white kings moving left forward that fork two men
+		squeeze = p->wk & rightbackward(free) & twobackward(p->bm) & tworightbackward(p->bm) &
+			tworightbackward(rightbackward(free)) & twobackward(leftbackward(free));
+
+// fork left backward
+//       WHITE
+//     28  29  30  31
+//	 24  25  26  27
+//	   20  21  22  23
+//	 16  17 18  19
+//	   fr  13  fr  15
+//	  8   bm  bm  11
+//	    4   fr   6   7
+//	  0   1   wk   3
+//	      BLACK
+
+		while (squeeze) {
+			// peel off forking one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= leftforward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = 0;
+			movelist[n].wm = 0;
+			movelist[n].wk = tmp;
+			n++;
+			///*if (tmp & ROW1) {
+			//printboard(p);
+			//printf("\nwhite appears to have a left forward fork");
+			//printint32(tmp);
+			//getch();
+			//}*/
+		}
+
+		// find white kings moving right forward that fork two men
+		squeeze = p->wk & leftbackward(free) & twobackward(p->bm) & twoleftbackward(p->bm) &
+			twoleftbackward(leftbackward(free)) & twobackward(rightbackward(free));
+
+		// fork left backward
+		//       WHITE
+		//     28  29  30  31
+		//	 24  25  26  27
+		//	   20  21  22  23
+		//	 16  17 18  19
+		//	   fr  13  fr  15
+		//	  8   bm  bm  11
+		//	    4   fr   6   7
+		//	  0   wk   2   3
+		//	      BLACK
+
+		while (squeeze) {
+			// peel off forking one by one
+			tmp = (squeeze & -squeeze);
+			squeeze ^= tmp;
+			tmp |= rightforward(tmp);
+			movelist[n].bm = 0;
+			movelist[n].bk = 0;
+			movelist[n].wm = 0;
+			movelist[n].wk = tmp;
+			n++;
+			///*if (tmp & ROW1) {
+			//printboard(p);
+			//printf("\nwhite appears to have a right forward fork");
+			//printint32(tmp);
+			//getch();
+			//}*/
+		}
+
+
+	}
+	return n;
+}
+
 
 
 #endif // QSEARCH

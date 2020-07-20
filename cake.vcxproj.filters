@@ -48,6 +48,9 @@
     <ClInclude Include="cake_book.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="app_instance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bookht.c">
@@ -81,6 +84,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cake_eval_parametrized.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spa.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app_instance.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

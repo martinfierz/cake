@@ -18,6 +18,7 @@ int setparams(int* params, int n);
 int optimalparams(void);
 int startparams(void); 
 int updateeval(void);
+int reverse(int x); 
 
 #ifdef USEDB
 int dbwineval(POSITION *p, MATERIALCOUNT *mc);

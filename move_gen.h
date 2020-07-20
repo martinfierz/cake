@@ -9,6 +9,7 @@ int numberofmoves(MOVE m[MAXMOVES]);
 // qs
 #ifdef QSEARCH
 int makeQSmovelist(POSITION *p, MOVE movelist[MAXMOVES]);
+int makeSqueezemovelist(POSITION* p, MOVE* movelist); 
 #endif
 
 /* captgen.h: function prototypes for captgen.c */

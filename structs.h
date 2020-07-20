@@ -56,6 +56,7 @@ typedef struct
 	int32 qsearch;
 	int32 qsearchfail;
 	int32 qsearchsuccess;
+	int32 csearch; 
 	int32 leaf;
 	int32 leafdepth;
 	int32 cutoffs;
@@ -68,8 +69,10 @@ typedef struct
 	int32 hashstores;
 	int32 spalookups;
 	int32 spasuccess;
+	int aborted; 
 	int maxdepth;
 	int realdepth;
+	int depth; 
 	int bm;
 	int bk;
 	int wm;
@@ -77,6 +80,7 @@ typedef struct
 	int Gbestindex;
 	int searchmode;
 	int allscores;
+	int age; 
 	int *play;				// is set to 1 by the interface if the search should be stopped
 	char *out;				// is the address to write output to
 	HASH hash;
@@ -98,18 +102,12 @@ typedef struct
 
 typedef struct
 	{
-	int32 hashkey;
-	sint16 value;
+	int32 lock;
+	int value : 14;
+	unsigned int color : 2; 
+	int16 depth; 
 	} SPA_ENTRY;
 
-typedef struct
-	{
-	int32 black;
-	int32 white;
-	int32 kings;
-	sint16 value;
-	sint16 staticeval;
-	} SPA_POSITION;
 
 typedef struct 
 	{
@@ -179,15 +177,16 @@ typedef struct
 // struct hashentry needs 8 bytes 
 	{
 	int32  lock;
-	unsigned int best : 6;		// could be 5 bits
-	int value:12;				// value is 12 bits because +-MATE is 4000
-	unsigned int color:1;
+	unsigned int best : 5;		// could be 5 bits
+	int value:12;				// value is 12 bits because +-MATE is 4000 
+	unsigned int color:1;		// could encode color in lock
 	unsigned int ispvnode:1;
-	unsigned int depth : 10;		// could be 9 bits
-	unsigned int valuetype:2;
+	unsigned int depth : 9;		// could be 9 bits
+	unsigned int valuetype:2;		// could be 1 bit as MTD only does upper/lower
+	unsigned int age : 2;
 	} HASHENTRY;
 
-// I could use a 2-bit age field?
+// I could use a 2-bit age field easily, and a 3 bit age field a bit more complexly with color in lock
 
 
 struct bookhashentry

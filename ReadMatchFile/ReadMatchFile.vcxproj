@@ -167,6 +167,7 @@
     <ClInclude Include="..\consts.h" />
     <ClInclude Include="..\dblookup.h" />
     <ClInclude Include="..\move_gen.h" />
+    <ClInclude Include="..\optimizeCake.h" />
     <ClInclude Include="..\structs.h" />
     <ClInclude Include="..\switches.h" />
   </ItemGroup>

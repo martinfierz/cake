@@ -147,6 +147,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\app_instance.h" />
     <ClInclude Include="..\boolean.h" />
     <ClInclude Include="..\cakepp.h" />
     <ClInclude Include="..\cake_book.h" />
@@ -157,11 +158,13 @@
     <ClInclude Include="..\egdb.h" />
     <ClInclude Include="..\initcake.h" />
     <ClInclude Include="..\move_gen.h" />
+    <ClInclude Include="..\optimizeCake.h" />
     <ClInclude Include="..\resource.h" />
     <ClInclude Include="..\structs.h" />
     <ClInclude Include="..\switches.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\app_instance.c" />
     <ClCompile Include="..\bookht.c" />
     <ClCompile Include="..\boolean.c" />
     <ClCompile Include="..\cakepp.c" />

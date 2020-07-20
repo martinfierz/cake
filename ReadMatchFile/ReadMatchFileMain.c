@@ -11,7 +11,7 @@
 #include <windows.h>
 #include <math.h>
 
-//#include "cake_misc.h"
+#include "optimizeCake.h"
 
 
 // cake-specific includes - structs defines structures, consts defines constants,
@@ -24,7 +24,7 @@
 //#include "cake_eval.h"
 
 
-#define NODUPLICATES  // undef to allow duplicate games!
+//#undef NODUPLICATES  // undef to allow duplicate games!
 
 
 #define WHITE 1
@@ -92,111 +92,7 @@ SHORTGAME* gamelist;
 
 // repeat identical matches should be 46,53,54 and 50,52
 
-char repeatfiles[NUMFILESREP][128] = { "match46.pdn", "match54.pdn", "match53.pdn", "match50.pdn", "match52.pdn" };
 
-char files[NUMFILES][128] = { "match1.pdn",
-							"match2.pdn",
-							"match4.pdn",
-							"match5.pdn",
-							"match6.pdn",
-							"match7.pdn",
-							"match8.pdn",
-							"match9.pdn",
-							"match10.pdn",
-							"match11.pdn",
-"match12.pdn",
-"match13.pdn",
-"match14.pdn",
-"match15.pdn",
-"match16.pdn",
-"match17.pdn",
-"match18.pdn",
-"match19.pdn",
-"match20.pdn",
-"match21.pdn",
-"match22.pdn",
-"match23.pdn",
-"match0.5_1.pdn",
-"match24.pdn",
-"match25.pdn",
-"match26.pdn",
-"match27.pdn",
-"match28.pdn",
-"match29.pdn",
-"match30.pdn",
-"match31.pdn",
-"match32.pdn",
-"match33.pdn",
-"match34.pdn",
-"match35.pdn",
-"match36'.pdn",
-"match37.pdn",
-"match38.pdn",
-"match39.pdn",
-"match40.pdn",
-"match41.pdn",
-"match0.5_2.pdn",
-"match42.pdn",
-"match43.pdn",
-"match44.pdn",
-"match45.pdn",
-"match46.pdn",
-"match47.pdn",
-"match48.pdn",
-"match49.pdn",
-"match50.pdn",
-"match51.pdn",
-"match52.pdn",
-"match53.pdn",
-"match54.pdn",
-"match55.pdn",
-"match56.pdn",
-"match57.pdn",
-"match58.pdn",
-"match59.pdn",
-"match60.pdn",
-"match61.pdn",
-"match62.pdn",
-"match63.pdn",
-"match64.pdn",
-"match65.pdn",
-"match66.pdn",
-"match67.pdn",
-"match69.pdn",
-"match70.pdn",
-"match71.pdn",
-"match72.pdn",
-"match73.pdn",
-"match74.pdn",
-"match76.pdn",
-"match77.pdn",
-"match78.pdn",
-"match79.pdn",
-"match80.pdn",
-"match81.pdn",
-"match82.pdn",
-"match83.pdn",
-"match84.pdn",
-"match85.pdn",
-"match86.pdn",
-"match88.pdn",
-"match89.pdn",
-"match90.pdn",
-"match91.pdn",
-"match92.pdn",
-"match93.pdn",
-"match94.pdn",
-"match95.pdn",
-"match96.pdn",
-"match97.pdn",
-"match98.pdn",
-"match99.pdn",
-"match100.pdn",
-"match101.pdn",
-"match102.pdn",
-"match103.pdn",
-"match104.pdn"
-};
 char directory[64] = "C:\\code\\checkersdata\\";
 
 
@@ -215,7 +111,7 @@ int main()
 	FILE* fp;
 	
 	EVALUATEDPOSITION* ep;
-	 
+	POSITION p; 
 	
 	int iterations = 0;
 	int position_number = 0;
@@ -232,23 +128,26 @@ int main()
 	if(gamelist != NULL)
 		memset(gamelist, 0, sizeof(SHORTGAME) * MAXGAMES); // set to 0
 
-	//for (i = 0; i < NUMFILESREP; i++) {
-	//	sprintf(filename, "%s%s", directory, repeatfiles[i]);
-	for (i = 0; i < NUMFILES; i++) {
-		sprintf(filename, "%s%s", directory, files[i]);
-			printf("\nfile to open is %s", filename);
+
+
+	for (i = 0; i < 300; i++) {
+		sprintf(filename, "%smatch%i.pdn", directory, i);
+		printf("\nfile to open is %s", filename);
 		position_number = load_PDN(ep, filename);
-		//getch();
 	}
 
-	printf("\nnow storing positions..."); 
+
+
+	printf("\nnow storing positions... hit key to continue or abort here!"); 
+	getch();
 #ifdef NODUPLICATES
 	fp = fopen("C:\\code\\checkersdata\\taggedpositions.txt", "w");
 #else
 	fp = fopen("C:\\code\\checkersdata\\taggedpositions+duplicates.txt", "w");
 #endif
-	for (i = 0; i < position_number; i++)
+	for (i = 0; i < position_number; i++) {
 		fprintf(fp, "%u %u %u %u %i %i\n", ep[i].bm, ep[i].bk, ep[i].wm, ep[i].wk, ep[i].color, ep[i].gameresult);
+	}
 	fclose(fp);
 	printf("\n%i games checked, %i positions stored", gamenumber, position_number);
 	getch();
@@ -291,6 +190,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 	int rep;
 	int capture;
 	int error; 
+	int localgamenumber = 0; 
 
 	int movenumber; 
 	int moveindex; 
@@ -302,7 +202,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 	fp = fopen(filename, "r");
 
 	if (!fp)
-		return 0;
+		return positions;
 	/* load a PDN database into buffer */
 	bytesread = fread(buffer, 1, 10000000, fp);
 	//printf("read %i bytes in PDN database - hit a key", bytesread);
@@ -325,37 +225,6 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 		// get headers
 		p.bm = 0; p.wm = 0; 
 		result = readheaders(&p, &startheader); 
-
-
-		/*
-		while (PDNparseGetnextheader(&startheader, header)) {
-			tag = header;
-			PDNparseGetnexttoken(&tag, headername);
-			PDNparseGetnexttag(&tag, headervalue);
-			_strlwr(headername);
-			if (strcmp(headername, "result") == 0) {
-				printf("result is %s", headervalue);
-				if (strcmp(headervalue, "1-0") == 0) {
-					result = WIN;
-					printf("\nWIN\n");
-				}
-				else if (strcmp(headervalue, "0-1") == 0) {
-					result = LOSS;
-					printf("\nLOSS\n");
-				}
-				else if (strcmp(headervalue, "1/2-1/2") == 0) {
-					result = DRAW;
-					printf("\nDRAW\n");
-				}
-				else {
-					result = UNKNOWN;
-					printf("\nUNKNOWN");
-				}
-			}
-			if (strcmp(headername, "fen") == 0) {
-				FENtoPosition(headervalue, &p);
-			}
-		}
 		// headers parsed*/
 		
 		// initialize the gamelist entry:
@@ -496,6 +365,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 			}
 #endif
 			gamenumber++;
+			localgamenumber++; 
 		}
 		if(error || isduplicate)		// go back to original entry of array thereby overwriting 
 			positions = gamestart_position;

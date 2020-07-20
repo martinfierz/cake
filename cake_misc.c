@@ -15,7 +15,11 @@
 #include "cake_misc.h"
 #include "dblookup.h"
 
+char suffix[128] = ""; 
 
+void setsuffix(char* str) {
+	sprintf(suffix, "%s", str); 
+}
 
 void searchinfotostring(char *out, int depth, double time, char *valuestring, char *pvstring, SEARCHINFO *si)
 	{
@@ -63,8 +67,8 @@ void movetonotation(POSITION *p,MOVE *m, char *str)
 		else c='-';                      /* capture or normal ? */
 		from = (m->bm|m->bk)&(p->bm|p->bk);    /* bit set on square from */
 		to = (m->bm|m->bk)&(~(p->bm|p->bk));
-		from = LSB(from);
-		to = LSB(to);
+		from = LSB(from); 
+		to = LSB(to);		
 		from = square[from];
 		to = square[to];
 		sprintf(str,"%2i%c%2i",from,c,to);
@@ -230,17 +234,33 @@ FILE *getlogfile(int clear)
 
 	// create a logfile in the personal folders path
 	if (dir[0] == 0) {
-		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir)))
+		if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, dir))) {
 			// personal folder is now in dir, append my path
-			strcat(dir, "\\Martin Fierz\\Cake\\cakelog.txt");
+			strcat(dir, "\\Martin Fierz\\Cake\\cakelog");
+			strcat(dir, suffix);
+			strcat(dir, ".txt");
+			//printf("\nlogfile created %s: ", dir); 
+			//getch(); 
+		}
+			
 	}
 
-	if (clear)
+	if (clear) {
 		fp = fopen(dir, "w");
+		
+		//printf("\n log file cleared"); 
+		//getch(); 
+		return fp; 
+	}
 	else {
 		fp = fopen(dir, "a");
-		if (fp == NULL)
+		//printf("\ntrying to append to log file"); 
+		//getch(); 
+		if (fp == NULL) {
 			fp = fopen(dir, "w");
+			//printf("\ncould not append, clearing log file");
+			//getch(); 
+		}
 		
 	return fp;
 	}
@@ -357,9 +377,16 @@ int logtofile(FILE *fp, char *str)
 	if(fp != NULL)
 		{
 		fprintf(fp,"\n%s",str);
+		//printf("\nlog: %s", str); 
+		//getch(); 
 		fflush(fp); 
 		return 1;
 		}
+	else {
+		; 
+		//printf("\n could not log, fp is nULL!");
+		//getch();
+	}
 	return 0;
 }
 
@@ -372,7 +399,7 @@ int isforced(POSITION *p)
 	int values[MAXMOVES];
 	int bestindex=0;
 
-	// forced moves occur if a) only one capture move exist
+	// forced moves occur if a) only one capture move exists
 	// and b) if 2 capture moves exist which transpose with 2 moves, then 4 single captures
 	n = makecapturelist(p, ml1, values, bestindex);
 	if(n==1)

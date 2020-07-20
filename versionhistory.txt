@@ -1,4 +1,7 @@
-looking at games i think i should try adding
+20.7.2020
+official release of Cake 1.88
+lots of changes which are not documented :-(
+One important thing may be that I fixed a bug related to maxdepth
 
 25.6.2019
 try TO2 once again hoping for a miracle: but none happens

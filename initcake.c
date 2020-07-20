@@ -82,7 +82,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum, FILE *fp)
 
 	sprintf(Lstr,"%i moves in opening book\n",j);
 	logtofile(fp, Lstr);
-	printf(Lstr); 
+	//printf(Lstr); 
 
 	*bookmovenum = j;
 
@@ -110,8 +110,13 @@ HASHENTRY *inithashtable(int hashsize, FILE *logfile)
 		{
 		sprintf(Lstr,"malloc failure in initcake (hashtable memory allocation failed)");
 		logtofile(logfile, Lstr);
+		fclose(logfile); 
 		exit(0);
 		}
+	else {
+		sprintf(Lstr, "\nhashtable allocated with %zi bytes", (hashsize + HASHITER) * sizeof(HASHENTRY) + 64);
+		logtofile(logfile, Lstr); 
+	}
 
 	return ptr;
 }

@@ -16,15 +16,15 @@
 /* function prototypes */
 #include "cakepp.h"
 
-int position_to_hashkey(POSITION *p, int32 *key, int32 *lock);
+//int position_to_hashkey(POSITION *p, int32 *key, int32 *lock);
 
 
-SPA_ENTRY *spatable[4];
+//SPA_ENTRY *spatable[4];
 SPA_ENTRY *spa;
 
 int initspa(void)
 	{
-	int i=0,j;
+	/*int i=0,j;
 	int32 lock, key;
 	FILE *fp;
 	SPA_POSITION spapos;
@@ -34,9 +34,13 @@ int initspa(void)
 	int items;
 	int index;
 	int k,l;
-	char str[256];
+	char str[256];*/
 
-	for(l=0; l<2; l++)
+	spa = malloc((SPASIZE + SPAITER) * sizeof(SPA_ENTRY));
+	if(spa != 0)
+		memset(spa, 0, (SPASIZE + SPAITER) * sizeof(SPA_ENTRY));
+
+	/*for(l=0; l<2; l++)
 		{
 		spatable[l] = NULL;
 #ifdef WINMEM
@@ -112,9 +116,82 @@ int initspa(void)
 					printf("\nreading spa: %i positions read",i);
 				}
 			}
-		}
+		}*/
 	return 1;
 	}
+
+int loadspa(void) {
+	FILE* fp; 
+	int i, j; 
+	int dummy, eval, depth; 
+	int n = 0; 
+	int index; 
+
+	POSITION lp; 
+	HASH h; 
+
+	printf("\nloading spa..:"); 
+	fp = fopen("c:\\code\\checkersdata\\uniquepositions1.txt", "r");
+
+	// fprintf(fpout, "%u %u %u %u %i %i %i %i\n",p.bm, p.bk,p.wm, p.wk, p.color, v0, v3, si.depth);
+	while (!feof(fp)) {
+		fscanf(fp, "%u %u %u %u %u %i %i %i\n", &(lp.bm), &(lp.bk), &(lp.wm), &(lp.wk), &(lp.color), &dummy, &eval, &depth);
+		n++; 
+		absolutehashkey(&lp, &h);
+		//if (n % 50000 == 0) {
+		//	printboard(&lp); 
+		//	printf("evaluation is %i", eval); 
+		//	getch(); 
+		//}
+
+		spastore(h.key, h.lock, eval, depth, lp.color); 
+
+		
+	}
+	printf("\n%i spa positions loaded", n); 
+
+	fclose(fp); 
+}
+
+int spalookup(SEARCHINFO* si, int* value, int d, int color) {
+	int index; 
+	int i; 
+
+	index = si->hash.key & (SPASIZE - 1); // only works for spasize as 2^x
+	for (i = 0; i < SPAITER; i++) {
+		if (spa[index + i].lock == si->hash.lock && 
+			spa[index+i].color == color) {
+			if (spa[index + i].depth* FRAC >= d) {
+				*value = spa[index + i].value;
+				//printf("spa color is %i, color is %i", spa[index + i].color, color); 
+				return 1;
+			}
+			return 0; 
+		}
+		if(spa[index + i].lock == 0)
+			return 0; 
+	}
+	return 0; 
+}
+
+int spastore(int key, int lock, int eval, int depth, int color) {
+	int index; 
+	int i; 
+
+	index = key & (SPASIZE - 1); 
+	for (i = 0; i < SPAITER; i++) {
+		if (spa[index + i].lock == 0 || spa[index + i].lock == lock) {
+			spa[index + i].lock = lock; 
+			spa[index + i].depth = depth; 
+			spa[index + i].value = eval; 
+			spa[index + i].color = color; 
+			return 1; 
+		}
+	}
+	return 0; 
+}
+
+/*
 
 int spa_lookup(int32 key, int32 lock, int *eval, int table)
 	{
@@ -122,7 +199,7 @@ int spa_lookup(int32 key, int32 lock, int *eval, int table)
 	int i;
 	index = key&(SPASIZE-1);
 
-	spa = spatable[table];
+	//spa = spatable[table];
 
 	for(i=0;i<SPAITER;i++)
 		{
@@ -140,13 +217,14 @@ int position_to_hashkey(POSITION *p, int32 *key, int32 *lock)
 //	int32 x;
 	int32 lkey = 0,llock = 0;
 	extern int32 Gkey, Glock; // from cakepp.c
+	HASH h; 
 
-	absolutehashkey(p);
+	absolutehashkey(p, &h);
 	//printf("\nkey, lock: %i %i",Gkey, Glock);
-	*key = Gkey;
-	*lock = Glock;
+	//*key = Gkey;
+	//*lock = Glock;
 
 	return 1;
 	}
-
+*/
 #endif // SPA

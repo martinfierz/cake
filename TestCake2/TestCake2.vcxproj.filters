@@ -51,6 +51,9 @@
     <ClCompile Include="..\cake_eval_parametrized.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\app_instance.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\boolean.h">
@@ -84,6 +87,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\switches.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\app_instance.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
