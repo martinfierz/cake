@@ -24,16 +24,12 @@
 //#include "cake_eval.h"
 
 
-//#undef NODUPLICATES  // undef to allow duplicate games!
-
-
 #define WHITE 1
 #define BLACK 2
 #define MAN 4
 #define KING 8
 #define FREE 16
 
-//#define PARAMS 24
 
 /* bitboard masks for moves in various directions */
 /* here "1" means the squares in the columns 1357 and "2" in 2468.*/
@@ -120,16 +116,17 @@ int main()
 	int rejected = 0;
 	int pos_num = 0;
 	int quiet_pos_num = 0;
+	int position_number_known = 0; 
 	char filename[128]; 
 
 	
-	ep = malloc(sizeof(EVALUATEDPOSITION) * MAXGAMES*50);  // allow for 2 million positions currently
-	gamelist = malloc(sizeof(SHORTGAME) * MAXGAMES); // allow for 100'000 games currently
+	ep = malloc(sizeof(EVALUATEDPOSITION) * MAXGAMES*50);  // allow for 50 million positions currently
+	gamelist = malloc(sizeof(SHORTGAME) * MAXGAMES); // allow for 1'000'000 games currently
 	if(gamelist != NULL)
 		memset(gamelist, 0, sizeof(SHORTGAME) * MAXGAMES); // set to 0
 
 
-
+	// todo change back to i = 0 when problem debugged
 	for (i = 0; i < 300; i++) {
 		sprintf(filename, "%smatch%i.pdn", directory, i);
 		printf("\nfile to open is %s", filename);
@@ -146,10 +143,15 @@ int main()
 	fp = fopen("C:\\code\\checkersdata\\taggedpositions+duplicates.txt", "w");
 #endif
 	for (i = 0; i < position_number; i++) {
-		fprintf(fp, "%u %u %u %u %i %i\n", ep[i].bm, ep[i].bk, ep[i].wm, ep[i].wk, ep[i].color, ep[i].gameresult);
+		if (ep[i].gameresult == UNKNOWN)
+			printf("!"); 
+		else {
+			fprintf(fp, "%u %u %u %u %i %i\n", ep[i].bm, ep[i].bk, ep[i].wm, ep[i].wk, ep[i].color, ep[i].gameresult);
+			position_number_known++; 
+		}
 	}
 	fclose(fp);
-	printf("\n%i games checked, %i positions stored", gamenumber, position_number);
+	printf("\n%i games checked, %i positions stored of %i", gamenumber, position_number_known, position_number);
 	getch();
 	exit(0);
 	

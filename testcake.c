@@ -286,7 +286,7 @@ main()
 
 	fclose(fp2);   
 	fclose(fp3);
-	getch();
+	//getch();
 	exitcake();
 	return 1;
 	}

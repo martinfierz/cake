@@ -33,7 +33,7 @@ enum {
     nocrampval13, nocrampval20, 
 	dogholeval,	dogholemandownval,
 	mc_occupyval, mc_attackval, realdykeval, greatdykeval,
-	promoteinone, promoteintwo, promoteinthree, tailhookval, kcval, keval,
+	promoteinone, promoteintwo, promoteinthree, tailhookval, dominatedkingval2, keval,
 	turnval, turnval_eg, kingcentermonopoly, kingtrappedinsinglecornerval,
 	kingtrappedinsinglecornerbytwoval, kingtrappedindoublecornerval, dominatedkingval, dominatedkingindcval,
 	kingproximityval1, kingproximityval2, immobilemanval, kingholdstwomenval, onlykingval, roamingkingval,
@@ -43,7 +43,7 @@ enum {
 	/*badstructuremax1, badstructuremax2, badstructuremin, */badstructure3, badstructure4, 
 	badstructure5, badstructure6, badstructure7, badstructure8,
 	badstructure9, badstructure10, badstructure11,
-	/*badstructure2stones,*/ kingmanstones, immobile_mult, immobile_mult_kings, runaway_destroys_backrank,
+	/*badstructure2stones,*/ dominatedkingindcval2, immobile_mult, immobile_mult_kings, runaway_destroys_backrank,
 	king_blocks_king_and_man, king_denied_center, king_low_mobility_mult, king_no_mobility,
 	experimental_king_cramp, compensation, compensation_mandown, /*compensation_mandown_norunaway,*/
 	ungroundedcontact, endangeredbridge, endangeredbridge_kingdown, arraystart

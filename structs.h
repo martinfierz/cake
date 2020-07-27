@@ -81,6 +81,7 @@ typedef struct
 	int searchmode;
 	int allscores;
 	int age; 
+	int value; 
 	int *play;				// is set to 1 by the interface if the search should be stopped
 	char *out;				// is the address to write output to
 	HASH hash;
@@ -88,7 +89,7 @@ typedef struct
 	REPETITION *repcheck;
 	double start;
 	double maxtime;
-	double aborttime;		// TODO: add history table int history[32][32]
+	double aborttime;		
 	int history[32][32];
 	} SEARCHINFO;
 

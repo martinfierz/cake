@@ -10,12 +10,13 @@
 #include <process.h>
 
 
+
 #include "stdafx.h"
 
 // cake-specific includes - structs defines structures, consts defines constants,
 // xxx.h defines function prototypes for xxx.c
 #include "../optimizeCake.h"  // important to load first!
-#include "switches.h"
+#include "..\\switches.h"
 #include "structs.h"
 #include "consts.h"
 #include "..\\cake_eval.h"
@@ -28,7 +29,12 @@
 #define KING 8
 #define FREE 16
 
-#define PARAMS 408
+
+
+/*#define PARAMS 408
+#ifdef BRTHREE
+#define PARAMS 4248
+#endif*/
 
 
 //#undef WEIGHT_BY_NUMBER
@@ -72,7 +78,7 @@
 #define RANK7 0xF000000
 #define RANK8 0xF0000000
 
-float sigmoid(int v, float c); 
+double sigmoid(int v, double c);
 void codeoutput(int recall);
 
 int result_translated[4] = { 0, 1, -1, 0 };
@@ -87,7 +93,7 @@ char strs[PARAMS][128] =  {
 	"backrankpower2", "backrankpower3", "backrankpower4", "nocrampval13", "nocrampval20", 
 	"dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
-	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "kcval", "keval",
+	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "dominatedkingval2", "keval",
 	"turnval", "turnval_eg", "kingcentermonopoly", "kingtrappedinsinglecornerval",
 	"kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval", "dominatedkingval", "dominatedkingindcval",
 	"kingproximityval1", "kingproximityval2", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
@@ -97,7 +103,7 @@ char strs[PARAMS][128] =  {
 	"badstructure3", "badstructure4",
 	"badstructure5", "badstructure6", "badstructure7", "badstructure8",
 	"badstructure9", "badstructure10", "badstructure11",
-	"kingmanstones","immobile_mult", "immobile_mult_kings",
+	"dominatedkingindcval2","immobile_mult", "immobile_mult_kings",
 	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", 
 	"king_no_mobility",
 	"experimental_king_cramp", "compensation", "compensation_mandown",	
@@ -202,21 +208,24 @@ char strs[PARAMS][128] =  {
 
 
 
-float calc_error(int n, EVALUATEDPOSITION* ep, float c); 
-float calc_error_MT(int n, EVALUATEDPOSITION* ep, float c);
+double calc_error(int n, EVALUATEDPOSITION* ep, double c);
+double calc_error_MT(int n, EVALUATEDPOSITION* ep, double c);
 
-float error_ST[30000000];
-float error_MT[30000000];
+double error_ST[30000000];
+double error_MT[30000000];
 
+#ifdef STOCHASTIC
+short int* isinactive; 
+#endif
 
 typedef struct
 {
 	EVALUATEDPOSITION* ep; 
 	int start; 
 	int end; 
-	float errorsum; 
+	double errorsum;
 	int threadID; 
-	float c; 
+	double c;
 	int gamenum; 
 } THREADINFO;
 
@@ -230,15 +239,15 @@ int main()
 	MATERIALCOUNT mc; 
 	int delta = 100; 
 	EVALUATEDPOSITION *ep, *cur; 
-	float error; 
+	double error;
 	int j; 
 	int oldparam; 
 	int iterations = 0; 
-	float minerror; 
+	double minerror;
 	int position_number = 0; 
 	int changed = 0; 
 	int res_from_file; 
-	float c; 
+	double c;
 	int rejected = 0; 
 	int rejectednum = 0; 
 	int pos_num = 0; 
@@ -250,14 +259,17 @@ int main()
 	int paramnum = 0; 
 	int allactive = 1; 
 	int initialparams[PARAMS]; 
-	float influence[PARAMS];
-	float influence0[PARAMS]; 
+	double influence[PARAMS];
+	double influence0[PARAMS];
 	//int games; 
 	//int points; 
 	int wins, draws, losses; 
 	int totalgames = 0; 
+	int totalpositions = 0; 
+	int totalquietpositions = 0; 
 	char FEN[256]; 
 	FILE* log; 
+	double tolerance = 3e-9;		// minimal change in error that a parameter is still changed
 
 	// if I want to check search times, run analyze_matchprogress()
 	//analyze_matchprogress(); 
@@ -268,6 +280,25 @@ int main()
 
 	ep = malloc(sizeof(EVALUATEDPOSITION) * 30000000);
 
+#ifdef BRTHREE
+	// rename parameter strings
+	for (i = 0; i < PARAMS; i++)
+		if (strcmp(strs[i], "br0") == 0)
+			break; 
+	printf("\nbr0 found at index %i", i); 
+	
+	i = i + 256; 
+	for (j = i; j < PARAMS - 4096 + 256; j++)
+		sprintf(strs[j + 4096 - 256], "%s", strs[j]); 
+	for (j = 0; j < 4096; j++)
+		sprintf(strs[j + i -256], "br%i", j); 
+	for (i = 0; i < PARAMS; i++)
+		printf("\n%i %s", i, strs[i]); 
+	getch(); 
+	exit(0); 
+
+#endif
+
 	// initialize eval
 	initeval();
 	//startparams();
@@ -275,17 +306,13 @@ int main()
 	updateeval();
 
 	// recall parameters from cake's evaluation
-	//getparams(params, &paramnum);
-
-	// print parameters to show it's working
-	//for (i = 0; i < paramnum; i++)
-	//	printf("\nparameter[%i] is %i (%s)", i, params[i], strs[i]); 
-	//getch(); 
-
 	//startparams(); 
 	//optimalparams(); 
 	//updateeval
-
+#ifdef ZERO
+	zeroparams(); 
+	updateeval(); 
+#endif
 	getparams(params, &paramnum);
 
 	printf("\nPARAMS is %i, paramnum is %i", PARAMS, paramnum);
@@ -350,6 +377,7 @@ int main()
 		p.wm = wm; 
 		p.wk = wk; 
 		p.color = color; 
+		totalpositions += (wins + draws + losses); 
 
 		/*if (wins + draws + losses > 100) {
 			printboard(p);
@@ -361,9 +389,8 @@ int main()
 			p.color = p.color^CC; 
 			if (!testcapture(&p)) {
 				quiet_pos_num++; 
+				totalquietpositions += (wins + draws + losses); 
 				p.color = p.color^CC;
-
-
 				cur->bm = bm;
 				cur->bk = bk;
 				cur->wm = wm;
@@ -373,7 +400,6 @@ int main()
 #ifdef AVERAGE
 				//cur->gameresult = (float)points / (float)(2 * games); 
 				//cur->gamenum = games; 
-
 				cur->wins = wins; 
 				cur->draws = draws; 
 				cur->losses = losses; 
@@ -391,6 +417,7 @@ int main()
 				if(abs(staticeval - v3) > 50) {
 #ifdef AVERAGE
 					rejectednum += (wins + draws + losses); 
+					totalquietpositions -= (wins + draws + losses); 
 					rejected++; 
 #else
 					rejected++;
@@ -403,7 +430,11 @@ int main()
 				else {
 #endif
 					cur++;
+#ifdef AVERAGE
 					totalgames += (wins + draws + losses); 
+#else
+					totalgames++; 
+#endif
 				}
 				
 				if (i % 10000 == 0)
@@ -414,9 +445,17 @@ int main()
 	}
 	fclose(fp); 
 	n = i - 1 - rejected;
-	printf("\ntotal positions %i, total games %i, quiet %i, final %i, %i were rejected (%i games)", pos_num, totalgames, quiet_pos_num, n, rejected, rejectednum);
+	printf("\ntotal unique positions %i, total positions %i, total quiet %i, unique quiet %i, final %i, %i were rejected (%i games)", pos_num, totalpositions, totalquietpositions, quiet_pos_num, n, rejected, rejectednum);
 	getch(); 
 	printf("\nevaluating...");
+
+	
+#ifdef STOCHASTIC
+	isinactive = malloc(n * sizeof(short int));
+	for (i = 0; i < n; i++) {
+		isinactive[i] = rand() % STOCHASTICNUM;
+	}
+#endif
 
 
 
@@ -441,7 +480,7 @@ int main()
 				getch();
 		}
 		fclose(fp);
-		printf("\done saving"); 
+		printf("\ndone saving"); 
 		getch();
 		
 	}
@@ -466,7 +505,7 @@ int main()
 	c = minc; 
 	getch(); */
 
-	float minc = 0.024; 
+	double minc = 0.024;
     c = 0.024; 
 	
 	
@@ -494,6 +533,13 @@ int main()
 	params[exchangebias] = 25; */
 	//startparams(); 
 	optimalparams(); 
+#ifdef ZERO
+	zeroparams(); 
+	for (i = 0; i < PARAMS; i++)
+		params[i] = 0; 
+	setparams(params, paramnum);
+	updateeval();
+#endif
 	getparams(params, &paramnum); 
 
 	/*
@@ -509,28 +555,30 @@ int main()
 	setparams(params, paramnum);
 	updateeval();
 	
+	getparams(params, &paramnum);
+	for (i = 0; i < PARAMS; i++) {
+		printf("\nparam %i: %i", i, params[i]); 
+	}
+	getch(); 
+	for (i = 0; i < n; i++) 
+		error_MT[i] = 0;
 	minerror = calc_error_MT(n, ep, c);
+	for (i = 0; i < n; i++)
+		error_MT[i] = 0;
 	printf("\ninitial error MT is %.10f", minerror);
 	fprintf(log, "\ninitial error MT is %.10f", minerror);
-
+	//minerror = 1; 
 
 	//setparams(params, paramnum);
 	//updateeval();
-	minerror = calc_error(n, ep, c);
-	printf("\nerror after setting all parameters is %.10f (ST)", minerror);
+	if (0) {
+		minerror = calc_error(n, ep, c);
+		printf("\nerror after setting all parameters is %.10f (ST)", minerror);
+	}
 	printf("\nfound %i parameters to optimize - hit key to continue", paramnum); 
 	getch(); 
 
 
-	// compare errors of single-threaded and multi-threaded version
-	/*for (i = 0; i < n; i++) {
-		if (error_ST[i] != error_MT[i]) {
-			printf("\n%i %.3f, %.3f", i, error_ST[i], error_MT[i]);
-			getch();
-		}
-	}
-
-	getch();*/
 
 	/*deactivate_all(); 
 	active_set[man_value] = 1;
@@ -583,8 +631,8 @@ int main()
 				updateeval(); 
 				error = calc_error_MT(n, ep, c);
 				influence[j] += fabs(error - minerror);
-				printf(" +(%.8f)", error); 
-				if (error > (minerror - 1e-8)) {
+				printf(" +(%.9f)", error); 
+				if (error > (minerror - tolerance)) {
 					// revert
 					params[j] = params[j] - 1; 
 					break; 
@@ -601,9 +649,9 @@ int main()
 					setparams(params, paramnum);
 					updateeval();
 					error = calc_error_MT(n, ep, c);
-					printf(" -(%.8f)", error);
+					printf(" -(%.9f)", error);
 					influence[j] += fabs(error - minerror);
-					if (error > (minerror-1e-8)) {
+					if (error > (minerror - tolerance)) {
 						// revert
 						params[j]++;
 						break;
@@ -627,6 +675,7 @@ int main()
 		}
 		printf("\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
 		fprintf(log, "\niteration %i with %i changes (%.7f)-----------------", iterations, changed, minerror);
+		codeoutput(0);
 		iterations++; 
 
 		if (changed == 0 && allactive)
@@ -636,8 +685,16 @@ int main()
 			fprintf(log, "\nno changes on this iteration, but not all active - reactivating all");
 			allactive = 1;
 			activate_all();
-		}
-			
+#ifdef STOCHASTIC
+			for (i = 0; i < n; i++) {
+				isinactive[i] = rand() % STOCHASTICNUM;
+				error_MT[i] = 0;
+				}
+			minerror = calc_error_MT(n, ep, c);
+			printf("\nnew initial error MT is %.10f", minerror);
+			fprintf(log, "\nnew initial error MT is %.10f", minerror);
+#endif
+		}		
 	}
 
 	// first write params directly
@@ -687,11 +744,13 @@ int main()
 int activate_all() {
 	for (int i = 0; i < PARAMS; i++)
 		active_set[i] = 1;
+	return 0; 
 }
 
 int deactivate_all() {
 	for (int i = 0; i < PARAMS; i++)
 		active_set[i] = 0;
+	return 0; 
 }
 
 void codeoutput(int recall) {
@@ -700,7 +759,7 @@ void codeoutput(int recall) {
 	int i; // , j;
 	int paramnum = 0;
 
-	int br[256]; 
+	//int br[256]; 
 	
 
 	if (recall != 0) {
@@ -718,22 +777,22 @@ void codeoutput(int recall) {
 	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
 	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
 
-	for (i = 0; i < paramnum - 13 - 25 - 256 - 10 - 32; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - BRNUM - 10 - 32; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
 	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
 
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - 256  - 10 - 32 ; i < paramnum - 25 - 256  - 10 -32; i++) {
+	for (i = paramnum - 13 - 25 - BRNUM  - 10 - 32 ; i < paramnum - 25 - BRNUM  - 10 -32; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
 
-	fprintf(fp, "\nstatic int backrank[256] = {");
-	for (i = paramnum - 25 - 256 - 10 - 32 ; i < paramnum - 25  - 10 - 32; i++) {
+	fprintf(fp, "\nstatic int backrank[BRNUM] = {");
+	for (i = paramnum - 25 - BRNUM - 10 - 32 ; i < paramnum - 25  - 10 - 32; i++) {
 		fprintf(fp, " %i,", params[i]);
-		if ((i - paramnum + 25 + 256 + 10 + 32) % 16 == 0)
+		if ((i - paramnum + 25 + BRNUM + 10 + 32) % 16 == 0)
 			fprintf(fp, "\n");
 	}
 	fprintf(fp, "};");
@@ -760,36 +819,6 @@ void codeoutput(int recall) {
 	}
 	fprintf(fp, "};");
 
-	/*fprintf(fp, "\nstatic int backrank_eg[256] = {");
-	for (i = paramnum - 256; i < paramnum; i++) {
-		fprintf(fp, " %i,", params[i]);
-		if ((i - paramnum + 256 ) % 16 == 0)
-			fprintf(fp, "\n");
-	}
-	fprintf(fp, "};");*/
-
-
-
-	/*
-	getblackbackrank(br); 
-	fprintf(fp, "\nstatic int blackbackrank[256] = {");
-	for (int j = 0; j < 16; j++) {
-		for (i = 0; i < 16; i++) {
-			fprintf(fp, "%i,", br[16 * j + i]);
-		}
-		fprintf(fp, "\n");
-	}
-	fprintf(fp, "};");
-
-	getwhitebackrank(br);
-	fprintf(fp, "\nstatic int whitebackrank[256] = {");
-	for (int j = 0; j < 16; j++) {
-		for (i = 0; i < 16; i++) {
-			fprintf(fp, "%i,", br[16 * j + i]);
-		}
-		fprintf(fp, "\n");
-	}
-	fprintf(fp, "};");*/
 
 	fclose(fp);
 }
@@ -800,21 +829,25 @@ unsigned __stdcall subThread(void* pArguments)
 	int i = 0; 
 	
 	threadinfo = (THREADINFO*)pArguments; 
-	float c = threadinfo->c; 
+	double c = threadinfo->c;
 	POSITION p;
 	MATERIALCOUNT mc;
 	int staticeval;
 	int delta = 0;
-	float res = 0, error = 0, errorsum = 0;
+	double res = 0, error = 0, errorsum = 0;
 	int num = 0;
-	float sum; 
-	float s;
+	double sum;
+	double s;
 	int games; 
 
 	//printf("In sub thread[%i]: %i...%i\n", threadinfo->threadID, threadinfo->start, threadinfo->end);
 
 	threadinfo->errorsum = 0; 
 	for (i = threadinfo->start; i < threadinfo->end; i++) {
+#ifdef STOCHASTIC
+		if (isinactive[i])
+			continue; 
+#endif
 		p.bm = threadinfo->ep[i].bm;
 		p.bk = threadinfo->ep[i].bk;
 		p.wm = threadinfo->ep[i].wm;
@@ -923,14 +956,14 @@ unsigned __stdcall subThread(void* pArguments)
 	return 0;
 }
 
-float calc_error_MT(int n, EVALUATEDPOSITION* ep, float c) {
+double calc_error_MT(int n, EVALUATEDPOSITION* ep, double c) {
 	//int calc_error_MT() {
 	// main function to call to run the calculation of the error in a multithreaded mode
 	HANDLE hThread[4];
 	unsigned threadID[4];
 	int counter[4]; 
 	THREADINFO threadinfo[4]; 
-	float error; 
+	double error;
 
 	//printf("Creating subthreads...\n");
 
@@ -999,7 +1032,7 @@ float calc_error_MT(int n, EVALUATEDPOSITION* ep, float c) {
 	//error = error / (threadinfo[0].gamenum + threadinfo[1].gamenum);
 
 	// now use the stored error info
-	float errorsum = 0; 
+	double errorsum = 0;
 	for (int i = 0; i < n; i++) {
 		errorsum += error_MT[i]; 
 	}
@@ -1024,18 +1057,22 @@ float calc_error_MT(int n, EVALUATEDPOSITION* ep, float c) {
 
 
 
-float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
+double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 	int i;
 	POSITION p;
 	MATERIALCOUNT mc;
 	int staticeval;
 	int delta;
-	float res, error, errorsum = 0;
-	float sum; 
+	double res, error, errorsum = 0;
+	double sum;
 	int num = 0; 
 
 	 
 	for (i = 0; i < n; i++) {
+#ifdef STOCHASTIC
+		if (isinactive[i])
+			continue;
+#endif
 		p.bm = ep[i].bm;
 		p.bk = ep[i].bk;
 		p.wm = ep[i].wm;
@@ -1060,7 +1097,7 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 			staticeval = -staticeval; // now staticeval is as seen from black's point of view
 #ifdef AVERAGE
 		//res = 2*ep[i].gameresult-1; // 0 means black lost nearly all, 1 means black won nearly all
-		//res = ((float)ep[i].wins + ((float)ep[i].draws) * 0.5) / ((float)(ep[i].wins + ep[i].draws + ep[i].losses));
+		//res = ((double)ep[i].wins + ((double)ep[i].draws) * 0.5) / ((double)(ep[i].wins + ep[i].draws + ep[i].losses));
 		num += (ep[i].wins + ep[i].draws + ep[i].losses);
 		error = (1 - sigmoid(staticeval, c));
 		error = error * error;
@@ -1094,18 +1131,18 @@ float calc_error(int n, EVALUATEDPOSITION* ep, float c) {
 	}
 	//printf("\ncalc standard: errorsum is %.2f, number is %i", errorsum, num);
 
-	errorsum = errorsum / (float)num; 
+	errorsum = errorsum / (double)num;
 	
 	return errorsum;
 }
 
 
-float sigmoid(int v, float c) {
-	float res; 
+double sigmoid(int v, double c) {
+	double res;
 	//float c = 0.02; 
 	//res = exp(0.001);
 
-	res = 2 / (1 + exp((double) (-c * ((float)v)))) - 1;
+	res = 2 / (1 + exp((double) (-c * ((double)v)))) - 1;
 	return res; 
 }
 
@@ -1214,18 +1251,18 @@ int analyze_matchlog(void) {
 	FILE* fp; 
 	char line[256]; 
 	int value, d1, d2;
-	float time, d3; 
-	float timesum_kr = 0, timesum_cake = 0; 
+	double time, d3;
+	double timesum_kr = 0, timesum_cake = 0;
 	int n_kr = 0, n_cake = 0; 
-	float time_cake[100000];
-	float time_kingsrow[100000];
+	double time_cake[100000];
+	double time_kingsrow[100000];
 
 	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog84.txt", "r");
 	while (!feof(fp)) {
 		fgets(line, 255, fp);
 		if (line[0] == 'a' && (line[10] == 'v' || line[33] == 'v')) {  // kingsrow
 			//printf("\n%s", line);
-			sscanf(line, "analysis: value=%i, depth  %i/%f/%i, %fs", &value, &d1, &d3, &d2, &time);
+			sscanf(line, "analysis: value=%i, depth  %i/%lf/%i, %lfs", &value, &d1, &d3, &d2, &time);
 			//sscanf(line, "analysis: time remaining:%fs   value=%i, depth  %i/%f/%i, %fs", &dummy, &value, &d1, &d3, &d2, &time);
 			if (d1 > 10 && d1 < 50
 				) {
@@ -1237,7 +1274,7 @@ int analyze_matchlog(void) {
 		}
 		if (line[0] == 'a' && (line[10] == 'd' || line[33] == 'd')) {  // cake
 			//printf("\n%s", line);
-			sscanf(line, "analysis: depth %i/%i/%f  time %f", &d1, &d2, &d3, &time);
+			sscanf(line, "analysis: depth %i/%i/%lf  time %lf", &d1, &d2, &d3, &time);
 			//sscanf(line, "analysis: time remaining:%fs  depth %i/%i/%f  time %f", &dummy, &d1, &d2, &d3, &time);
 			//printf("\n%i/%i/%.1f %.2f", d1,d2,d3,time);
 			if (d1 > 10 && d1 < 50) {
@@ -1353,7 +1390,7 @@ int analyze_matchprogress(void) {
 	// write data to file
 	fp = fopen("C:\\code\\checkersdata\\ballot_difficulty.txt", "w");
 	for (int i = 1; i <= 2400; i++)
-		fprintf(fp, "%i\t%.3f\n", i, (float)wins[i]/(float)(n[i]));
+		fprintf(fp, "%i\t%.3f\n", i, (double)wins[i]/(double)(n[i]));
 	fclose(fp);
 	
 
@@ -1371,7 +1408,7 @@ int PositiontoFEN(POSITION* p, char* FEN) {
 		28,27,26,25,32,31,30,29 }; /* maps bits to checkers notation */
 
 
-	int i; 
+	//int i; 
 	int32 tmp; 
 	int square; 
 	char s[16]; 
@@ -1444,6 +1481,7 @@ int PositiontoFEN(POSITION* p, char* FEN) {
 		haskings = 0; 
 	}
 	strcat(FEN, "\n"); 
+	return 0; 
 }
 
 int FENtoPosition(char* FEN, POSITION* p)

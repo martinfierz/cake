@@ -6,10 +6,20 @@
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.88"   //(376.12M) LMR2"
+#define VERSION "1.88d"   //(376.12M) LMR2"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
+#endif
+
+#undef BRTHREE  // use three rows for back rank computation, if not defined then only 2
+
+#ifdef BRTHREE
+#define BRNUM 4096
+#define PARAMS 4248 // 376
+#else
+#define BRNUM 256
+#define PARAMS 408 // 376
 #endif
 
 
@@ -103,7 +113,8 @@
 #define SINGLEEXTEND FRAC/2			// extension for forced move 
 #define CLDEPTH 5					// if depth < CLDEPTH // 5
 
-#define HASHSIZE 0x01000000			// 64 MB default hashtable size  (was 64 if you something has changed somewhere...)
+#define HASHSIZE 0x01000000			// 128 MB default hashtable size  
+//#define HASHSIZE 0x00040000			// 4 MB default hashtable size
 
 #define HASHITER 4					// 4 probes in the hashtable
 
@@ -142,12 +153,12 @@
 
 #define MARKPV						// mark pv in hashtable and don't prune
 
-
+#undef TESTEVALSYMMETRY
 #define IITERD						// use internal iterative deepening
 #define IIDDEPTH 6*FRAC				// only use it when the remaining depth is > this
 #define IIDREDUCE 4*FRAC //4*FRAC			// and reduce by this amount for IID search 
 
-#define LATEMOVEREDUCTION			// use late move reduction
+#undef LATEMOVEREDUCTION			// use late move reduction
 #undef LMR_AGGRESSIVE // use a very aggressive version of LMR
 
 #undef LATEMOVEREDUCTIONROOT
