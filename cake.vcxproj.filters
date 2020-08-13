@@ -92,6 +92,9 @@
     <ClCompile Include="app_instance.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cake_eval_185.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cakedll.def" />

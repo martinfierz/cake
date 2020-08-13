@@ -673,8 +673,9 @@ void blackorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 			if(from & 0xFF)
 				{
 				/* man giving up back rank */
-				eval -= blackbr_mo[p->bm & 0xFF] / 2;
-				eval += blackbr_mo[ (p->bm ^ ml[i].bm) & 0xFF] / 2;
+
+				eval -= blackbr_mo[p->bm & 0xFF];
+				eval += blackbr_mo[ (p->bm ^ ml[i].bm) & 0xFF];
 				}
 			else
 				{
@@ -800,8 +801,8 @@ void whiteorderevaluation(SEARCHINFO *si, POSITION *p,MOVE ml[MAXMOVES],int valu
 				{
       			if(from & 0xFF000000)
 					{
-					eval -= whitebr_mo[p->wm >> 24] / 2;
-					eval += whitebr_mo[ (p->wm ^ ml[i].wm) >> 24] / 2;
+					eval -= whitebr_mo[p->wm >> 24];
+					eval += whitebr_mo[ (p->wm ^ ml[i].wm) >> 24];
 					}
 				else if(from&C4)
       				eval -= MANC4VAL;

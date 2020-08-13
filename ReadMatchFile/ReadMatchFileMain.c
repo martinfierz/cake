@@ -128,7 +128,11 @@ int main()
 
 	// todo change back to i = 0 when problem debugged
 	for (i = 0; i < 300; i++) {
+#ifdef NEWFILES
+		sprintf(filename, "%smatch_%i.pdn", directory, i);
+#else
 		sprintf(filename, "%smatch%i.pdn", directory, i);
+#endif
 		printf("\nfile to open is %s", filename);
 		position_number = load_PDN(ep, filename);
 	}
@@ -345,6 +349,8 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 			}
 			movenumber++; 
 		}
+
+		//printf("\ngame %i with %i moves parsed", gamenumber, movenumber); 
 		
 		if (!error) {
 
@@ -376,8 +382,8 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 		//else
 		//	printf("\ngame %i is no duplicate", gamenumber); 
 	}
-	printf("\n%i positions stored, %i repetitions, %i endgames, %i captures, %i duplicates found", 
-		positions, repetitions, endgames, captures, duplicates);
+	printf("\n%i positions stored, %i games, %i repetitions, %i endgames, %i captures, %i duplicates found", 
+		positions, gamenumber, repetitions, endgames, captures, duplicates);
 	free(buffer); 
 	return positions;
 }

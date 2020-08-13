@@ -70,7 +70,7 @@ static int  norefresh;
 MOVE movestack[(MAXDEPTH + 10) * MAXMOVES];
 #endif
 
-
+//int ifs[100]; 
 
 #ifdef THREADSAFEHT
 CRITICAL_SECTION hash_access;		// is locked if a thread is accessing the hashtable
@@ -168,6 +168,9 @@ int initcake(char str[1024])
 
 	// create Cake folder in personal documents
 	//createCakeFolder(); 
+
+	/*for (int i = 0; i < 100; i++)
+		ifs[i] = 0;*/
 
 	return 1;
 	}
@@ -636,14 +639,31 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	/*		if reset!=0 cake++ will reset hashtables and repetition checklist
 	/*		reset==0 generally means that the normal course of the game was disturbed
 	// info currently has uses for its first 4 bits:
-	// info&1 means reset repcheck array
-	// info&2 means exact time level
-	// info&4 means increment time level
-	// info&8 means allscore search
+	// info & 1  means reset repcheck array
+	// info & 2  means exact time level
+	// info & 4  means increment time level
+	// info & 8  means allscore search
 	// info & 16 means increase aborttime to 10x search time (why??)
 	// info & 32 means reset hash table
+
+
 	/*
 	/*----------------------------------------------------------------------------*/
+
+
+	// ed's comments in his code:
+
+	/* If this board has more pieces than the previous board,
+	 * or this board represents a conversion move from the previous board,
+	 * or this board has the same color to move as the previous board,
+	 * then reset the list of game moves.
+	 */
+
+	 /* If the position is identical to the second most recent, then he must be researching the same
+	  * position as the last time in Analysis mode. Delete the last position and return.
+	  */
+
+	  /* In autoplay the position to search will be identical to last one. */
 
 	int d;
 	int value=0,lastvalue=0,n,i, guess;
@@ -713,7 +733,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 	resetsearchinfo(si);
 
-	// set "age" telling which hashentries can be overwritten.
+	// set "age" telling which hashentries can be overwritten (all those with different age)
 	age = (age + 1) % 4; 
 	si->age = age; 
 
@@ -848,10 +868,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 		//	logtofile(fp, "\n******very different position found, assuming new game");
 		newgamestarts++;
 		//printf("\nhash reset"); 
-#ifndef NOHASHRESET
-		//if(p->color == BLACK)
-		//memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
-#endif
+
 		/*if ((newgamestarts % 500) == 0) {
 			logtofile(fp, "\nclearing hashtable due to game number");
 			memset(hashtable, 0, (hashsize + HASHITER) * sizeof(HASHENTRY));
@@ -1042,7 +1059,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			norefresh = 1;
 			}		// end of for depth move
 		}
-	// TODO: remove this, only used for eval improvement.
+
 	si->value = value; 
 	if (log & 2)
 		printf("\n%s", si->out); 
@@ -1382,9 +1399,9 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 	int32 forcefirst=0;
 	int32 Lkiller=0;
 	MOVE tmpmove;
-	int refnodes[MAXMOVES];		//TODO: looks superfluous	/* number of nodes searched to refute a move */
+	int refnodes[MAXMOVES];		/* number of nodes searched to refute a move; used to order move list */
 	int statvalues[MAXMOVES];	
-	int tmpnodes;				// TODO: looks superfluous
+	int tmpnodes;				
 	int bestindex=0;
 	HASH localhash;
 
@@ -1394,9 +1411,6 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 
 	assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
 
-
-	// TODO: will static position last work here? and static movelist??
-	// probably i need to make a movelist in mtdf and send it to firstnegamax!
 
 	for(i=0;i<MAXMOVES;i++)
 		refnodes[i] = 0;
@@ -1446,7 +1460,6 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 #endif
 		tmpnodes = si->negamax;
 		/********************recursion********************/
-		//value = -negamax(si, p,d-FRAC,-beta, &Lkiller, &forcefirst, 0,0,0);
 		assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
 
 #ifdef LATEMOVEREDUCTIONROOT
@@ -1589,12 +1602,6 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 
 	// TODOTODO: no, if we have no moves, we should check for squeezes
 
-	/*if(n==0)
-		{
-		si->qsearchfail++;
-		return maxvalue;
-		}*/
-
 
 	if (n > 0) {
 		// now do recursion over all moves. note that we either have a capture, then we certainly
@@ -1607,7 +1614,6 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 		for (i = 0; i < n; i++)
 		{
 			domove(q, p, movelist[i]);
-			//q.color = p->color ^CC;
 
 			// could assert testcapture here
 			// TODO: why can this assert fail?
@@ -2157,7 +2163,21 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 
 #ifdef IITERD // TODO: if we do the dblookup first, then we haven't counted the pieces properly?!
 #ifdef USEDB
-	if (forcefirst == MAXMOVES - 1 && d > IIDDEPTH && si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
+	/*
+	if (forcefirst == MAXMOVES - 1)
+		ifs[0]++; 
+	if (d > IIDDEPTH)
+		ifs[1]++; 
+	if (si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
+		ifs[2]++;
+
+		ifs[0]: 611963291
+		ifs[1]: 8515074
+		ifs[2]: 600260589
+		*/
+
+	//if (forcefirst == MAXMOVES - 1 && d > IIDDEPTH && si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
+	if (d > IIDDEPTH && forcefirst == MAXMOVES - 1  && si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
 #else
 	if (forcefirst == MAXMOVES - 1 && d > IIDDEPTH)
 #endif
@@ -2177,6 +2197,8 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	// get info on capture by opponent (if there is a capture on the board, then the database
 	// contains no valid data
 // NOTE TODO do we need this here yet? delay evaluation?
+
+	// TODO: put this if in the else below!
 	if(!stmcapture)	// NOTE: if we have no capture and opp has one we don't see it!
 		{
 		p->color ^= CC;
@@ -2258,9 +2280,9 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	ispvnode=0;
 #endif
 #ifdef EXTENDPV
-	// todo: maybe it's a tiny bit faster to do d+=EXTENDPVDEPTH*ispvnode?
+	// TODO: maybe it's a tiny bit faster to do d+=EXTENDPVDEPTH*ispvnode?
 	if (ispvnode)
-	{d += EXTENDPVDEPTH;/*printf("*");*/}     // extension by half a ply
+		{d += EXTENDPVDEPTH;/*printf("*");*/}     // extension by half a ply
 #endif
 
 	/*-----------------------------------------------------
@@ -2277,6 +2299,16 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	
 	// TODO: there used to be &!sntmcapture here - good or not?
 	
+	/*
+	if (!stmcapture)
+		ifs[4]++; 
+	if (!isdbpos)
+		ifs[5]++; 
+	if (!ispvnode)
+		ifs[6]++; 
+		ifs[4]: 369847505
+ifs[5]: 619939913
+ifs[6]: 648698573*/
 	if(!stmcapture & !isdbpos & !ispvnode)
 		{
 		// only get evaluation here if we don't have it already!
@@ -2306,6 +2338,18 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 
 	
 #ifdef SAFE
+	/*
+	if (!stmcapture)
+		ifs[7]++; 
+	if (localeval > alpha)
+		ifs[8]++; 
+	if (p->bk + p->wk == 0)
+		ifs[9]++; 
+		ifs[7]: 369847505
+ifs[8]: 453057992
+ifs[9]: 382939399
+*/
+
 	if((!stmcapture) & (localeval > alpha) & ((p->bk+p->wk)==0))
 		safemovenum = safemoves(p);
 #endif // SAFE
@@ -2322,10 +2366,38 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	// TODO take this if and the next if together - they both need !stmcapture && safemovnum > SAFEMOVENUM
 	// TODO: !iid should also be here, right? because the point of having iid is to generate a best move, and if
 	// we return here we don't get a best move
+	/*
+	if (!iid)
+		ifs[10]++; 
+	if (!ispvnode)
+		ifs[11]++; 
+	if (!stmcapture)
+		ifs[12]++; 
+	if (!sntmcapture)
+		ifs[13]++; 
+	if (safemovenum > SAFEMOVENUM)
+		ifs[14]++; 
+	if (originaldepth < 10 * FRAC)
+		ifs[15]++; 
+	if (localeval - 40 - (max(originaldepth, 0)) * 2 > alpha)
+		ifs[16]++; 
+	if (localeval != MATE)
+		ifs[17]++; 
+		ifs[10]: 648756494
+		ifs[11]: 648698573
+		ifs[12]: 369847505
+		ifs[13]: 588609816
+		ifs[14]: 642778444
+		ifs[15]: 648436520
+		ifs[16]: 361701578
+		ifs[17]: 355706825
+*/
 
-	if (!iid && !ispvnode && !stmcapture && !sntmcapture && safemovenum > SAFEMOVENUM && originaldepth < 10 * FRAC &&
-		(localeval - 40 - (max(originaldepth, 0)) * 2 > alpha) && localeval != MATE) {
-		//futile = 1; 
+	//if (!iid && !ispvnode && !stmcapture && !sntmcapture && safemovenum > SAFEMOVENUM && originaldepth < 10 * FRAC &&
+	//	(localeval - 40 - (max(originaldepth, 0)) * 2 > alpha) && localeval != MATE) {
+	if (!stmcapture && localeval != MATE && !sntmcapture  && !iid && !ispvnode && safemovenum > SAFEMOVENUM && originaldepth < 10 * FRAC &&
+		(localeval - 40 - (max(originaldepth, 0)) * 2 > alpha)) {
+			//futile = 1; 
 		//printf("!"); 
 		return localeval;
 	}
@@ -2337,6 +2409,17 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	// depth must be <=0, and sidetomove has no capture  //
 	//---------------------------------------------------//
 
+	/*
+	if (d <= 0)
+		ifs[18]++; 
+	if (!stmcapture)
+		ifs[19]++; 
+	if (safemovenum > SAFEMOVENUM)
+		ifs[20]++; 
+		ifs[18]: 427980362
+ifs[19]: 311624538
+ifs[20]: 584555477
+*/
 	if((d<=0) & (!stmcapture) & (!iid) & (safemovenum >SAFEMOVENUM)) // // TODO: safemovenum computation has changed, need to revisit "2"
 		{
 		// normally, we'd be stopping here, but if the side to move "has something", we shouldn't do this

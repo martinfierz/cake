@@ -53,6 +53,7 @@ main()
 	double time2=0;
 	extern int usethebook; // from cakepp.c
 	extern char DBpath[256]; // from dblookup.c
+	//extern int ifs[100]; // from cakepp.c
 	//char *c;
 
 	SEARCHINFO si;
@@ -283,6 +284,9 @@ main()
 	
 	for(i=0; i<n; i++)
 		fprintf(fp2,"\n%i,%i",newnodes[i][0],newnodes[i][1]);
+
+	//for (i = 0; i <= 20; i++)
+	//	printf("\nifs[%i]: %i", i, ifs[i]); 
 
 	fclose(fp2);   
 	fclose(fp3);

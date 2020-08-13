@@ -127,6 +127,7 @@ typedef struct
 	int32 wk;
 	int color;
 	int value; 
+	int searchvalue; 
 	int staticeval; 
 #ifdef AVERAGE
 	//float gameresult; 

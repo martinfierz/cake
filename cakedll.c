@@ -12,7 +12,7 @@
 #include "initcake.h"
 
 /* ---------------------> exported functions ----------------------------------------------------*/
-int	WINAPI getmove(int b[8][8],int color, double maxtime, char str[255], int *playnow, int info, int unused, struct CBmove *move);
+int	WINAPI getmove(int b[8][8],int color, double maxtime, char str[1024], int *playnow, int info, int unused, struct CBmove *move);
 int	WINAPI enginecommand(char command[256], char reply[256]);
 
 /* -------------------->end exported functions --------------------------------------------------*/
@@ -390,9 +390,10 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		interrupting your search IMMEDIATELY. */
 
 		// info currently has uses for its first 3 bits:
-		// info&1 means reset
-		// info&2 means exact time level
-		// info&4 means increment time level
+		// info & 1 means reset
+		// info & 2 means exact time level
+		// info & 4 means increment time level
+		// info & 8 means all score search
 		POSITION p;
 		int value;
 		int how=0;

@@ -3,16 +3,22 @@
 #pragma warning( once : 4996 )
 #pragma warning( once : 4133 )  // once instead of disable is maybe better
 
+#undef CAKE185
+
 #ifdef _WIN64 
 //#define VERSION "1.86 RC0 (5500k-log)"
 //#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.88d"   //(376.12M) LMR2"
+#define VERSION "1.88_BR3d128"   //(376.12M) LMR2"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
 #endif
 
-#undef BRTHREE  // use three rows for back rank computation, if not defined then only 2
+#ifdef CAKE185
+#define VERSION "as 1.85"
+#endif
+
+#define BRTHREE  // use three rows for back rank computation, if not defined then only 2
 
 #ifdef BRTHREE
 #define BRNUM 4096
@@ -114,7 +120,7 @@
 #define CLDEPTH 5					// if depth < CLDEPTH // 5
 
 #define HASHSIZE 0x01000000			// 128 MB default hashtable size  
-//#define HASHSIZE 0x00040000			// 4 MB default hashtable size
+//#define HASHSIZE 0x00010000			// 4 MB default hashtable size
 
 #define HASHITER 4					// 4 probes in the hashtable
 

@@ -177,8 +177,8 @@ main()
 			v0 = evaluation(&p, &mc, 0, &delta, 0, 0);
 
 			//qsvalue = qsearch(&si, &p, v0, v0 + 50, 0);
-
-			cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 0, 0);
+			//cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 0, 0);
+			cake_getmove(&si, &p, 1, 1, 9, 10000, str, &play, 0, 0);
 			v1 = si.value; 
 			//printf("\nd1 %s", si.out);
 

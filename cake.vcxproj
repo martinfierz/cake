@@ -290,6 +290,7 @@
     <ClCompile Include="cakedll.c" />
     <ClCompile Include="cakepp.c" />
     <ClCompile Include="cake_book.c" />
+    <ClCompile Include="cake_eval_185.c" />
     <ClCompile Include="cake_eval_parametrized.c" />
     <ClCompile Include="cake_learn.c" />
     <ClCompile Include="cake_misc.c" />

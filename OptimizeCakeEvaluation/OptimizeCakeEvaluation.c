@@ -292,10 +292,10 @@ int main()
 		sprintf(strs[j + 4096 - 256], "%s", strs[j]); 
 	for (j = 0; j < 4096; j++)
 		sprintf(strs[j + i -256], "br%i", j); 
-	for (i = 0; i < PARAMS; i++)
-		printf("\n%i %s", i, strs[i]); 
-	getch(); 
-	exit(0); 
+	//for (i = 0; i < PARAMS; i++)
+	//	printf("\n%i %s", i, strs[i]); 
+	//getch(); 
+	//exit(0); 
 
 #endif
 
@@ -397,6 +397,7 @@ int main()
 				cur->wk = wk;
 				cur->color = color;
 				cur->value = v3;
+				cur->searchvalue = v1; // value from a deeper search, currently 9 ply
 #ifdef AVERAGE
 				//cur->gameresult = (float)points / (float)(2 * games); 
 				//cur->gamenum = games; 
@@ -535,8 +536,8 @@ int main()
 	optimalparams(); 
 #ifdef ZERO
 	zeroparams(); 
-	for (i = 0; i < PARAMS; i++)
-		params[i] = 0; 
+	//for (i = 0; i < PARAMS; i++)
+	//	params[i] = 0; 
 	setparams(params, paramnum);
 	updateeval();
 #endif
@@ -556,10 +557,10 @@ int main()
 	updateeval();
 	
 	getparams(params, &paramnum);
-	for (i = 0; i < PARAMS; i++) {
+	/*for (i = 0; i < PARAMS; i++) {
 		printf("\nparam %i: %i", i, params[i]); 
 	}
-	getch(); 
+	getch(); */
 	for (i = 0; i < n; i++) 
 		error_MT[i] = 0;
 	minerror = calc_error_MT(n, ep, c);
@@ -571,7 +572,7 @@ int main()
 
 	//setparams(params, paramnum);
 	//updateeval();
-	if (0) {
+	if (1) {
 		minerror = calc_error(n, ep, c);
 		printf("\nerror after setting all parameters is %.10f (ST)", minerror);
 	}
@@ -607,6 +608,7 @@ int main()
 
 	activate_all(); 
 
+	//minerror = 1; 
 	while (iterations < 1000) {
 		changed = 0;
 		sameadjust = 0; 
@@ -625,7 +627,7 @@ int main()
 			printf("\nparameter %i:%i", j, oldparam);
 			// 1. try going in positive direction
 			adjust = 0; 
-			while (adjust < 3) {
+			while (adjust < 5) {
 				params[j] = params[j]+1; 
 				setparams(params, paramnum); 
 				updateeval(); 
@@ -644,7 +646,7 @@ int main()
 
 			// 2. if param was not adjusted in positive direction, try negative direction
 			if (!adjust) {
-				while (adjust < 3) {
+				while (adjust < 5) {
 					params[j] --;
 					setparams(params, paramnum);
 					updateeval();
@@ -742,6 +744,17 @@ int main()
 }
 
 int activate_all() {
+
+	for (int i = 0; i < 7; i++)
+		active_set[i] = 1; 
+
+	for (int i = 0; i < BRNUM; i++) {
+		active_set[arraystart + 13 + i] = 1;
+	}
+
+
+	//return 0; 
+
 	for (int i = 0; i < PARAMS; i++)
 		active_set[i] = 1;
 	return 0; 
@@ -880,49 +893,51 @@ unsigned __stdcall subThread(void* pArguments)
 		if (threadinfo->ep[i].color == WHITE)
 			staticeval = -staticeval; // now staticeval is as seen from black's point of view
 #ifdef AVERAGE
-		//res = 2 * threadinfo->ep[i].gameresult - 1; // 0 means black lost nearly all, 1 means black won nearly all
-
-		//res = ((float)threadinfo->ep[i].wins + ((float)threadinfo->ep[i].draws)*0.5) / ((float)(threadinfo->ep[i].wins + threadinfo->ep[i].draws + threadinfo->ep[i].losses));
+#ifdef OPTIMIZE_SEARCHEVAL
+		res = threadinfo->ep[i].searchvalue;
+		if (threadinfo->ep[i].color == WHITE)
+			res = -res; // now staticeval is as seen from black's point of view
+		res = sigmoid(res, c);
+		error = (res - sigmoid(staticeval, c));
+		error = error * error;
+		error *= (threadinfo->ep[i].wins + threadinfo->ep[i].draws + threadinfo->ep[i].losses); 
+		threadinfo->errorsum += error; 
+		error_MT[i] = error; 
+#else
 		s = sigmoid(staticeval, c); 
 		error = (1 - s);
 		error = error * error; 
 		sum = error * threadinfo->ep[i].wins; 
-		//if (games > 100) {
-		//	printf("\n%i games, %i wins, %i staticeval, %.3f error", games, threadinfo->ep[i].wins, staticeval, error); 
-		//}
-
+		
 		error = (0 - s);
 		error = error * error;
 		sum += error * threadinfo->ep[i].draws;
-		//if (games > 100) {
-		//	printf("\n%i games, %i draws, %i staticeval, %.3f error", games, threadinfo->ep[i].draws, staticeval, error);
-		//}
-
+		
 		error = (-1 - s);
 		error = error * error;
 		sum += error * threadinfo->ep[i].losses;
 		threadinfo->errorsum  += sum;
 		error_MT[i] = sum;
+#endif
 
-		/*if (games > 100) {
-			printf("\n%i games, %i losses, %i staticeval, %.3f error", games, threadinfo->ep[i].losses, staticeval, error);
-			printf("\ntotal error for this position %.3f", sum);
-			printboard(&p); 
-			getch();
-		}*/
 
-		//printf("\nerrorsum %.8f", errorsum); 
-		//getch(); 
 
 
 #else
 		res = result_translated[threadinfo->ep[i].gameresult];
+
+
+#ifdef OPTIMIZE_SEARCHEVAL
+		res = threadinfo->ep[i].searchvalue;
+		if (threadinfo->ep[i].color == WHITE)
+			res = -res; // now staticeval is as seen from black's point of view
+		res = sigmoid(res, c);
+#endif
 		// res is game result as seen from black's point of view (1 = win, 0 = draw, -1 = loss)
 		error = (res - sigmoid(staticeval, c));
 
-
-
 		error = error * error;
+		printf("\nerror is %f", error);
 		errorsum += error;
 		error_MT[i] = error;
 
@@ -1096,8 +1111,20 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 		if (ep[i].color == WHITE)
 			staticeval = -staticeval; // now staticeval is as seen from black's point of view
 #ifdef AVERAGE
-		//res = 2*ep[i].gameresult-1; // 0 means black lost nearly all, 1 means black won nearly all
-		//res = ((double)ep[i].wins + ((double)ep[i].draws) * 0.5) / ((double)(ep[i].wins + ep[i].draws + ep[i].losses));
+#ifdef OPTIMIZE_SEARCHEVAL
+
+		res = ep[i].searchvalue;
+		if (ep[i].color == WHITE)
+			res = -res; // now staticeval is as seen from black's point of view
+		res = sigmoid(res, c);
+		error = (res - sigmoid(staticeval, c));
+		error = error * error;
+		error *= (ep[i].wins + ep[i].draws + ep[i].losses);
+		errorsum += error; 
+		error_ST[i] = error;
+		num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+#else
 		num += (ep[i].wins + ep[i].draws + ep[i].losses);
 		error = (1 - sigmoid(staticeval, c));
 		error = error * error;
@@ -1113,9 +1140,17 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 
 		errorsum += sum;
 		error_ST[i] = sum;
+#endif
 #else
 		// res is game result as seen from black's point of view (1 = win, 0 = draw, -1 = loss
 		res = result_translated[ep[i].gameresult];
+
+#ifdef OPTIMIZE_SEARCHEVAL
+		res = ep[i].searchvalue; 
+		if (ep[i].color == WHITE)
+			res = -res; // now staticeval is as seen from black's point of view
+		res = sigmoid(res, c); 
+#endif
 		error = (res - sigmoid(staticeval, c));
 		error = error * error;
 		errorsum += error;
