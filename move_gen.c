@@ -1252,7 +1252,6 @@ int makeSqueezemovelist(POSITION* p, MOVE* movelist) {
 	int n = 0;
 
 	// notes to self: ~EDGE seems wrong - pieces moving from back rank can also make a squeeze!
-
 	if (p->color == BLACK) {
 		// find black men  that can move right forward and squeeze a white man!
 
@@ -1557,8 +1556,374 @@ int makeSqueezemovelist(POSITION* p, MOVE* movelist) {
 
 #endif // QSEARCH
 
+#ifdef CHECKDANGER
+int checkblacksqueeze(POSITION* p) {
+    int32 occupied = p->bm | p->bk | p->wm | p->wk;
+    int32 free = ~occupied;
+    int32 black = p->bm | p->bk;
+    int32 white = p->wm | p->wk;
+    int32 squeeze;
+    
+    // notes to self: ~EDGE seems wrong - pieces moving from back rank can also make a squeeze!
+    // find black men  that can move right forward and squeeze a white man!
+    squeeze = (p->bm) & (~EDGE | SQ1 | SQ2 | SQ3) & leftbackward(free) & ((twoleftbackward(~white) & (occupied >> 1)) | ROW7) &
+            (black << 1 | rightbackward(occupied)) & twobackward(p->wm) &
+            twobackward(rightbackward(free)) &
+            ~twobackward(twobackward(white)) & ~tworightbackward(twobackward(white));
+
+    if (squeeze)
+        return 1; 
 
 
+    // find black men or kings that can move left forward and squeeze a white man!
+    squeeze = p->bm & (~EDGE | SQ1 | SQ2 | SQ3) & rightbackward(free) & ((tworightbackward(~white) & (occupied << 1)) | ROW2) &
+        (black >> 1 | leftbackward(occupied)) & twobackward(p->wm) &
+        twobackward(leftbackward(free)) &
+        ~twobackward(twobackward(white)) & ~twoleftbackward(twobackward(white));
+
+    if (squeeze)
+        return 1; 
+    // squeeze left forward
+    
+    // find black kings moving left backwards that fork two men
+    squeeze = p->bk & rightforward(free) & twoforward(p->wm) & tworightforward(p->wm) &
+        tworightforward(rightforward(free)) & twoforward(leftforward(free));
+
+    if (squeeze)
+        return 1; 
+            
+    // find black kings moving right backwards that fork two men
+    squeeze = p->bk & leftforward(free) & twoforward(p->wm) & twoleftforward(p->wm) &
+        twoleftforward(leftforward(free)) & twoforward(rightforward(free));
+
+    if (squeeze)
+        return 1;           
+    return 0; 
+}
+
+int checkwhitesqueeze(POSITION* p) {
+    int32 occupied = p->bm | p->bk | p->wm | p->wk;
+    int32 free = ~occupied;
+    int32 black = p->bm | p->bk;
+    int32 white = p->wm | p->wk;
+    int32 squeeze;
+
+    squeeze = (p->wm) & (~EDGE | SQ32 | SQ31 | SQ30) & leftforward(free) & ((twoleftforward(~black) & (occupied >> 1)) | ROW7) &
+        (white << 1 | rightforward(occupied)) & twoforward(p->bm) &
+        twoforward(rightforward(free)) &
+        ~twoforward(twoforward(black)) & ~tworightforward(twoforward(black));
+    if (squeeze)
+        return 1; 
+
+    squeeze = (p->wm) & (~EDGE | SQ30 | SQ31 | SQ32) & rightforward(free) & ((tworightforward(~black) & (occupied << 1)) | ROW2) &
+        (white >> 1 | leftforward(occupied)) & twoforward(p->bm) &
+        twoforward(leftforward(free)) &
+        ~twoforward(twoforward(black)) & ~twoleftforward(twoforward(black));
+
+    if (squeeze)
+        return 1; 
+    // find white kings moving left forward that fork two men
+    squeeze = p->wk & rightbackward(free) & twobackward(p->bm) & tworightbackward(p->bm) &
+        tworightbackward(rightbackward(free)) & twobackward(leftbackward(free));
+    if (squeeze)
+        return 1; 
+    // find white kings moving right forward that fork two men
+    squeeze = p->wk & leftbackward(free) & twobackward(p->bm) & twoleftbackward(p->bm) &
+        twoleftbackward(leftbackward(free)) & twobackward(rightbackward(free));
+
+    if (squeeze)
+        return 1; 
+    return 0; 
+}
+
+int checkblackshots(POSITION* p) {
+    int32 n = 0, free;
+    int32 tmp;
+    int32 captures, shots = 0;
+
+    free = ~(p->bm | p->bk | p->wm | p->wk);
+
+    // generate only moves that could be shots, no other moves!
+    // right forward potential shots
+    // find the following  2 patterns sort of simultaneously:
+    // the first 5 items from downside are the same, first
+    // detect these, then still the 2 different ends above
+    // 
+    //          fr        fr
+    //        wm            wm
+    //      wm                wm
+    //    fr  wm            fr  wm
+    //  b  --   b         b       b
+    captures = p->bm & leftbackward(free);
+    tmp = leftbackward(p->wm);
+    captures &= left(tmp);
+
+    tmp = leftbackward(tmp);
+    captures &= tmp;
+    captures &= left(left(p->bm | p->bk));
+    // now captures contains the 5-stone pattern
+    // tmp is set to the white man at the top of the 5-stone pyramid
+    // now get pattern on the left:
+    shots |= captures & leftbackward(tmp) & twoleftbackward(twoleftbackward(free));
+    // and now pattern on the right
+    shots |= captures & rightbackward(tmp) & fourbackward(free);
+
+    if (shots)
+        return 1; 
+
+    // add more right-forward moving shots here
+
+    // next patterns:
+    //      fr 
+    //    wm  wm
+    //  fr  fr  ?
+    //    bm  ?
+    //      bm
+    //    ?   oc
+    captures = p->bm & leftbackward(free); // move right forward
+    tmp = leftbackward(p->wm);
+    captures &= (leftbackward(tmp) & rightbackward(tmp)); // the two white men there
+    captures &= leftforward(p->bm | p->bk);
+    captures &= leftbackward(twobackward(free));
+    captures &= rightbackward(free);
+    captures &= (twoleftforward(~free) | RANK1 | RANK2);
+    shots |= captures;
+    if (shots)
+        return 1; 
+    //fr       
+    //  w  nw   w
+    //    fr  fr  
+    //      bm  oc-if-nw-is-w 
+    //        b
+    //          oc
+    captures = p->bm & leftbackward(free); // move right forward
+    tmp = rightbackward(free);
+    captures &= tmp;
+    captures &= tworightbackward(tmp);
+    captures &= leftbackward(leftbackward(p->wm | p->wk));
+    captures &= rightbackward(rightbackward(p->wm | p->wk));
+    // last but not least: the nw part
+    captures &= (twobackward(~(p->wm | p->wk)) | left(~free));
+    captures &= leftforward(p->bm | p->bk);
+
+    captures &= (twoleftforward(~free) | RANK1 | RANK2);
+    shots |= captures;
+
+    if (shots)
+        return 1; 
+
+    // left forward moving shots
+    // find the following  2 patterns sort of simultaneously:
+    // the first 5 items from downside are the same, first
+    // detect these, then still the 2 different ends above
+    // 
+    //  fr                        fr
+    //    wm                    wm
+    //      wm                wm
+    //    wm  fr            wm  fr
+    //  b  --   b         b       b
+    captures = p->bm & rightbackward(free);
+    tmp = rightbackward(p->wm);
+    captures &= right(tmp);
+    tmp = rightbackward(tmp);
+    captures &= tmp;
+    captures &= right(right(p->bm | p->bk));
+    // now captures contains the 5-stone pattern
+    // tmp is set to the white man at the top of the 5-stone pyramid
+    // now get pattern on the left:
+    shots |= captures & rightbackward(tmp) & tworightbackward(tworightbackward(free));
+    // and now pattern on the right
+    //shots |= captures & leftbackward(tmp) & leftbackward(leftbackward(rightbackward(rightbackward(free))));
+    shots |= captures & leftbackward(tmp) & fourbackward(free);
+
+    if (shots)
+        return 1; 
+    // add more left-forward moving shots here
+            // next patterns:
+    //      fr 
+    //    wm  wm
+    //  ?   fr   fr
+    //    ?   bm
+    //      bm
+    //    oc   ?
+    captures = p->bm & rightbackward(free); // move left forward
+    tmp = rightbackward(p->wm);
+    captures &= (leftbackward(tmp) & rightbackward(tmp)); // the two white men there
+    captures &= rightforward(p->bm | p->bk);
+    captures &= twobackward(rightbackward(free));
+    captures &= leftbackward(free);
+    captures &= (tworightforward(~free) | RANK1 | RANK2);
+    shots |= captures;
+
+    if (shots)
+        return 1; 
+    //             fr
+    //  w  nw?   w
+    //    fr  fr  
+    //  oc? bm  
+    //    b
+    //  oc
+    captures = p->bm & rightbackward(free); // move right forward
+    tmp = leftbackward(free);
+    captures &= tmp;
+    captures &= twoleftbackward(tmp);
+    captures &= tworightbackward(p->wm | p->wk);
+    captures &= twoleftbackward(p->wm | p->wk);
+    // last but not least: the nw part
+    captures &= (twobackward(~(p->wm | p->wk)) | right(~free));
+    captures &= rightforward(p->bm | p->bk);
+
+    captures &= (tworightforward(~free) | RANK1 | RANK2);
+    shots |= captures;
+    if (shots)
+        return 1; 
+    return 0; 
+}
+
+int checkwhiteshots(POSITION* p) {
+    int32 n = 0, free;
+    int32 tmp;
+    int32 captures, shots = 0;
+
+    free = ~(p->bm | p->bk | p->wm | p->wk);
+
+    captures = p->wm & leftforward(free);
+    tmp = leftforward(p->bm);
+    captures &= left(tmp);
+    tmp = leftforward(tmp);
+    captures &= tmp;
+    //captures &= leftbackward(leftforward(leftbackward(leftforward(p->wm|p->wk))));
+    captures &= left(left(p->wm | p->wk));
+
+        // captures now contains the 5-man pyramid that is the same in both
+        // cases. tmp is lf(lf(p->bm)) now find the left pattern:
+    shots |= captures & leftforward(tmp) & twoleftforward(twoleftforward(free));
+    // and the right pattern
+    shots |= captures & rightforward(tmp) & fourforward(free);
+
+    if (shots)
+        return 1; 
+    // next patterns:
+    //         ?  oc
+    //          w 
+    //       wm      
+    //     fr  fr 
+    //       bm  bm
+    //         fr
+    //  
+    captures = p->wm & leftforward(free); // move right backward
+    tmp = leftforward(p->bm);
+    captures &= (leftforward(tmp) & rightforward(tmp)); // the two black men there
+    captures &= leftbackward(p->wm | p->wk);
+    captures &= leftforward(twoforward(free));
+    captures &= rightforward(free);
+    captures &= (twoleftbackward(~free) | RANK7 | RANK8);
+    shots |= captures;
+
+    if (shots)
+        return 1; 
+
+    //fr       
+    //  w  nw   w
+    //    fr  fr  
+    //      bm  oc-if-nw-is-w 
+    //        b
+    //          oc
+
+
+    //          oc
+    //        w
+    //      wm  oc-if-nb
+    //    fr  fr
+    //   b  nb  b
+    // fr
+
+    captures = p->wm & leftforward(free); // move right backward
+    tmp = rightforward(free);
+    captures &= tmp;
+    captures &= tworightforward(tmp);
+    captures &= twoleftforward(p->bm | p->bk);
+    captures &= tworightforward(p->bm | p->bk);
+    // last but not least: the nw part
+    captures &= (twoforward(~(p->bm | p->bk)) | left(~free));
+    captures &= leftbackward(p->wm | p->wk);
+
+    captures &= (twoleftbackward(~free) | RANK7 | RANK8);
+    shots |= captures;
+
+    if (shots)
+        return 1; 
+
+    // add left-forward moving shots:
+    // find the following 2 patterns simultaneously:
+    // 
+    //  fr                   fr
+    //    wm               wm
+    //      wm           wm
+    //    wm  fr       wm  fr
+    //  bm  --  bm   bm      bm
+
+    captures = p->wm & rightforward(free);
+    tmp = rightforward(p->bm);
+    captures &= right(tmp);
+    tmp = rightforward(tmp);
+    captures &= tmp;
+    captures &= right(right(p->wm | p->wk));
+    // captures now contains the 5-man pyramid that is the same in both
+    // cases. tmp is rf(rf(p->bm)) now find the left pattern:
+    shots |= captures & rightforward(tmp) & tworightforward(tworightforward(free));
+    // and the right pattern
+    //shots |= captures & leftforward(tmp) & twoleftforward(tworightforward(free));
+    shots |= captures & leftforward(tmp) & fourforward(free);
+
+    if (shots)
+        return 1; 
+
+    // next pattern:
+    //        oc  ?
+    //          w 
+    //           wm  
+    //         fr  fr
+    //       bm  bm
+    //         fr
+    //  
+    captures = p->wm & rightforward(free); // move left backward
+    tmp = rightforward(p->bm);
+    captures &= (rightforward(tmp) & leftforward(tmp)); // the two black men there
+    captures &= rightbackward(p->wm | p->wk);
+    captures &= rightforward(twoforward(free));
+    captures &= leftforward(free);
+    captures &= (tworightbackward(~free) | RANK7 | RANK8);
+    shots |= captures;
+    if (shots)
+        return 1; 
+    //          oc
+    //        w
+    //      wm  oc-if-nb
+    //    fr  fr
+    //   b  nb  b
+    // fr
+
+    captures = p->wm & rightforward(free); // move left backward
+    tmp = leftforward(free);
+    captures &= tmp;
+    captures &= twoleftforward(tmp);
+    captures &= tworightforward(p->bm | p->bk);
+    captures &= twoleftforward(p->bm | p->bk);
+    // last but not least: the nw part
+    captures &= (twoforward(~(p->bm | p->bk)) | right(~free));
+    captures &= rightbackward(p->wm | p->wk);
+
+    captures &= (tworightbackward(~free) | RANK7 | RANK8);
+    shots |= captures;
+
+    if (shots)
+        return 1; 
+    return 0;
+
+}
+
+#endif
 /******************************************************************************/
 /* capture list */
 /******************************************************************************/
@@ -1899,6 +2264,42 @@ int makecapturelist(POSITION *p,MOVE movelist[MAXMOVES],int values[MAXMOVES], in
 #ifdef MOHASH
       values[bestindex] += HASHMOVE;
 #endif
+      if (n > 1) {
+         // printf("!"); 
+          for (m = 0; m < n; m++) {
+#ifdef MOTESTCAPT
+              /* toggle move */
+              p->bm ^= movelist[m].bm;
+              p->bk ^= movelist[m].bk;
+              p->wm ^= movelist[m].wm;
+              p->wk ^= movelist[m].wk;
+
+              p->color ^= CC;
+              if (testcapture(p))
+                  values[m] -= 5;
+#ifdef MOTESTCAPT2
+              else
+              {
+                  p->color ^= CC;
+                  if (testcapture(p))
+                      values[m] += 5;
+                  p->color ^= CC;
+              }
+              /* toggle move */
+#endif
+              p->bm ^= movelist[m].bm;
+              p->bk ^= movelist[m].bk;
+
+              p->wm ^= movelist[m].wm;
+              p->wk ^= movelist[m].wk;
+              p->color ^= CC;
+#endif
+             // values[i] += eval;
+          }
+              //values[m] -= bitcount(movelist[m].wk | movelist[m].wm);
+              //printf("\n%i", bitcount(movelist[m].wk | movelist[m].wm)); 
+          //}
+      }
 
 		
 		return n;
@@ -2190,7 +2591,44 @@ int makecapturelist(POSITION *p,MOVE movelist[MAXMOVES],int values[MAXMOVES], in
 #ifdef MOHASH
       values[bestindex] += HASHMOVE;
 #endif
-		return n;
+	
+      if (n > 1) {
+          // printf("!"); 
+          for (m = 0; m < n; m++) {
+#ifdef MOTESTCAPT
+              /* toggle move */
+              p->bm ^= movelist[m].bm;
+              p->bk ^= movelist[m].bk;
+              p->wm ^= movelist[m].wm;
+              p->wk ^= movelist[m].wk;
+
+              p->color ^= CC;
+              if (testcapture(p))
+                  values[m] -= 5;
+#ifdef MOTESTCAPT2
+              else
+              {
+                  p->color ^= CC;
+                  if (testcapture(p))
+                      values[m] += 5;
+                  p->color ^= CC;
+              }
+              /* toggle move */
+#endif
+              p->bm ^= movelist[m].bm;
+              p->bk ^= movelist[m].bk;
+
+              p->wm ^= movelist[m].wm;
+              p->wk ^= movelist[m].wk;
+              p->color ^= CC;
+#endif
+              // values[i] += eval;
+          }
+
+      }
+      
+      
+      return n;
       }
    }
 

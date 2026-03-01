@@ -10,6 +10,10 @@
 #include "consts.h"
 #include "dblookup.h"
 #include "initcake.h"
+#include "cake_misc.h"
+#ifdef USE_KR_DB
+#include "egdb.h"
+#endif
 
 /* ---------------------> exported functions ----------------------------------------------------*/
 int	WINAPI getmove(int b[8][8],int color, double maxtime, char str[1024], int *playnow, int info, int unused, struct CBmove *move);
@@ -27,7 +31,7 @@ int staticevaluation(SEARCHINFO *si, EVALUATION *e, POSITION *p,int *total, int 
 extern int hashmegabytes;
 extern int dbmegabytes;
 extern int usethebook;
-extern char DBpath[256];  // from dblookup
+extern char DBpath[256];  // from cakepp.c
 
 static int cake_is_init=0;
 static int dll_is_init=0;
@@ -36,11 +40,17 @@ static int allscores = 0;
 // for detection of repetition draws
 
 static REPETITION repdetect[HISTORYOFFSET+2];
+SEARCHINFO si; 
+
 
 HINSTANCE hInst; /*instance of the dll */
 /*-------------- PART 1: dll stuff -------------------------------------------*/
 
 #define LOG 1
+
+#ifdef USE_KR_DB
+extern EGDB_DRIVER* handle;
+#endif
 
 BOOL __stdcall WINAPI DllMain (HANDLE hDLL, DWORD dwReason, LPVOID lpReserved)
 	{
@@ -48,11 +58,17 @@ BOOL __stdcall WINAPI DllMain (HANDLE hDLL, DWORD dwReason, LPVOID lpReserved)
         {
         case DLL_PROCESS_ATTACH:
             // initialize dll handle		
-			hInst=hDLL; 
+			hInst = (HINSTANCE)hDLL; 
 			break;
         case DLL_PROCESS_DETACH:
 			// this is called by freelibrary?!
+#ifdef USE_KR_DB
+			if(handle != NULL)
+				handle->close(handle); 
+#endif
+#ifdef USEDB
             exitcake();
+#endif
 			break;
         case DLL_THREAD_ATTACH:
 			// this would be called if a new thread of the same dll starts
@@ -68,13 +84,19 @@ BOOL __stdcall WINAPI DllMain (HANDLE hDLL, DWORD dwReason, LPVOID lpReserved)
     }
 
 
+
+
 int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 	{
 	char command[256],param1[256],param2[256];
 	char Lstr[1024];
-	extern int maxNdb;
+	extern int maxNdb;			// this is the number of pieces to use by Cake
 	extern int hashsize;
 	extern int bookmovenum;
+	extern int enable_wld;
+	extern int maxPiecesToUse;		
+	extern int maxPiecesInDB;
+	
 	char ETCstring[100]="",PVSstring[100]="",SEstring[100]="";
 	static char version[100];
 	HKEY hKey;
@@ -86,10 +108,14 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 	int total, material, positional;
 	int delta = 0;
 	int registry_error;
-	SEARCHINFO si;
+	//SEARCHINFO si;
 	EVALUATION e;
 	char *s;
 	int dbresult;
+	char* movestring;
+	const char split[2] = " ";
+	REPETITION dummy;
+	//char* stopstring;
 	//FILE* fp; 
 
 	if(!dll_is_init)
@@ -109,6 +135,9 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 				result=RegQueryValueEx(hKey,"All Scores",NULL,&datatype,(LPBYTE)&allscores,&datasize);
 				datasize = 256;
 				result=RegQueryValueEx(hKey,"DBpath",NULL,&datatype,(LPBYTE)DBpath,&datasize);
+				result = RegQueryValueEx(hKey, "Maxpieces", NULL, &datatype, (LPBYTE)&maxPiecesToUse, &datasize);
+				result = RegQueryValueEx(hKey, "Enable wld", NULL, &datatype, (LPBYTE)&enable_wld, &datasize);
+				
 				RegSetValueEx(hKey,"Version",0,REG_SZ,(LPBYTE)version,strlen(version)+1);
 				}
 			if(result == REG_CREATED_NEW_KEY)
@@ -157,10 +186,10 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(!cake_is_init)
 			{
-			sprintf(reply,"Cake %s\nJanuary 2020 by Martin Fierz\n\nEngine not initialized yet!",version);
+			sprintf(reply,"Cake %s\nJune 2021 by Martin Fierz\n\nEngine not initialized yet!",version);
 			return 1;
 			}
-		sprintf(reply,"Cake %s\nJanuary 2020 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,db_getcachesize()/1024,hashmegabytes);
+		sprintf(reply,"Cake %s\nJune 2021 by Martin Fierz\n\nUsing %i MB for database cache\nUsing %i MB for the hashtable\n\nCompile options:",version,dbmegabytes,hashmegabytes);
 #ifdef ETC
 		strcat(reply,"\n    - ETC");
 #endif
@@ -193,23 +222,32 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 		strcat(reply,"\n    - SPA");
 #endif
 
-		strcat(reply, "\n\noptimized with 8279k 135p"); 
+		strcat(reply, "\n\noptimized with 9 million positions and about 200'000 parameters"); 
 		// get book info
 		sprintf(Lstr,"\n\n%i moves in opening book",bookmovenum);
 		strcat(reply,Lstr);
 
 		// get endgame database info
-		sprintf(Lstr,"\n\nUsing %i-piece databases",maxNdb);
+		sprintf(Lstr,"\n\nFound %i-piece databases", maxPiecesInDB);
+		strcat(reply, Lstr); 
+		sprintf(Lstr, "\n\nUsing %i-piece databases", min(maxPiecesToUse, maxPiecesInDB));
 		strcat(reply,Lstr);
+#ifdef USEDB
 		db_infostring(Lstr);
 		strcat(reply, Lstr);
+#endif
+#ifdef USE_KR_DB
+		// use a different info string
+		
+#endif
+
 
 		return 1;
 		}
 
 	if(strcmp(command,"help")==0)
 		{
-		sprintf(reply,"cake188.htm");
+		sprintf(reply,"cake189.htm");
 		return 1;
 		}
 
@@ -219,8 +257,14 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 		boardtobitboard(board8,&p);
 		memset(&e, 0, sizeof(EVALUATION));
 		staticeval = staticevaluation(&si, &e, &p,&total,&material,&positional,&delta);
+#ifdef USEDB
 		dbresult = dblookup(&p, 0, &(si.matcount));
-		sprintf(reply, "evaluation from point of view of side to move is:\nTotal:\t%i\nMaterial:\t%i\nMen:\t%i\nBack Rank:\t%i\nRunaway:\t%i\nCramp:\t%i\nHold:\t%i\nKing:\t%i\nSelftrap:\t%i\nKing-Man:\t%i\nCompensation:\t%i\nDatabase:\t%i",staticeval, e.material, e.men, e.backrank, e.runaway, e.cramp, e.hold, e.king, e.selftrap, e.king_man, e.compensation, dbresult);
+#endif
+#ifdef USE_KR_DB
+		dbresult = handle->lookup(handle, (EGDB_BITBOARD *) &p, p.color & 1, 0);
+#endif
+		sprintf(reply, "evaluation from point of view of side to move is:\nTotal:\t%i\nMaterial:\t%i\nPatterns:\t%i\nMen:\t%i\nBack Rank:\t%i\nRunaway:\t%i\nCramp:\t%i\nHold:\t%i\nKing:\t%i\nKing-Man:\t%i\nCompensation:\t%i\nDatabase:\t%i",
+			staticeval, e.material, e.selftrap, e.men, e.backrank, e.runaway, e.cramp, e.hold, e.king,  e.king_man, e.compensation, dbresult);
 		return 1;
 		}
 
@@ -229,13 +273,90 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 		{
 		FENtoboard8(board8,param1,&p.color);	
 		boardtobitboard(board8,&p);
+		double starttime = clock(); 
 		delta = perft(&si, &p, atoi(param2));
-		sprintf(reply, "Perft returned %i", delta); 
+		sprintf(reply, "Perft returned %i in %.3fs", delta, (clock()-starttime)/CLK_TCK); 
 		return 1;
 		}
 
+
+
 	if(strcmp(command,"set")==0)
 		{
+		// new in cake 1.89f: gamehist: usage set gamehist FEN move1 move2 move3 etc
+// example 1 with kings: 
+//set gamehist B:WK12,K27,30,32:B21,K24,28,K31 24-19 27-24 19-15 12-16
+// example 2 start position:
+// set gamehist B:W21,22,23,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,6,7,8,9,10,11,12
+		if (strcmp(param1, "gamehist") == 0)
+		{
+			FENtoboard8(board8, param2, &p.color);
+			boardtobitboard(board8, &p);
+			// we now have our starting position for which there may be moves
+			//
+			//	
+			char mystring[256]; 
+			strcpy(mystring, str); 
+			
+			movestring = strtok(mystring, " ");  // should be set
+			movestring = strtok(NULL, " ");  // should be gamehist
+			movestring = strtok(NULL, " ");  // should be FEN
+			movestring = strtok(NULL, " ");  // should be first move
+
+			MOVE movelist[MAXMOVES]; 
+			int values[MAXMOVES];
+			int n; 
+			HASH h; 
+			char move[64]; 
+
+			if (!cake_is_init)
+			{
+				//initcake(str);
+				//cake_is_init = 1;
+				initxors_only();
+				if (si.repcheck == 0)
+					si.repcheck = (REPETITION*)malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
+			}
+
+			absolutehashkey(&p, &h);
+			// debug assertion fails here because si.repcheck is not allocated
+			if (si.repcheck == 0)
+				si.repcheck = (REPETITION*)malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
+
+			si.repcheck[HISTORYOFFSET].irreversible = 0; 
+			si.repcheck[HISTORYOFFSET].hash = h.key; 
+
+			while (movestring != NULL) {
+				n = makecapturelist(&p, movelist, values, 0);
+				if (!n)
+					n = makemovelist(si, &p, movelist, values, 0, 0);
+				if (!n)
+				{
+					absolutehashkey(&p, &h);
+					return;
+				}
+				for (int i = 0; i < n; i++) {
+					movetonotation(&p, &(movelist[i]), &move);
+					if (strcmp(move, movestring) == 0) {
+						// found the move
+						togglemove((&p), movelist[i]); 
+						break; 
+					}
+				}
+				absolutehashkey(&p, &h);
+				for (int i = 0; i < HISTORYOFFSET; i++) {
+					si.repcheck[i].irreversible = si.repcheck[i + 1].irreversible;
+					si.repcheck[i].hash = si.repcheck[i + 1].hash;
+				}
+				si.repcheck[HISTORYOFFSET].irreversible = 0;
+				si.repcheck[HISTORYOFFSET].hash = h.key;
+
+				movestring = strtok(NULL, " ");
+			}
+			si.gamehistflag = 1; 
+			return 1;
+		}
+
 		if(strcmp(param1,"dbpath") == 0)
 			{
 			// ugly method to skip to the DB path after set dbpath <path> - because <path> can have whitespace the
@@ -318,10 +439,53 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 			RegCloseKey(hKey);
 			return 0;
 			}
+
+		if (strcmp(param1, "enable_wld") == 0) {
+			enable_wld = atoi(param2); 
+			sprintf(reply, "Enable WLD set to %i", enable_wld);
+			registry_error = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Martin Fierz\\Cake", 0, "CB_Key", 0, KEY_ALL_ACCESS, NULL, &hKey, &result);
+			if (registry_error != ERROR_SUCCESS)
+			{
+				sprintf(reply, "Message Cannot access registry!");
+				return 0;
+			}
+			RegSetValueEx(hKey, "Enable WLD", 0, REG_DWORD, (LPBYTE)&enable_wld, sizeof(int));
+			RegCloseKey(hKey);
+			return 0;
+			}
+
+		if (strcmp(param1, "max_dbpieces") == 0) {
+			maxPiecesToUse = atoi(param2); 
+			//sprintf(reply, "max DB pieces to use set to %i", maxPiecesToUse);
+			registry_error = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Martin Fierz\\Cake", 0, "CB_Key", 0, KEY_ALL_ACCESS, NULL, &hKey, &result);
+			if (registry_error != ERROR_SUCCESS)
+			{
+				sprintf(reply, "Message Cannot access registry!");
+				return 0;
+			}
+			RegSetValueEx(hKey, "Maxpieces", 0, REG_DWORD, (LPBYTE)&maxPiecesToUse, sizeof(int));
+			RegCloseKey(hKey);
+			sprintf(reply, "max DB pieces to use set to %i\nYou must restart Cake for the\nchange to take effect", maxPiecesToUse);
+
+			return 0;
+			}
 		}
 	
 	if(strcmp(command,"get")==0)
 		{
+		if (strcmp(param1, "max_dbpieces") == 0)
+		{
+			sprintf(reply, "%i", maxPiecesToUse);
+			return 1;
+		}
+
+		if (strcmp(param1, "enable_wld") == 0)
+		{
+			sprintf(reply, "%i", enable_wld);
+			return 1;
+		}
+
+
 		if(strcmp(param1,"dbpath")==0)
 			{
 			sprintf(reply,"%s",DBpath);
@@ -336,7 +500,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 
 		if(strcmp(param1,"dbmbytes")==0)
 			{
-			sprintf(reply,"%i",db_getcachesize()/1024);
+			sprintf(reply,"%i",/*db_getcachesize()/1024*/ dbmegabytes);
 			return 1;
 			}
 
@@ -361,6 +525,19 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 			sprintf(reply,"21");
 			return 1;
 			}
+
+		if (strcmp(param1, "enable_wld") == 0) {
+			sprintf(reply, "%i", enable_wld);
+			//snprintf(reply, REPLY_MAX, "%d", checkerBoard.enable_wld);
+			return(1);
+		}
+
+		if (strcmp(param1, "max_dbpieces") == 0) {
+			//get_max_dbpieces(&checkerBoard.max_dbpieces);
+			//sprintf(reply, "%d", checkerBoard.max_dbpieces);
+			sprintf(reply, "%i", maxPiecesToUse);
+			return(1);
+		}
 		}
 
 	return 0;
@@ -399,16 +576,22 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		int how=0;
 		int maxdepth=0;
 		int i;
-		static SEARCHINFO si;
+		//static SEARCHINFO si;
 		HASH h; 
+		// todo: just for tesing, remove again
+		char reply[256]; 
 		//FILE* fp; 
 		
 		if(!cake_is_init)
 			{
 			initcake(str);
 			cake_is_init = 1;
-			si.repcheck = malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
+			if(si.repcheck == 0)
+				si.repcheck = (REPETITION *) malloc((MAXDEPTH + HISTORYOFFSET) * sizeof(REPETITION));
 			}
+
+		// TODO: just for testing, remove again
+		//enginecommand("set gamehist B:WK12,K27,30,32:B21,K24,28,K31 24-19 27-24 19-15 12-16", reply);
 
 		resetsearchinfo(&si);
 		boardtobitboard(b,&p);
@@ -538,6 +721,7 @@ void FENtoboard8(int board[8][8], char *p, int *color)
 	/* parses the FEN string in *p and places the result in board8 and color */
 	char *token;
 	char *col,*white,*black;
+	char* dummy; 
 	char FENstring[256];
 	int i,j;
 	int number;
@@ -559,6 +743,12 @@ void FENtoboard8(int board[8][8], char *p, int *color)
 	/* parse position: get white and black strings */
 	white=strtok(NULL,":");
 	black=strtok(NULL,":");
+	if (white[0] == 'B') {
+		// assumption on which string is where was wrong, flip them
+		dummy = white; 
+		white = black; 
+		black = dummy; 
+	}
 	white++;
 	black++;
 	

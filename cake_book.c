@@ -10,14 +10,14 @@
 
 // TODO: variables such as the book hashtable, number of bookentries and the usethebook setting should be owned by this file
 
-int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], HASHENTRY *book, int bookentries, int usethebook, FILE *fp)
+int booklookup(POSITION *p, int *value, int depth, int32 *remainingdepth, int *best, char str[256], OLD_HASHENTRY *book, int bookentries, int usethebook, FILE *fp)
 	{
 	// searches for a position in the book hashtable.
 	int32 index;
 	int iter=0;
 	int bookmoves;
 	// todo: change this to bookhashentry!
-	HASHENTRY *pointer;
+	OLD_HASHENTRY *pointer;
 	int bucketsize;
 	int size;
 	int bookfound = 0;

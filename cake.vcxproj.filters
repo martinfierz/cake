@@ -51,6 +51,12 @@
     <ClInclude Include="app_instance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="egdb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pattern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bookht.c">
@@ -93,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cake_eval_185.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pattern.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include <intrin.h>
 #include "structs.h"
 #include "boolean.h"
+#include <assert.h>
 
 
 //static char bitsinword[65536];
@@ -56,15 +57,20 @@ int LSB(int32 x)
 	// LSB uses "intrinsics" for an efficient implementation
 	//-----------------------------------------------------------------------------------------------------
 
-	int returnvalue;
+	unsigned long returnvalue;
 
 	//_BitScanForward(&returnvalue, x); 
 	//return returnvalue; 
-
-	if(_BitScanForward(&returnvalue,x))
+	
+	// todo: that looks like a bug! if x is 1, it should give 0 but will return -1!?
+	//assert(x != 1);
+	//if (x == 1)
+	//	printf("!");
+	if (x != 0) {
+		(_BitScanForward(&returnvalue, x));
 		return returnvalue;
-	else
-		return -1;
+	}
+	return -1;
 	}
 
 
@@ -74,10 +80,14 @@ int MSB(int32 x)
 	// returns the position of the most significant bit in a 32-bit word x 
 	// or -1 if not found, if x=0.
 	//-----------------------------------------------------------------------------------------------------
-	int returnvalue;
+	unsigned long returnvalue;
 
-	if(_BitScanReverse(&returnvalue,x))
+	//assert(x != 1); 
+	//if (x == 1)
+	//	printf("!");
+	if (x != 0) {
+		(_BitScanReverse(&returnvalue, x));
 		return returnvalue;
-	else
-		return -1;
+	}
+	return -1;
 	}

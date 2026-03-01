@@ -1,3 +1,42 @@
+16.4.2021
+currently known bugs to fix:
+
+- exiting Cake without search in CB caused debugger to complain (fixed 28.5.21)
+- current oplib export is not recognized!?!? (fixed 28.5.21 with a different default size, 1.2M instead of 800'000 positions, but why?)
+- should implement Ed's new gamehist command
+
+- changing hashtable size crashes Cake  (fixed 28.5.21)
+- book doesn't work any more since Cake 1.88 since I changed hashtable format (fixed 26.5.21)
+- in some positions in analysis mode, Cake returns bad values. Take this game, move back and forth, bad values in the end (no longer
+sees the win after moving back and forth!)  (fixed 28.5.2021)
+
+I find: it is clear that this is a repcheck issue! I was clearing one entry of repcheck array too little (the one at historyoffset)
+clearing up to and with historyoffset the behavior disappears!
+
+[Event "game 30: ACF #17: 9-13 23-18 12-16"]
+[Date ""]
+[Black "Kingsrow(x64) 1.19c"]
+[White "Cake 1.88w"]
+[Result "0-1"]
+[FEN "W:W18,21,22,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,6,7,8,10,11,13,16"]
+18-14 2. 10x17 21x14 3. 11-15 24-20 4. 8-11 27-24 5. 6-10 25-21 6. 10x17 21x14 7. 4-8 24-19 
+8. 16x23 26x10 9. 8-12 29-25 10. 2-6 25-21 11. 6x15 32-27 12. 1-6 22-17 13. 13x22 31-26 
+14. 22x31 21-17 15. 31x24 28x1 16. 12-16 17-13 17. 16-19 13-9 18. 19-24 9-6 19. 24-27 6-2 
+20. 27-31 1-6 21. 31-27 6-9 22. 27-24 9-13 23. 24-19 13-17 24. 19-16 2-6 25. 16-12 30-25 
+26. 12-8 6-2 27. 8-12 17-22 28. 12-16 2-6 29. 16-19 22-18 30. 19-15 25-22 31. 15-19 22-17 
+32. 19-15 18-22 33. 15-19 17-13 34. 19-15 
+{value=-809,  depth 32/17.4/45,  0.8s,  5569 kN/s,  pv 19-15 22-26 3-8 26-31 8-12 31-26 15-19 6-10 11-15 10x3 15-18 : gameover claimed} 
+*
+
+- check if/why it crashes if db is missing (fixed 28.5.21)
+
+
+20.3.2021
+official release of Cake 1.89d
+I added patterns, like Ed explained; I added magic indexing to speed things up, and this is a huge improvement now.
+I removed about 10-12 parameters from classical eval. 
+
+
 20.7.2020
 official release of Cake 1.88
 lots of changes which are not documented :-(

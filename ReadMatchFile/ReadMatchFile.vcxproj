@@ -159,6 +159,7 @@
     <ClCompile Include="..\cake_misc.c" />
     <ClCompile Include="..\dblookup.c" />
     <ClCompile Include="..\move_gen.c" />
+    <ClCompile Include="..\pattern.c" />
     <ClCompile Include="ReadMatchFileMain.c" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="..\boolean.h" />
     <ClInclude Include="..\consts.h" />
     <ClInclude Include="..\dblookup.h" />
+    <ClInclude Include="..\egdb.h" />
     <ClInclude Include="..\move_gen.h" />
     <ClInclude Include="..\optimizeCake.h" />
     <ClInclude Include="..\structs.h" />

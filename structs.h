@@ -2,6 +2,7 @@
 
 /*definitions for platform-independence*/
 // aaargh, int is not in32 any more!
+#define int64 unsigned __int64
 #define int32 unsigned int
 #define int16 unsigned short
 #define int8  unsigned char
@@ -51,24 +52,24 @@ typedef struct
 
 typedef struct
 	{
-	int32 negamax;
-	int32 iidnegamax;
-	int32 qsearch;
-	int32 qsearchfail;
-	int32 qsearchsuccess;
-	int32 csearch; 
-	int32 leaf;
-	int32 leafdepth;
-	int32 cutoffs;
-	int32 cutoffsatfirst;
-	int32 dblookup;
-	int32 dblookupsuccess;
-	int32 dblookupfail;
-	int32 hashlookup;
-	int32 hashlookupsuccess;
-	int32 hashstores;
-	int32 spalookups;
-	int32 spasuccess;
+	int64 negamax;				// most of these should be changed to unsigned long long
+	int64 iidnegamax;
+	int64 qsearch;
+	int64 qsearchfail;
+	int64 qsearchsuccess;
+	int64 csearch;
+	int64 leaf;					// in particular this one
+	int64 leafdepth;			// and this one
+	int64 cutoffs;
+	int64 cutoffsatfirst;
+	int64 dblookup;
+	int64 dblookupsuccess;
+	int64 dblookupfail;
+	int64 hashlookup;
+	int64 hashlookupsuccess;
+	int64 hashstores;
+	int64 spalookups;
+	int64 spasuccess;
 	int aborted; 
 	int maxdepth;
 	int realdepth;
@@ -90,7 +91,8 @@ typedef struct
 	double start;
 	double maxtime;
 	double aborttime;		
-	int history[32][32];
+	unsigned int history[32][32];
+	int gamehistflag; 
 	} SEARCHINFO;
 
 
@@ -188,6 +190,21 @@ typedef struct
 	} HASHENTRY;
 
 // I could use a 2-bit age field easily, and a 3 bit age field a bit more complexly with color in lock
+
+
+
+typedef struct
+// struct hashentry needs 8 bytes 
+{
+	int32  lock;
+	unsigned int best : 6;		// could be 5 bits
+	int value : 12;				// value is 12 bits because +-MATE is 4000 
+	unsigned int color : 1;		// could encode color in lock
+	unsigned int ispvnode : 1;
+	unsigned int depth : 10;		// could be 9 bits
+	unsigned int valuetype : 2;		// could be 1 bit as MTD only does upper/lower
+} OLD_HASHENTRY;
+
 
 
 struct bookhashentry

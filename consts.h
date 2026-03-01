@@ -1,7 +1,7 @@
 /* consts.h - all definitions for cake++, movegen, captgen */
 
 /* mate value */
-#define MATE 2000
+#define MATE 1900
 
 /* # of fractions per ply */
 #define FRAC 4
@@ -190,7 +190,7 @@
 #define UNKNOWN 3
 #define DB_NOT_LOOKED_UP 4
 
-#define WINLEVEL 160
+#define WINLEVEL 200
 
 /* exchange bias */
 #define EXBIAS 250 

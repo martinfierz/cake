@@ -19,10 +19,11 @@ int hashreallocate(int MB);
 void hashstore(SEARCHINFO *si, POSITION *p, int value, int alpha, int depth, MOVE *best, int32 bestindex);
 static void initboard(void);
 int initcake(char str[1024]);
+int initxors_only();
 int LSB(int32 x);
 static int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,int depth, MOVE *best);
 static int negamax(SEARCHINFO *si, POSITION *p,int depth, int alpha, int32 *bestproto, 
-				   int *bestmoveindex, int truncationdepth, int truncationdepth2,int iid);
+				   unsigned int *bestmoveindex, int truncationdepth, int truncationdepth2,int iid);
 int perft(SEARCHINFO *si, POSITION *p, int depth);
 int perftrec(SEARCHINFO *si, POSITION *p, int depth);
 int	prune(int v1, POSITION *p, int delta, int d, int *truncationdepth, int *truncationdepth2);
@@ -33,7 +34,7 @@ int testcapture(POSITION *p);
 void updatehashkey(MOVE *m, HASH *h);
 static int windowsearch(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int depth, int guess, MOVE *best);
 
-#ifdef USEDB
+#if defined USEDB || defined USE_KR_DB
 int isdbpos(POSITION *p, MATERIALCOUNT *m);
 #endif
 

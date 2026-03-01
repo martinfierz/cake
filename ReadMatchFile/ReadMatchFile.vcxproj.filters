@@ -36,6 +36,9 @@
     <ClCompile Include="..\cake_eval_parametrized.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\pattern.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\checkerboard17\PDNparser.h">
@@ -60,6 +63,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\optimizeCake.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\egdb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

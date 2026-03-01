@@ -55,6 +55,7 @@ main()
 	extern char DBpath[256]; // from dblookup.c
 	//extern int ifs[100]; // from cakepp.c
 	//char *c;
+	HASH h; 
 
 	SEARCHINFO si;
 
@@ -163,21 +164,34 @@ main()
 	
 	fp3=fopen("C:\\code\\checkersdata\\output.txt","w");
 	
+	// test what LSB is doing
+	(_BitScanForward(&i, 0));
+	printf("\n%i %i", 0, i);
+	for (n = 0; n < 32; n++) {
+		(_BitScanForward(&i, 1 << n));
+		printf("\n%i %i", n, i);
+	}
+	//getch(); 
+
+	// test hashing:
+	p.bk = 0; 
+	p.wk = 0; 
+	p.bm = 0xFFF; 
+	p.wm = 0xFFF00000;
+	p.color = BLACK; 
+	//absolutehashkey(&p, &h); 
+	printboard(&p); 
+	//printf("\nhash: key: %i lock: %i", h.key, h.lock); 
+	//getch(); 
 	////////////////////////////////////////////////////////////////////////
 	//
 	// main loop over all test positions
 	//
 	////////////////////////////////////////////////////////////////////////
 
-	// test what LSB is doing
-	(_BitScanForward(&i, 0));
-	printf("\n%i %i", 0, i);
-	for (n = 0; n < 32; n++) {
-		(_BitScanForward(&i, 1<<n));
-		printf("\n%i %i", n, i);
-	}
-	//getch(); 
+
 			
+	
 
 	for(n=0; n<MAXTESTPOS; n++)
 		{
@@ -189,6 +203,8 @@ main()
 			break;
 		printf("\nPosition %i: %s",n,FEN);
 		//sprintf(FEN, "B:W9,19,21,29,32:B7,10,11,12");
+
+		//sprintf(FEN, "W:WK3,5,11,21,22,25,26,29,30,32:B1,2,4,10,12,16,19,20,23,28");
 
 		FENtoPosition(FEN, &p);
 		

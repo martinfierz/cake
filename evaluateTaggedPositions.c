@@ -177,8 +177,8 @@ main()
 			v0 = evaluation(&p, &mc, 0, &delta, 0, 0);
 
 			//qsvalue = qsearch(&si, &p, v0, v0 + 50, 0);
-			//cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 0, 0);
-			cake_getmove(&si, &p, 1, 1, 9, 10000, str, &play, 0, 0);
+			cake_getmove(&si, &p, 1, 1, 0, 10000, str, &play, 0, 0);
+			//cake_getmove(&si, &p, 1, 1, 9, 10000, str, &play, 0, 0);   // if you want a 9ply eval
 			v1 = si.value; 
 			//printf("\nd1 %s", si.out);
 
@@ -236,7 +236,7 @@ main()
 		double start, time;
 		int stones[25];
 		EXTHASHENTRY* hashtable; 
-		int hashsize = 20000000; // 20 mio positions, x8 bytes = 160MB 
+		int hashsize = 30000000; // 20 mio positions, x8 bytes = 160MB 
 		int index; 
 		int longest = 0; 
 		int aborted = 0; 

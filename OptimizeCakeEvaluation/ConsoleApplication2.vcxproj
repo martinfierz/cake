@@ -152,7 +152,9 @@
     <ClInclude Include="..\boolean.h" />
     <ClInclude Include="..\cake_eval.h" />
     <ClInclude Include="..\cake_misc.h" />
+    <ClInclude Include="..\egdb.h" />
     <ClInclude Include="..\optimizeCake.h" />
+    <ClInclude Include="..\pattern.h" />
     <ClInclude Include="..\switches.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="stdafx.h" />
@@ -165,6 +167,7 @@
     <ClCompile Include="..\cake_misc.c" />
     <ClCompile Include="..\dblookup.c" />
     <ClCompile Include="..\move_gen.c" />
+    <ClCompile Include="..\pattern.c" />
     <ClCompile Include="OptimizeCakeEvaluation.c" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

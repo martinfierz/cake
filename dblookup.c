@@ -149,12 +149,16 @@
 //					is thrown out
 // 
 
+#include "switches.h"
+
+#ifdef USEDB
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
 #include <winbase.h>
 #include <assert.h>
+
 
 
 typedef __int64 int64;
@@ -248,7 +252,7 @@ static FILE *dbfp[MAXFP]; // file pointers to db2...dbn - always open.
 static char dbnames[MAXFP][256]; // write in here what each dbfp is pointing to
 
 // database path
-char DBpath[256];
+extern char DBpath[256];
 
 // number of db buffers
 static int maxblocknum;
@@ -1295,6 +1299,10 @@ static void preload(char out[256])
 #endif
 
 static int parseindexfile(char idxfilename[256],int blockoffset,int fpcount)
+	// todo: code analysis says: 
+	// C:\code\cake\dblookup.c(1298): warning C6262: Die Funktion verwendet "176348" Bytes vom Stapel und
+	// überschreitet /analyze:stacksize "16384". Verschieben Sie einige Daten auf den Heap.
+
 	// parse an index file and write all necessary information in *dbpointer.
 	// it returns the number of blocks in this database - we need this to compute unique block id
 	// if the index file is not present, it returns -1
@@ -1431,3 +1439,5 @@ void db_infostring(char *str)
 	sprintf(str,"\nDatabase Details:\n%s",dbinfo);
 	return;
 	}
+
+#endif

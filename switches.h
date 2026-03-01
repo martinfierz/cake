@@ -6,9 +6,8 @@
 #undef CAKE185
 
 #ifdef _WIN64 
-//#define VERSION "1.86 RC0 (5500k-log)"
-//#define VERSION "1.86 RC2 (8279k)"
-#define VERSION "1.88_BR3d128"   //(376.12M) LMR2"
+//#define VERSION "1.89f nofut div16 2*frac captextend smotherdetect"   //(376.12M) LMR2"
+#define VERSION "1.89g"   //(376.12M) LMR2"
 //#define VERSION "1.85 original (x64)"
 #else
 #define VERSION "1.85"
@@ -18,16 +17,48 @@
 #define VERSION "as 1.85"
 #endif
 
-#define BRTHREE  // use three rows for back rank computation, if not defined then only 2
+#define SMOTHERDETECT
+#define SMOTHEREXTEND 2
+#define CAPTUREEXTENDALWAYS // extend all captures, not only n == 1
 
-#ifdef BRTHREE
-#define BRNUM 4096
-#define PARAMS 4248 // 376
+#define BOOST // boost optimizer after 100 passes
+#undef BOOST2 // boost optimizer more after 200 passes
+
+#undef USEDB						// use the Cake endgame database, my code
+#define USE_KR_DB					// use Ed's database driver
+
+#define PATTERNS
+#define MAXINDEX_BR531K 531441  // for back rank pattern 3^12
+#define MAXINDEX_BR4K 4096*16	// for single-color-backrank pattern 2^12  // or 2^16!?
+#define DUALCOLOR 
+#ifdef DUALCOLOR
+#define MAXKINGINDEX 2*390625  // for king pattern 5^8
+#define ADDCOLOR 390625
 #else
-#define BRNUM 256
-#define PARAMS 408 // 376
+#define MAXKINGINDEX 390625  // for king pattern 5^8
 #endif
 
+#undef PAT5
+
+//#define BRTHREE  // use three rows for back rank computation, if not defined then only 2
+
+
+
+
+#define BR4
+#ifdef BR4
+#define BRNUM 4096*16
+#else
+#define BRNUM 4096
+#endif
+
+
+#define PARAMS 152 // 4248 // 376
+
+
+
+#undef NEW_NOMATERIAL_CHECK  // seems buggy :-(
+#define MATEHASHSCORES
 
 
 #define TIMEOPTIMIZED
@@ -46,6 +77,7 @@
 #define SAFE
 #define SAFEMOVENUM 2 // 2
 
+// todo: revisit this fastupdate thing
 #undef FASTUPDATE
 
 #undef PROMOTEEXTEND
@@ -53,7 +85,7 @@
 
 #define QSEARCH
 #define MAXQS 1
-#define QSEARCHLEVEL 150
+#define QSEARCHLEVEL 150//150
 #undef QS_SQUEEZE
 #define QS_SQUEEZE_NEW
 
@@ -67,7 +99,6 @@
 #define IMMEDIATERETURNONFORCED		// if defined, cake will not think about forced moves
 #define BOOK						// use opening book
 #define CHECKTIME					// check if time is > than breaktime and abort if yes
-#define USEDB						// use the endgame database 
 
 #define NOPRUNE						// new: if this is defined, the eval will be able 
 									// to tell the search not to prune by expanding the pruning window
@@ -92,15 +123,18 @@
 #define QLEVEL2 60//60//60	// 60			// if the side not to move has a capture
 						
 
+// maxtrunc, truncdivhard, truncdivsoft changed, futility undefined
+
 #define NEWTRUNCATION				// use new, eval-based truncation?
-#define MAXTRUNC 3*FRAC				//2*FRAC	// maximum truncation per ply 
-#define TRUNCLEVELHARD 100 // 80// 100			//100			// TRUNCLEVEL was 30 for 1.42
-#define TRUNCLEVELSOFT 30			// new double truncation scheme!
-#define TRUNCDIVHARD 12 //12 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
-#define TRUNCDIVSOFT 16//32 //16 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
+#define MAXTRUNC 2.5*FRAC			//2*FRAC	// maximum truncation per ply 
+#define TRUNCLEVELHARD 100 //100 // 80// 100			//100			// TRUNCLEVEL was 30 for 1.42
+#define TRUNCLEVELSOFT 20			// new double truncation scheme!
+#define TRUNCDIVHARD  16 // 16//12 //12 // 16 //16				// divider to get ply: if outside window by 80, divide by 16 to get the number of ply to truncate
+#define TRUNCDIVSOFT  16 // 12 //32 //16 //32				// positional cutoff: example: for 32 outside, 0.25 ply, for 64: 0.5ply. very gentle
 									// changing truncdivsoft to 16 -> ~70% nodes = lots of potential!
 
-#define FUTILITY
+#undef FUTILITY			//!!!!!!!!!!!!
+#undef CHECKDANGER
 
 #define ETC							// use enhanced transposition cutoffs 
 #define ETCDEPTH FRAC*2				//maybe 3 is better.	if depth>etcdepth do ETC 
@@ -117,6 +151,8 @@
 #define HISTORYOFFSET 10		
 #define ASPIRATIONWINDOW 60			// aspiration window size for windowed search
 #define SINGLEEXTEND FRAC/2			// extension for forced move 
+#define SINGLEEXTEND_ONLY FRAC/2
+#define SINGLEEXTEND_RECAPTURE FRAC/2
 #define CLDEPTH 5					// if depth < CLDEPTH // 5
 
 #define HASHSIZE 0x01000000			// 128 MB default hashtable size  
@@ -164,11 +200,11 @@
 #define IIDDEPTH 6*FRAC				// only use it when the remaining depth is > this
 #define IIDREDUCE 4*FRAC //4*FRAC			// and reduce by this amount for IID search 
 
-#undef LATEMOVEREDUCTION			// use late move reduction
+#define LATEMOVEREDUCTION			// use late move reduction
 #undef LMR_AGGRESSIVE // use a very aggressive version of LMR
 
 #undef LATEMOVEREDUCTIONROOT
-#define LATEMOVEMINDEPTH 10*FRAC		// search depth above which to use LMR
+#define LATEMOVEMINDEPTH 8*FRAC// 6*FRAC		// search depth above which to use LMR
 #define LATEMOVEDEPTH 4				// reduce late moves by 1/4 a ply times this
 #define LATEMOVENUM 3
 #define LATEMOVENUM2 8

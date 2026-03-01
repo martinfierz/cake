@@ -54,6 +54,9 @@
     <ClCompile Include="..\app_instance.c">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\pattern.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\boolean.h">
@@ -90,6 +93,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\app_instance.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pattern.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\egdb.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

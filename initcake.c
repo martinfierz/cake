@@ -12,14 +12,14 @@
 #include "boolean.h"
 
 #ifdef BOOK
-HASHENTRY *loadbook(int *bookentries, int *bookmovenum, FILE *fp)
+OLD_HASHENTRY *loadbook(unsigned int *bookentries, unsigned int *bookmovenum, FILE *fp)
 // loads the cake book file and returns a pointer to the book,
 // sets bookentries to the number of entries in the opening book.
 {
 	FILE *Lfp;
 	int32 i,j;
 	char Lstr[256];
-	static HASHENTRY *book;
+	static OLD_HASHENTRY *book;
 	char dirname[256]; 
 //	__int64 *x; 
 
@@ -43,7 +43,7 @@ HASHENTRY *loadbook(int *bookentries, int *bookmovenum, FILE *fp)
 #ifdef WINMEM
 	book = VirtualAlloc(0, bookentries*sizeof(struct bookhashentry), MEM_COMMIT, PAGE_READWRITE);
 #else
-	book = malloc((*bookentries)*sizeof(struct bookhashentry));
+	book = (OLD_HASHENTRY *) malloc((*bookentries)*sizeof(struct bookhashentry));
 #endif
 
 	if (book == NULL)
@@ -103,7 +103,7 @@ HASHENTRY *inithashtable(int hashsize, FILE *logfile)
 #ifdef WINMEM
 	hashtable = VirtualAlloc(0, (hashsize+HASHITER)*sizeof(HASHENTRY), MEM_COMMIT, PAGE_READWRITE);
 #else
-	ptr = malloc((hashsize+HASHITER)*sizeof(HASHENTRY)+64);
+	ptr = (HASHENTRY *) malloc((hashsize+HASHITER)*sizeof(HASHENTRY)+64);
 #endif
 
 	if(ptr == NULL)

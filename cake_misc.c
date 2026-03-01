@@ -25,9 +25,9 @@ void searchinfotostring(char *out, int depth, double time, char *valuestring, ch
 	{
 	char percent='%';
 
-	sprintf(out,"depth %i/%i/%.1f  time %.2fs  %s  nodes %u  %ikN/s  db %.0f%c cut %.1f%c %s", 
+	sprintf(out,"depth %i/%i/%.1f  time %.2fs  %s  nodes %llu  %ikN/s  db %.0f%c cut %.1f%c %s", 
 		(depth/FRAC), si->maxdepth, (float)si->leafdepth/((float)si->leaf+0.01) , time, valuestring, 
-		si->negamax, (int)((float)si->negamax/(time+0.01)/1000),
+		si->negamax, (int)((float)si->negamax/(time+0.00001)/1000),
 		100*((float)si->dblookupsuccess/(float)(si->dblookupsuccess+si->dblookupfail+1)),
 		percent, 100.0*(float)(si->cutoffsatfirst)/(float)(si->cutoffs), percent,	
 		pvstring); 
@@ -71,8 +71,9 @@ void movetonotation(POSITION *p,MOVE *m, char *str)
 		to = LSB(to);		
 		from = square[from];
 		to = square[to];
-		sprintf(str,"%2i%c%2i",from,c,to);
-		}
+		//sprintf(str, "%2i%c%2i", from, c, to);
+		sprintf(str, "%i%c%i", from, c, to);
+	}
 	else
 		{
 		if(m->bk|m->bm) c='x';
@@ -83,7 +84,8 @@ void movetonotation(POSITION *p,MOVE *m, char *str)
 		to=LSB(to);
 		from=square[from];
 		to=square[to];
-		sprintf(str,"%2i%c%2i",from,c,to);
+		//sprintf(str,"%2i%c%2i",from,c,to);
+		sprintf(str, "%i%c%i", from, c, to);
 		}
 	return;
 	}
@@ -443,14 +445,19 @@ void resetsearchinfo(SEARCHINFO *s)
 	// resets the search info structure nearly completely, with the exception of
 	// the pointer si.repcheck, to which we allocated memory during initialization - this is restored
 	int *rep = (int*)s->repcheck; 
+	int gamehistflag = s->gamehistflag;
 	memset(s, 0, sizeof(SEARCHINFO)); 
 	s->repcheck = (REPETITION *) rep; //malloc((MAXDEPTH+HISTORYOFFSET) * sizeof(REPETITION));
+	s->gamehistflag = gamehistflag; 
 	}
 
 int exitcake()
 	{
 	// deallocate memory 
+#ifdef USEDB
 	db_exit();
+#endif
+	// TODO: change to handle->close!?
 
 	return 1;
 	}

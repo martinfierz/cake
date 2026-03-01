@@ -1,4 +1,12 @@
-// TODO
+	// TODO
+
+// todo 7.3.2021
+// -> integrate br531k calculation with king calculation to see what difference that makes
+// -> set weights after pattern optimizer in cake so optimizer can continue seamlessly
+// -> start throwing out old weights that may be useless / timeconsuming
+// -> get exact static eval from Cake
+
+
 // position selection should be on basis of file on disk, not of eval itself - otherwise, 
 // when you run the optimizer again, it gives a different result because the eval has changed.
 
@@ -8,9 +16,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <process.h>
-
-
-
+#include <time.h>
 #include "stdafx.h"
 
 // cake-specific includes - structs defines structures, consts defines constants,
@@ -20,6 +26,13 @@
 #include "structs.h"
 #include "consts.h"
 #include "..\\cake_eval.h"
+#include "..\\egdb.h"
+
+
+#ifdef USE_KR_DB
+EGDB_DRIVER* handle;
+char* out = 0;
+#endif
 
 #define SKIP 0 // 4000000
 
@@ -31,10 +44,7 @@
 
 
 
-/*#define PARAMS 408
-#ifdef BRTHREE
-#define PARAMS 4248
-#endif*/
+
 
 
 //#undef WEIGHT_BY_NUMBER
@@ -78,82 +88,45 @@
 #define RANK7 0xF000000
 #define RANK8 0xF0000000
 
-double sigmoid(int v, double c);
+double sigmoid(double v, double c);
 void codeoutput(int recall);
 
 int result_translated[4] = { 0, 1, -1, 0 };
 static int params[PARAMS]; // parameters to optimize
+int index[4096];
+int indexnum[MAXINDEX_BR531K];
+int indexknum[MAXKINGINDEX]; 
+int indexknum2[MAXKINGINDEX]; 
+int indexknumside[MAXKINGINDEX]; 
+int indexknumcenter[MAXKINGINDEX];
+char DBpath[256] = "C:\\Programme\\CheckerBoard64\\db";
 
 int active_set[PARAMS]; // specify which parameters are used in optimization.
 
 char strs[PARAMS][128] =  {
 	"man_value", "king_value", "piecedown_9", "piecedown_11", "twokingbonus_10", "twokingbonus_12",
-	"exchangebias",
-	/*"devsinglecorner", "intactdoublecorner", "oreoval", "idealdoublecornerval", */"backrankpower1",
-	"backrankpower2", "backrankpower3", "backrankpower4", "nocrampval13", "nocrampval20", 
-	"dogholeval", "dogholemandownval",
+	"exchangebias",	"backrankpower1","backrankpower2", "backrankpower3", "backrankpower4", 
+	"immobile_mult", "immobile_mult_kings", "ungroundedcontact", "balancemult", "skewnessmult", "skewnessmult_eg",
+	"dogholeval2", "dogholeval", "dogholemandownval",
 	"mc_occupyval", "mc_attackval", "realdykeval", "greatdykeval",
-	"promoteinone", "promoteintwo", "promoteinthree", "tailhookval", "dominatedkingval2", "keval",
-	"turnval", "turnval_eg", "kingcentermonopoly", "kingtrappedinsinglecornerval",
-	"kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval", "dominatedkingval", "dominatedkingindcval",
-	"kingproximityval1", "kingproximityval2", "immobilemanval", "kingholdstwomenval", "onlykingval", "roamingkingval",
-    "balancemult", "skewnessmult", "skewnessmult_eg", "cramp12", "cramp13", "cramp13_eg",
-	"cramp20", "badstructure", 
-	"dogholeval2", "badstructure2", 
-	"badstructure3", "badstructure4",
-	"badstructure5", "badstructure6", "badstructure7", "badstructure8",
+	"cramp20", "nocrampval20", "cramp13", "cramp13_eg", "nocrampval13", "cramp12",
+	"badstructure3", "badstructure4", "badstructure",
+	"badstructure2", "badstructure5", "badstructure6", "badstructure7", "badstructure8",
 	"badstructure9", "badstructure10", "badstructure11",
-	"dominatedkingindcval2","immobile_mult", "immobile_mult_kings",
-	"runaway_destroys_backrank", "king_blocks_king_and_man", "king_denied_center", "king_low_mobility_mult", 
-	"king_no_mobility",
-	"experimental_king_cramp", "compensation", "compensation_mandown",	
-	"ungroundedcontact", "endangeredbridge", "endangeredbridge_kingdown",
+	"promoteinone", "runaway_destroys_backrank", "promoteintwo", "promoteinthree",
+	"kingtrappedinsinglecornerval", "kingtrappedinsinglecornerbytwoval", "kingtrappedindoublecornerval",
+	"king_blocks_king_and_man", "dominatedkingval", "dominatedkingval2", "dominatedkingindcval", "dominatedkingindcval2",
+	"king_denied_center", "kingcentermonopoly", "onlykingval", "roamingkingval",
+	"experimental_king_cramp", "keval",
+	"tailhookval", "kingproximityval1", "kingproximityval2", "endangeredbridge_kingdown", "endangeredbridge",
+	"kingholdstwomenval", "immobilemanval", "compensation", "compensation_mandown",
+	"turnval", "turnval_eg",
+	"edgepressure1", "edgepressure2",
+
+
 	"ungrounded0", "ungrounded1", "ungrounded2", "ungrounded3", "ungrounded4", "ungrounded5", "ungrounded6", 
 	"ungrounded7", "ungrounded8", "ungrounded9", "ungrounded10", "ungrounded11", "ungrounded12",
 	
-	"br0", "br1", "br2", "br3", "br4", "br5", "br6", "br7",
-	"br8", "br9", "br10", "br11", "br12", "br13", "br14", "br15",
-	"br16", "br17", "br18", "br19", "br20", "br21", "br22", "br23",
-	"br24", "br25", "br26", "br27", "br28", "br29", "br30", "br31",
-
-	"br32", "br33", "br34", "br35", "br36", "br37", "br38", "br39",
-	"br40", "br41", "br42", "br43", "br44", "br45", "br46", "br47",
-	"br48", "br49", "br50", "br51", "br52", "br53", "br54", "br55",
-	"br56", "br57", "br58", "br59", "br60", "br61", "br62", "br63",
-
-	"br64", "br65", "br66", "br67", "br68", "br69", "br70", "br71",
-	"br72", "br73", "br74", "br75", "br76", "br77", "br78", "br79",
-	"br80", "br81", "br82", "br83", "br84", "br85", "br86", "br87",
-	"br88", "br89", "br90", "br91", "br92", "br93", "br94", "br95",
-
-		"br96", "br97", "br98", "br99", "br100", "br101", "br102", "br103",
-	"br104", "br105", "br106", "br107", "br108", "br109", "br110", "br111",
-	"br112", "br113", "br114", "br115", "br116", "br117", "br118", "br119",
-	"br120", "br121", "br122", "br123", "br124", "br125", "br126", "br127",
-
-		"br128", "br129", "br130", "br131", "br132", "br133", "br134", "br135",
-	"br136", "br137", "br138", "br139", "br140", "br141", "br142", "br143",
-	"br144", "br145", "br146", "br147", "br148", "br149", "br150", "br151",
-	"br152", "br153", "br154", "br155", "br156", "br157", "br158", "br159",
-
-		"br160", "br161", "br162", "br163", "br164", "br165", "br166", "br167",
-	"br168", "br169", "br170", "br171", "br172", "br173", "br174", "br175",
-	"br176", "br177", "br178", "br179", "br180", "br181", "br182", "br183",
-	"br184", "br185", "br186", "br187", "br188", "br189", "br190", "br191",
-
-		"br192", "br193", "br194", "br195", "br196", "br197", "br198", "br199",
-	"br200", "br201", "br202", "br203", "br204", "br205", "br206", "br207",
-	"br208", "br209", "br210", "br211", "br212", "br213", "br214", "br215",
-	"br216", "br217", "br218", "br219", "br220", "br221", "br222", "br223",
-
-		"br224", "br225", "br226", "br227", "br228", "br229", "br230", "br231",
-	"br232", "br233", "br234", "br235", "br236", "br237", "br238", "br239",
-	"br240", "br241", "br242", "br243", "br244", "br245", "br246", "br247",
-	"br248", "br249", "br250", "br251", "br252", "br253", "br254", "br255",
-
-	
-
-
 	"tmod0", "tmod1", "tmod2", "tmod3", "tmod4", "tmod5", "tmod6", "tmod7",
 	"tmod8", "tmod9", "tmod10", "tmod11", "tmod12", "tmod13", "tmod14", "tmod15",
 	"tmod16", "tmod17", "tmod18", "tmod19", "tmod20", "tmod21", "tmod22", "tmod23", "tmod24",
@@ -163,46 +136,6 @@ char strs[PARAMS][128] =  {
 		"kpst16", "kpst17", "kpst18", "kpst19", "kpst20", "kpst21", "kpst22", "kpst23",
 		"kpst24", "kpst25", "kpst26", "kpst27", "kpst28", "kpst29", "kpst30", "kpst31",
 
-		
-	/*"br_eg0", "br_eg1", "br_eg2", "br_eg3", "br_eg4", "br_eg5", "br_eg6", "br_eg7",
-	"br_eg8", "br_eg9", "br_eg10", "br_eg11", "br_eg12", "br_eg13", "br_eg14", "br_eg15",
-	"br_eg16", "br_eg17", "br_eg18", "br_eg19", "br_eg20", "br_eg21", "br_eg22", "br_eg23",
-	"br_eg24", "br_eg25", "br_eg26", "br_eg27", "br_eg28", "br_eg29", "br_eg30", "br_eg31",
-
-	"br_eg32", "br_eg33", "br_eg34", "br_eg35", "br_eg36", "br_eg37", "br_eg38", "br_eg39",
-	"br_eg40", "br_eg41", "br_eg42", "br_eg43", "br_eg44", "br_eg45", "br_eg46", "br_eg47",
-	"br_eg48", "br_eg49", "br_eg50", "br_eg51", "br_eg52", "br_eg53", "br_eg54", "br_eg55",
-	"br_eg56", "br_eg57", "br_eg58", "br_eg59", "br_eg60", "br_eg61", "br_eg62", "br_eg63",
-
-	"br_eg64", "br_eg65", "br_eg66", "br_eg67", "br_eg68", "br_eg69", "br_eg70", "br_eg71",
-	"br_eg72", "br_eg73", "br_eg74", "br_eg75", "br_eg76", "br_eg77", "br_eg78", "br_eg79",
-	"br_eg80", "br_eg81", "br_eg82", "br_eg83", "br_eg84", "br_eg85", "br_eg86", "br_eg87",
-	"br_eg88", "br_eg89", "br_eg90", "br_eg91", "br_eg92", "br_eg93", "br_eg94", "br_eg95",
-
-	"br_eg96", "br_eg97", "br_eg98", "br_eg99", "br_eg100", "br_eg101", "br_eg102", "br_eg103",
-	"br_eg104", "br_eg105", "br_eg106", "br_eg107", "br_eg108", "br_eg109", "br_eg110", "br_eg111",
-	"br_eg112", "br_eg113", "br_eg114", "br_eg115", "br_eg116", "br_eg117", "br_eg118", "br_eg119",
-	"br_eg120", "br_eg121", "br_eg122", "br_eg123", "br_eg124", "br_eg125", "br_eg126", "br_eg127",
-
-	"br_eg128", "br_eg129", "br_eg130", "br_eg131", "br_eg132", "br_eg133", "br_eg134", "br_eg135",
-	"br_eg136", "br_eg137", "br_eg138", "br_eg139", "br_eg140", "br_eg141", "br_eg142", "br_eg143",
-	"br_eg144", "br_eg145", "br_eg146", "br_eg147", "br_eg148", "br_eg149", "br_eg150", "br_eg151",
-	"br_eg152", "br_eg153", "br_eg154", "br_eg155", "br_eg156", "br_eg157", "br_eg158", "br_eg159",
-
-	"br_eg160", "br_eg161", "br_eg162", "br_eg163", "br_eg164", "br_eg165", "br_eg166", "br_eg167",
-	"br_eg168", "br_eg169", "br_eg170", "br_eg171", "br_eg172", "br_eg173", "br_eg174", "br_eg175",
-	"br_eg176", "br_eg177", "br_eg178", "br_eg179", "br_eg180", "br_eg181", "br_eg182", "br_eg183",
-	"br_eg184", "br_eg185", "br_eg186", "br_eg187", "br_eg188", "br_eg189", "br_eg190", "br_eg191",
-
-	"br_eg192", "br_eg193", "br_eg194", "br_eg195", "br_eg196", "br_eg197", "br_eg198", "br_eg199",
-	"br_eg200", "br_eg201", "br_eg202", "br_eg203", "br_eg204", "br_eg205", "br_eg206", "br_eg207",
-	"br_eg208", "br_eg209", "br_eg210", "br_eg211", "br_eg212", "br_eg213", "br_eg214", "br_eg215",
-	"br_eg216", "br_eg217", "br_eg218", "br_eg219", "br_eg220", "br_eg221", "br_eg222", "br_eg223",
-
-	"br_eg224", "br_eg225", "br_eg226", "br_eg227", "br_eg228", "br_eg229", "br_eg230", "br_eg231",
-	"br_eg232", "br_eg233", "br_eg234", "br_eg235", "br_eg236", "br_eg237", "br_eg238", "br_eg239",
-	"br_eg240", "br_eg241", "br_eg242", "br_eg243", "br_eg244", "br_eg245", "br_eg246", "br_eg247",
-	"br_eg248", "br_eg249", "br_eg250", "br_eg251", "br_eg252", "br_eg253", "br_eg254", "br_eg255",*/
 };
 
 
@@ -213,7 +146,7 @@ double calc_error_MT(int n, EVALUATEDPOSITION* ep, double c);
 
 double error_ST[30000000];
 double error_MT[30000000];
-
+int totalquietpositions = 0;
 #ifdef STOCHASTIC
 short int* isinactive; 
 #endif
@@ -230,79 +163,62 @@ typedef struct
 } THREADINFO;
 
 
+
+
 int main()
 {
 	int i = 0, n;
-	FILE *fp; 
-	unsigned int bm, bk, wm, wk, color; 
-	POSITION p; 
-	MATERIALCOUNT mc; 
-	int delta = 100; 
-	EVALUATEDPOSITION *ep, *cur; 
+	FILE* fp;
+	unsigned int bm, bk, wm, wk, color;
+	POSITION p;
+	MATERIALCOUNT mc;
+	int delta = 100;
+	EVALUATEDPOSITION* ep, * cur;
 	double error;
-	int j; 
-	int oldparam; 
-	int iterations = 0; 
+	int j;
+	int oldparam;
+	int iterations = 0;
 	double minerror;
-	int position_number = 0; 
-	int changed = 0; 
-	int res_from_file; 
+	int position_number = 0;
+	int changed = 0;
+	int res_from_file;
 	double c;
-	int rejected = 0; 
-	int rejectednum = 0; 
-	int pos_num = 0; 
-	int quiet_pos_num = 0; 
-	int /*v0, */v1, v3, staticeval; 
+	int rejected = 0;
+	int rejectednum = 0;
+	int pos_num = 0;
+	int quiet_pos_num = 0;
+	int /*v0, */v1, v3, staticeval;
 	int iter[3] = { 1,0,2 };
-	int sameadjust; 
-	int adjust; 
-	int paramnum = 0; 
-	int allactive = 1; 
-	int initialparams[PARAMS]; 
+	int sameadjust;
+	int adjust;
+	int paramnum = 0;
+	int allactive = 1;
+	int initialparams[PARAMS];
 	double influence[PARAMS];
 	double influence0[PARAMS];
-	//int games; 
-	//int points; 
-	int wins, draws, losses; 
-	int totalgames = 0; 
-	int totalpositions = 0; 
-	int totalquietpositions = 0; 
-	char FEN[256]; 
-	FILE* log; 
-	double tolerance = 3e-9;		// minimal change in error that a parameter is still changed
+	int wins, draws, losses;
+	int totalgames = 0;
+	int totalpositions = 0;
+	
+	char FEN[256];
+	FILE* log;
+	double tolerance = 3e-12;		// minimal change in error that a parameter is still changed
+	int usedgames = 0;
+	int unusedgames = 0;
 
 	// if I want to check search times, run analyze_matchprogress()
 	//analyze_matchprogress(); 
 
-	//calc_error_MT(); 
-	//getch(); 
 
+	//create_indices(); 
 
 	ep = malloc(sizeof(EVALUATEDPOSITION) * 30000000);
 
-#ifdef BRTHREE
-	// rename parameter strings
-	for (i = 0; i < PARAMS; i++)
-		if (strcmp(strs[i], "br0") == 0)
-			break; 
-	printf("\nbr0 found at index %i", i); 
-	
-	i = i + 256; 
-	for (j = i; j < PARAMS - 4096 + 256; j++)
-		sprintf(strs[j + 4096 - 256], "%s", strs[j]); 
-	for (j = 0; j < 4096; j++)
-		sprintf(strs[j + i -256], "br%i", j); 
-	//for (i = 0; i < PARAMS; i++)
-	//	printf("\n%i %s", i, strs[i]); 
-	//getch(); 
-	//exit(0); 
-
-#endif
 
 	// initialize eval
 	initeval();
 	//startparams();
-	optimalparams(); 
+	optimalparams();
 	updateeval();
 
 	// recall parameters from cake's evaluation
@@ -310,27 +226,27 @@ int main()
 	//optimalparams(); 
 	//updateeval
 #ifdef ZERO
-	zeroparams(); 
-	updateeval(); 
+	zeroparams();
+	updateeval();
 #endif
 	getparams(params, &paramnum);
 
 	printf("\nPARAMS is %i, paramnum is %i", PARAMS, paramnum);
 	// print parameters to show it's working
 	for (i = 0; i < paramnum; i++) {
-		printf("\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
-		initialparams[i] = params[i]; 
+		//printf("\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
+		initialparams[i] = params[i];
 	}
-	printf("\nfound %i parameters to optimize", paramnum); 
+	printf("\nfound %i parameters to optimize", paramnum);
 
 	// open optimizer logfile, save params
 	log = fopen("c:\\code\\checkersdata\\optimizerlog.txt", "w");
 
-	getch(); 
+	//getch(); 
 
 	// here, test specific positions: rattlesnake problem because of freewk < freebk, check again later
 	/*
-	sprintf(FEN, "W:W28,K15,13,K11,7:BK25,K22,12,5,4."); 
+	sprintf(FEN, "W:W28,K15,13,K11,7:BK25,K22,12,5,4.");
 	FENtoPosition(FEN, &p);
 	mc.bm = bitcount(p.bm);
 	mc.bk = bitcount(p.bk);
@@ -344,17 +260,30 @@ int main()
 	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions_av.txt", "r");
 #else
 #ifdef NODUPLICATES
-    fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
+	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions.txt", "r");
 #else
 	fp = fopen("c:\\code\\checkersdata\\taggedevaluatedpositions+duplicates.txt", "r");
 #endif
 #endif
+
+	// set index numbers to 0 (telling how many time a position with index appears)
+	for (i = 0; i < MAXINDEX_BR531K; i++)
+		indexnum[i] = 0;
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		indexknum[i] = 0;
+		indexknum2[i] = 0; 
+		indexknumside[i] = 0; 
+#ifdef PAT5
+		indexknumcenter[i] = 0; 
+#endif
+		}
 	
 	printf("\nloading...");
 
 	cur = ep; 
 	i = 0; 
-	j = 0; 
+	j = 0;
+	int maxindex = 0; 
 	while (!feof(fp)) {
 		
 		// bm, bk, wm, wk, color, evaluation, result
@@ -432,9 +361,41 @@ int main()
 #endif
 					cur++;
 #ifdef AVERAGE
-					totalgames += (wins + draws + losses); 
+					totalgames += (wins + draws + losses);
 #else
-					totalgames++; 
+					totalgames++;
+#endif
+
+					int index = getindex_br531k(&p);
+					if (index >= 0) {
+						indexnum[index] += (wins + draws + losses);
+					}
+
+					int revindex = getreverseindex_br531k(&p);
+					if (revindex >= 0) {
+						indexnum[revindex] += (wins + draws + losses);
+					}
+					if (index <= 0 && revindex <= 0)
+						unusedgames += (wins + draws + losses);
+					else
+						usedgames += (wins + draws + losses); 
+					index = getkingindex(&p); 
+					indexknum[index] += (wins + draws + losses);
+					revindex = getreversekingindex(&p); 
+					indexknum[revindex] += (wins + draws + losses);
+					index = getkingindex2(&p); 
+					indexknum2[index] += (wins + draws + losses);
+					revindex = getreversekingindex2(&p);
+					indexknum2[revindex] += (wins + draws + losses);
+					index = getkingindexside(&p); 
+					indexknumside[index] += (wins + draws + losses);
+					revindex = getreversekingindexside(&p); 
+					indexknumside[revindex] += (wins + draws + losses);
+#ifdef PAT5
+					index = getkingindexcenter(&p);
+					indexknumcenter[index] += (wins + draws + losses);
+					revindex = getreversekingindexcenter(&p);
+					indexknumcenter[revindex] += (wins + draws + losses);
 #endif
 				}
 				
@@ -444,10 +405,41 @@ int main()
 			}
 		}
 	}
+
+	
+	int realized = 0; 
+	for (int j = 0; j < MAXINDEX_BR531K; j++) {
+		if (indexnum[j] > 0)
+			realized++;
+	}
+	printf("\nof 531441 possible 3-backrank indices, %i are actually realized (n>0)", realized);
+
+	realized = 0;
+	for (int j = 0; j < MAXINDEX_BR531K; j++) {
+		if (indexnum[j] > 10)
+			realized++;
+	}
+	printf("\nof 531441 possible 3-backrank indices, %i are actually realized (n>10)", realized);
+
+	realized = 0;
+	for (int j = 0; j < MAXINDEX_BR531K; j++) {
+		if (indexnum[j] > 100)
+			realized++;
+	}
+	printf("\nof 531441 possible 3-backrank indices, %i are actually realized (n>100)", realized);
+
+	realized = 0;
+	for (int j = 0; j < MAXINDEX_BR531K; j++) {
+		if (indexnum[j] > 1000)
+			realized++;
+	}
+	printf("\nof 531441 possible 3-backrank indices, %i are actually realized (n>1000)", realized);
+	printf("\n%i used games, %i unused games for pattern optimization", usedgames, unusedgames);
+
 	fclose(fp); 
 	n = i - 1 - rejected;
-	printf("\ntotal unique positions %i, total positions %i, total quiet %i, unique quiet %i, final %i, %i were rejected (%i games)", pos_num, totalpositions, totalquietpositions, quiet_pos_num, n, rejected, rejectednum);
-	getch(); 
+	printf("\ntotal unique positions %i, total positions %i, total quiet games %i, unique quiet %i, final %i, %i were rejected (%i games)", 
+		pos_num, totalpositions, totalquietpositions, quiet_pos_num, n, rejected, rejectednum);
 	printf("\nevaluating...");
 
 	
@@ -509,9 +501,6 @@ int main()
 	double minc = 0.024;
     c = 0.024; 
 	
-	
-
-
 	//for (i = 0; i < PARAMSOPT; i++)
 	//	params[i] = 0;
 	//params[7] = 130; // keep only king value
@@ -543,11 +532,6 @@ int main()
 #endif
 	getparams(params, &paramnum); 
 
-	/*
-	for (i = 0; i < 256; i++) {
-		params[arraystart + i + 13 + 256] = 0;
-		params[arraystart + i + 13] = 0;
-	}*/
 
 	// to "stretch" eval
 	//for (i = 0; i < PARAMS; i++)
@@ -568,7 +552,6 @@ int main()
 		error_MT[i] = 0;
 	printf("\ninitial error MT is %.10f", minerror);
 	fprintf(log, "\ninitial error MT is %.10f", minerror);
-	//minerror = 1; 
 
 	//setparams(params, paramnum);
 	//updateeval();
@@ -580,31 +563,34 @@ int main()
 	getch(); 
 
 
+	// then optimize 4x4 single and double corner with kings
+	patterns_setbr_to_zero();
+	patterns_setpat1_to_zero(); 
+	patterns_setpat2_to_zero();
+	patterns_setpat3_to_zero(); 
+	patterns_setpat4_to_zero(); 
+#ifdef PAT5
+	patterns_setpat5_to_zero();
+#endif
+	pattern_kings_optimizer2(n, ep, c); 
+	printf("\n...*** pattern optimizer done!! ");
+
+
+	if (1) {
+		minerror = calc_error(n, ep, c);
+		printf("\nerror after patterns is %.10f (ST)", minerror);
+	}
 
 	/*deactivate_all(); 
 	active_set[man_value] = 1;
 	active_set[king_value] = 1;
-	active_set[piecedown_9] = 1;
-	active_set[piecedown_11] = 1;
-	active_set[twokingbonus_10] = 1;
-	active_set[twokingbonus_12] = 1;
-	active_set[exchangebias] = 1; */
+*/
 
-	/*deactivate_all(); 
-	for (i = 0; i < 256; i++) {
-		active_set[arraystart + i + 13 + 256 + 25 + 10 + 32] = 1;
-	}*/
-	/*active_set[selftrap1] = 1; 
-	active_set[selftrap2] = 1;
-	active_set[selftrap3] = 1;
-	active_set[selftrap4] = 1;
-	active_set[selftrap5] = 1;
-	active_set[selftrap6] = 1;
-	active_set[selftrap7] = 1;*/
 
 	
 
-
+	int step = 1;
+	int maxadjust = 100; 
 
 	activate_all(); 
 
@@ -627,16 +613,16 @@ int main()
 			printf("\nparameter %i:%i", j, oldparam);
 			// 1. try going in positive direction
 			adjust = 0; 
-			while (adjust < 5) {
-				params[j] = params[j]+1; 
+			while (adjust < maxadjust) {
+				params[j] = params[j]+step; 
 				setparams(params, paramnum); 
 				updateeval(); 
 				error = calc_error_MT(n, ep, c);
 				influence[j] += fabs(error - minerror);
-				printf(" +(%.9f)", error); 
+				printf(" +(%.12f)", error); 
 				if (error > (minerror - tolerance)) {
 					// revert
-					params[j] = params[j] - 1; 
+					params[j] = params[j] - step; 
 					break; 
 				}
 				adjust++; 
@@ -646,16 +632,16 @@ int main()
 
 			// 2. if param was not adjusted in positive direction, try negative direction
 			if (!adjust) {
-				while (adjust < 5) {
-					params[j] --;
+				while (adjust < maxadjust) {
+					params[j] -= step;
 					setparams(params, paramnum);
 					updateeval();
 					error = calc_error_MT(n, ep, c);
-					printf(" -(%.9f)", error);
+					printf(" -(%.12f)", error);
 					influence[j] += fabs(error - minerror);
 					if (error > (minerror - tolerance)) {
 						// revert
-						params[j]++;
+						params[j]+= step;
 						break;
 					}
 					adjust++;
@@ -745,15 +731,19 @@ int main()
 
 int activate_all() {
 
+	/*
+	deactivate_all(); 
+	
+	
+	//active_set[edgepressure1] = 1; 
+	return 0; 
 	for (int i = 0; i < 7; i++)
 		active_set[i] = 1; 
 
 	for (int i = 0; i < BRNUM; i++) {
 		active_set[arraystart + 13 + i] = 1;
 	}
-
-
-	//return 0; 
+		//return 0; */
 
 	for (int i = 0; i < PARAMS; i++)
 		active_set[i] = 1;
@@ -769,11 +759,8 @@ int deactivate_all() {
 void codeoutput(int recall) {
 	// write parameters as C code to file
 	FILE* fp;
-	int i; // , j;
+	int i; 
 	int paramnum = 0;
-
-	//int br[256]; 
-	
 
 	if (recall != 0) {
 		getparams(params, &paramnum);
@@ -784,35 +771,15 @@ void codeoutput(int recall) {
 		paramnum = PARAMS; 
 	}
 	
-	
-	// print parameters to show it's working
-	//for (i = 0; i < paramnum; i++)
-	//	fprintf(fp, "\nparameter[%i] is %i (%s)", i, params[i], strs[i]);
-	//fprintf(fp, "\nfound %i parameters to optimize", paramnum);
-
-	for (i = 0; i < paramnum - 13 - 25 - BRNUM - 10 - 32; i++) {
+	for (i = 0; i < paramnum - 13 - 25 - 10 - 32; i++) {
 		fprintf(fp, "\nv[%s] = %i;", strs[i], params[i]);
 	}
 
-	//static int ungroundedpenalty[13] = { -1,-1,1,5,10,16,21,27,24,24,21,21,21 }; // optimized
-
 	fprintf(fp, "\n\nstatic int ungroundedpenalty[13] = {");
-	for (i = paramnum - 13 - 25 - BRNUM  - 10 - 32 ; i < paramnum - 25 - BRNUM  - 10 -32; i++) {
+	for (i = paramnum - 13 - 25  - 10 - 32 ; i < paramnum - 25  - 10 - 32 ; i++) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
-
-	fprintf(fp, "\nstatic int backrank[BRNUM] = {");
-	for (i = paramnum - 25 - BRNUM - 10 - 32 ; i < paramnum - 25  - 10 - 32; i++) {
-		fprintf(fp, " %i,", params[i]);
-		if ((i - paramnum + 25 + BRNUM + 10 + 32) % 16 == 0)
-			fprintf(fp, "\n");
-	}
-	fprintf(fp, "};");
-
-
-
-
 
 	fprintf(fp, "\nstatic int tmod[25] = {");
 	for (i = paramnum - 25-10-32; i < paramnum-10-32; i++) {
@@ -831,7 +798,6 @@ void codeoutput(int recall) {
 		fprintf(fp, " %i,", params[i]);
 	}
 	fprintf(fp, "};");
-
 
 	fclose(fp);
 }
@@ -920,12 +886,8 @@ unsigned __stdcall subThread(void* pArguments)
 		error_MT[i] = sum;
 #endif
 
-
-
-
 #else
 		res = result_translated[threadinfo->ep[i].gameresult];
-
 
 #ifdef OPTIMIZE_SEARCHEVAL
 		res = threadinfo->ep[i].searchvalue;
@@ -940,24 +902,11 @@ unsigned __stdcall subThread(void* pArguments)
 		printf("\nerror is %f", error);
 		errorsum += error;
 		error_MT[i] = error;
-
-
-
 #endif
-
-
-
-#ifdef AVERAGE
-		//error = error * (threadinfo->ep[i].wins + threadinfo->ep[i].draws + threadinfo->ep[i].losses);
-#endif
-
-
-
 
 		//printboard(&p);
 		//printf("\nstatic eval, search eval: %i %i", staticeval, eval);
 		//getch();
-
 	}
 	//errorsum = errorsum / (float)num;
 	//printf("\n***** %.6f",errorsum);
@@ -1014,9 +963,6 @@ double calc_error_MT(int n, EVALUATEDPOSITION* ep, double c) {
 	threadinfo[3].c = c;
 	threadinfo[3].gamenum = 0;
 
-	//counter[0] = 1000000000; 
-	//counter[1] = 2000000000; 
-
 	// Create the second thread.
 	// parameter 4 would be a pointer to an argument list = I could pass a structure there which would 
 	// contain information to communicate with the thread
@@ -1064,12 +1010,822 @@ double calc_error_MT(int n, EVALUATEDPOSITION* ep, double c) {
 	printf("\nnumber of games %i", threadinfo[0].gamenum + threadinfo[1].gamenum + threadinfo[2].gamenum + threadinfo[3].gamenum);
 	error = error / (threadinfo[0].gamenum + threadinfo[1].gamenum + threadinfo[2].gamenum + threadinfo[3].gamenum); 
 	printf("\naverage error of %.10f", error);*/
-
-
 	return error; 
 }
 
 
+int pattern_kings_optimizer2(int n, EVALUATEDPOSITION* ep, double c) {
+	// here's what the pattern optimizer has to do:
+	int i;
+	POSITION p;
+	MATERIALCOUNT mc;
+	int delta;
+	int* staticeval;
+	double* changeplus;
+	double* changeminus;
+	double* weights;
+	double* changeplus2;
+	double* changeminus2;
+	double* weights2;
+	// next 3 lines new for br
+	double* weightsbr531k;
+	double* changeplusbr531k; 
+	double* changeminusbr531k; 
+	// next 3 lines for 4k br
+	double* weightsbr4k;
+	double* changeplusbr4k; 
+	double* changeminusbr4k; 
+	// next 3 lines for side king pattern
+	double* changeplusside;
+	double* changeminusside;
+	double* weightsside;
+	// next 3 lines for king center pattern
+#ifdef PAT5
+	double* changepluscenter;
+	double* changeminuscenter;
+	double* weightscenter;
+#endif
+	
+
+	//if(p.color == BLACK)
+
+	double error;
+	//double errormodified;
+	double sum;
+	double starttime; 
+	int adjustplus = 1, adjustminus = 1;
+	int adjustplus2 = 1, adjustminus2 = 1; 
+	int adjustplusbr531k = 1, adjustminusbr531k = 1; 
+	int adjustplusbr4k = 1, adjustminusbr4k = 1; 
+	int adjustplusside = 1, adjustminusside = 1; 
+#ifdef PAT5
+	int adjustpluscenter = 1, adjustminuscenter = 1;
+#endif
+	int pass = 1;
+
+	int num=0; 
+	double errorsum; 
+	//int res;
+
+	staticeval = malloc(n * sizeof(int));
+
+	changeplus = malloc(MAXKINGINDEX * sizeof(double));
+	changeminus = malloc(MAXKINGINDEX * sizeof(double));
+	weights = malloc(MAXKINGINDEX * sizeof(double));
+
+	changeplus2 = malloc(MAXKINGINDEX * sizeof(double));
+	changeminus2 = malloc(MAXKINGINDEX * sizeof(double));
+	weights2 = malloc(MAXKINGINDEX * sizeof(double));
+
+	changeplusside = malloc(MAXKINGINDEX * sizeof(double));
+	changeminusside = malloc(MAXKINGINDEX * sizeof(double));
+	weightsside = malloc(MAXKINGINDEX * sizeof(double));
+
+#ifdef PAT5
+	changepluscenter = malloc(MAXKINGINDEX * sizeof(double));
+	changeminuscenter = malloc(MAXKINGINDEX * sizeof(double));
+	weightscenter = malloc(MAXKINGINDEX * sizeof(double));
+#endif
+
+	changeplusbr531k = malloc(MAXINDEX_BR531K * sizeof(double));
+	changeminusbr531k = malloc(MAXINDEX_BR531K * sizeof(double));
+	weightsbr531k = malloc(MAXINDEX_BR531K * sizeof(double));
+
+	changeplusbr4k = malloc(MAXINDEX_BR4K * sizeof(double));
+	changeminusbr4k = malloc(MAXINDEX_BR4K * sizeof(double));
+	weightsbr4k = malloc(MAXINDEX_BR4K * sizeof(double));
+
+
+	if (staticeval == 0 || changeplus == 0 || changeminus == 0 || weights == 0
+		|| changeplus2 == 0 || changeminus2 == 0 || weights2 == 0 ||
+		changeplusbr531k == 0 || changeminusbr531k == 0 || weightsbr531k == 0 ||
+		changeplusbr4k == 0 || changeminusbr4k == 0 || weightsbr4k == 0 ||
+		changeplusside == 0 || changeminusside == 0 || weightsside == 0 
+#ifdef PAT5
+		||
+		changepluscenter == 0 || changeminuscenter == 0 || weightscenter == 0
+#endif
+		)
+		{
+		printf("\nnull pointer in pattern optimizer!");
+		return 0;
+	}
+
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		weights[i] = 0;
+		weights2[i] = 0; 
+		weightsside[i] = 0; 
+#ifdef PAT5
+		weightscenter[i] = 0; 
+#endif
+	}
+	for (i = 0; i < MAXINDEX_BR531K; i++)
+		weightsbr531k[i] = 0; 
+	for (i = 0; i < MAXINDEX_BR4K; i++)
+		weightsbr4k[i] = 0;
+
+
+	// 1. calculate current eval of each position without changes and save in an array of size N
+	printf("\npattern king optimizer: getting initial eval for %i positions....", n);
+	for (i = 0; i < n; i++) {
+		p.bm = ep[i].bm;
+		p.bk = ep[i].bk;
+		p.wm = ep[i].wm;
+		p.wk = ep[i].wk;
+		p.color = ep[i].color;
+		// calculate number of positions once in init, then use it later
+		num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+		mc.bm = bitcount(p.bm);
+		mc.bk = bitcount(p.bk);
+		mc.wm = bitcount(p.wm);
+		mc.wk = bitcount(p.wk);
+		staticeval[i] = evaluation(&p, &mc, 0, &delta, 0, 0);
+		if (ep[i].color == WHITE)
+			staticeval[i] = -staticeval[i]; // now staticeval is as seen from black's point of view
+	}
+	printf(" done!");
+
+	starttime = clock(); 
+	
+	
+	while (adjustplus + adjustminus && (pass </*2002*/ 2002)) {
+		// 2. create two arrays "changeplus[531441]" and "changeminus[531441]", and set them all to 0
+
+		// todo: use memset instead?
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			changeplus[i] = 0;
+			changeminus[i] = 0;
+			changeplus2[i] = 0; 
+			changeminus2[i] = 0; 
+			changeplusside[i] = 0; 
+			changeminusside[i] = 0; 
+#ifdef PAT5
+			changepluscenter[i] = 0;
+			changeminuscenter[i] = 0;
+#endif
+		}
+		for (i = 0; i < MAXINDEX_BR531K; i++) {
+			changeplusbr531k[i] = 0;
+			changeminusbr531k[i] = 0;
+		}
+		for (i = 0; i < MAXINDEX_BR4K; i++) {
+			changeplusbr4k[i] = 0;
+			changeminusbr4k[i] = 0;
+		}
+
+		errorsum = 0; 
+		// 3. loop over all N positions
+		for (i = 0; i < n; i++) {
+			p.bm = ep[i].bm;
+			p.bk = ep[i].bk;
+			p.wm = ep[i].wm;
+			p.wk = ep[i].wk;
+			p.color = ep[i].color;
+
+			//    4.calculate index of this position
+			int index = indexk_get_magic(&p);
+			int reverseindex = indexk_reverse_get_magic(&p);  
+			int index2 = indexk2_get_magic(&p); 
+			int reverseindex2 = indexk2_reverse_get_magic(&p); 
+			int indexside = indexk_side_get_magic(&p); 
+			int reverseindexside = indexk_side_reverse_get_magic(&p); 
+#ifdef PAT5
+			int indexcenter = indexk_center_get_magic(&p);
+			int reverseindexcenter = indexk_center_reverse_get_magic(&p);
+#endif
+			int indexbr = index_get(&p); 
+			int reverseindexbr = index_reverse_get(&p); 
+
+#ifdef BR4
+			int indexbr4k = (p.bm & 0xFFFF);
+			int reverseindexbr4k = fastrev16((p.wm >> 16));
+#else
+			int indexbr4k = (p.bm & 0xFFF);
+			int reverseindexbr4k = fastrev12((p.wm >> 20));
+#endif
+
+
+
+			double w = 0; 
+			double res = 0; 
+
+			//    5.adjust weight[index] by +1, evaluate position (actually, just add weight[index]+1 to the eval! no need to really evaluate!)
+			//    6.calculate difference of sigmoid function for old and new eval  (sigmoid(old) - sigmoid(new))
+			//    7.add this difference to changeplus[index]
+			//    8.adjust weight[index]  by -1, evaluate position (actually, just add weight[index]-1 to the eval! no need to really evaluate!)
+			//	  9.calculate difference of sigmoid function for old and new eval
+			//    10.add this difference to changeminus[index]
+			
+				/*if (abs(weights[index]) > 30 && (indexknum[index] > 100) && ((pass % 100) == 0)) {
+					printboard(&p);
+					printf("\nindex is %i, weight is %.1f, static eval %i, games %i, %i (W%i D%i L%i)", index, weights[index], staticeval[i], indexknum[index], ep[i].wins + ep[i].draws + ep[i].losses, ep[i].wins, ep[i].draws, ep[i].losses);
+				}
+				if (abs(weights2[index2]) > 30 && (indexknum2[index2] > 100) && ((pass % 100) == 0)) {
+					printboard(&p);
+					printf("\nDC index is %i, weight is %.1f, static eval %i, games %i, %i (W%i D%i L%i)", index, weights2[index2], staticeval[i], indexknum2[index2], ep[i].wins + ep[i].draws + ep[i].losses, ep[i].wins, ep[i].draws, ep[i].losses);
+				}*/
+
+				w = weights[index] - weights[reverseindex] +weights2[index2] - weights2[reverseindex2];
+				w += weightsside[indexside] - weightsside[reverseindexside]; 
+#ifdef PAT5
+				w += weightscenter[indexcenter] - weightscenter[reverseindexcenter];
+#endif
+				w += weightsbr531k[indexbr]; 
+				w -= weightsbr531k[reverseindexbr]; 
+				w += weightsbr4k[indexbr4k]; 
+				w -= weightsbr4k[reverseindexbr4k]; 
+
+#ifdef OPTIMIZE_SEARCHEVAL
+
+				res = ep[i].searchvalue;
+				if (ep[i].color == WHITE)
+					res = -res; // now staticeval is as seen from black's point of view
+				res = sigmoid(res, c);
+				error = (res - sigmoid((double)staticeval[i] + w, c));
+				error = error * error;
+				error *= (ep[i].wins + ep[i].draws + ep[i].losses);
+				errorsum += error;
+				sum = error; 
+				//error_ST[i] = error;
+				//num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+#else
+				error = (1.0 - sigmoid((double)staticeval[i] + w, c));
+				error = error * error;
+				sum = error * ep[i].wins;
+
+				error = (0.0 - sigmoid((double)staticeval[i] + w, c));
+				error = error * error;
+				sum += error * ep[i].draws;
+
+				error = (-1.0 - sigmoid((double)staticeval[i] + w, c));
+				error = error * error;
+				sum += error * ep[i].losses;
+				errorsum += sum;
+#endif
+
+				//num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+				changeplus[index] += sum;
+				changeminus[index] += sum;
+				changeplus[reverseindex] += sum;
+				changeminus[reverseindex] += sum;
+				changeplus2[index2] += sum; 
+				changeminus2[index2] += sum; 
+				changeplus2[reverseindex2] += sum; 
+				changeminus2[reverseindex2] += sum; 
+				changeplusbr531k[indexbr] += sum; 
+				changeminusbr531k[indexbr] += sum; 
+				changeplusbr531k[reverseindexbr] += sum; 
+				changeminusbr531k[reverseindexbr] += sum; 
+				changeplusbr4k[indexbr4k] += sum;
+				changeminusbr4k[indexbr4k] += sum;
+				changeplusbr4k[reverseindexbr4k] += sum;
+				changeminusbr4k[reverseindexbr4k] += sum;
+				changeplusside[indexside] += sum; 
+				changeminusside[indexside] += sum; 
+				changeplusside[reverseindexside] += sum; 
+				changeminusside[reverseindexside] += sum; 
+
+#ifdef PAT5
+				changepluscenter[indexcenter] += sum;
+				changeminuscenter[indexcenter] += sum;
+				changepluscenter[reverseindexcenter] += sum;
+				changeminuscenter[reverseindexcenter] += sum;
+#endif
+
+
+#ifdef OPTIMIZE_SEARCHEVAL
+
+				error = (res - sigmoid((double)staticeval[i] + w + 0.1, c));
+				error = error * error;
+				error *= (ep[i].wins + ep[i].draws + ep[i].losses);
+				sum = error;
+				//error_ST[i] = error;
+				//num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+#else
+				error = (1.0 - sigmoid((double)staticeval[i] + w + 0.1, c));
+				error = error * error;
+				sum = error * ep[i].wins;
+
+				error = (0.0 - sigmoid((double)staticeval[i] + w + 0.1, c));
+				error = error * error;
+				sum += error * ep[i].draws;
+
+				error = (-1.0 - sigmoid((double)staticeval[i] + w + 0.1, c));
+				error = error * error;
+				sum += error * ep[i].losses;
+#endif
+
+				changeplus[index] -= sum;
+				changeminus[reverseindex] -= sum;
+				changeplus2[index2] -= sum; 
+				changeminus2[reverseindex2] -= sum; 
+				changeplusside[indexside] -= sum; 
+				changeminusside[reverseindexside] -= sum; 
+
+#ifdef PAT5
+				changepluscenter[indexcenter] -= sum;
+				changeminuscenter[reverseindexcenter] -= sum;
+#endif
+				changeplusbr531k[indexbr] -= sum; 
+				changeminusbr531k[reverseindexbr] -= sum; 
+				changeplusbr4k[indexbr4k] -= sum;
+				changeminusbr4k[reverseindexbr4k] -= sum;
+
+#ifdef OPTIMIZE_SEARCHEVAL
+
+
+				error = (res - sigmoid((double)staticeval[i] + w -0.1, c));
+				error = error * error;
+				error *= (ep[i].wins + ep[i].draws + ep[i].losses);
+				sum = error;
+				//error_ST[i] = error;
+				//num += (ep[i].wins + ep[i].draws + ep[i].losses);
+
+#else
+
+				error = (1.0 - sigmoid((double)staticeval[i] + w - 0.1, c));
+				error = error * error;
+				sum = error * ep[i].wins;
+
+				error = (0.0 - sigmoid((double)staticeval[i] + w - 0.1, c));
+				error = error * error;
+				sum += error * ep[i].draws;
+
+				error = (-1.0 - sigmoid((double)staticeval[i] + w - 0.1, c));
+				error = error * error;
+				sum += error * ep[i].losses;
+
+#endif
+				changeminus[index] -= sum;
+				changeplus[reverseindex] -= sum;
+				changeminus2[index2] -= sum; 
+				changeplus2[reverseindex2] -= sum; 
+				changeminusside[indexside] -= sum; 
+				changeplusside[reverseindexside] -= sum; 
+#ifdef PAT5
+				changeminuscenter[indexcenter] -= sum;
+				changepluscenter[reverseindexcenter] -= sum;
+#endif
+				changeminusbr531k[indexbr] -= sum; 
+				changeplusbr531k[reverseindexbr] -= sum; 
+				changeminusbr4k[indexbr4k] -= sum;
+				changeplusbr4k[reverseindexbr4k] -= sum;
+		}
+		errorsum = errorsum / (double)num;
+		printf("%.9f", errorsum);
+
+		adjustplus = 0;
+		adjustminus = 0;
+		adjustplus2 = 0; 
+		adjustminus2 = 0; 
+		adjustplusbr531k = 0; 
+		adjustminusbr531k = 0; 
+		adjustplusbr4k = 0;
+		adjustminusbr4k = 0;
+		adjustplusside = 0; 
+		adjustminusside = 0; 
+#ifdef PAT5
+		adjustpluscenter = 0;
+		adjustminuscenter = 0;
+#endif
+		// find index with greatest change
+		double maxchange = 0;
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			if (changeplus[i] > maxchange)
+				maxchange = changeplus[i];
+			if (changeminus[i] > maxchange)
+				maxchange = changeminus[i];
+		}
+		printf("  KSC %.3f", maxchange);
+		
+		maxchange = 0; 
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			if (changeplus2[i] > maxchange)
+				maxchange = changeplus2[i]; 
+			if (changeminus2[i] > maxchange)
+				maxchange = changeminus2[i]; 
+		}
+		printf("  KDC %.3f", maxchange);
+
+		maxchange = 0;
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			if (changeplusside[i] > maxchange)
+				maxchange = changeplusside[i];
+			if (changeminusside[i] > maxchange)
+				maxchange = changeminusside[i];
+		}
+		printf("  KS %.3f", maxchange);
+#ifdef PAT5
+		maxchange = 0;
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			if (changepluscenter[i] > maxchange)
+				maxchange = changepluscenter[i];
+			if (changeminuscenter[i] > maxchange)
+				maxchange = changeminuscenter[i];
+		}
+#endif
+		//printf("   king center %.3f", maxchange);
+		
+		maxchange = 0;
+		for (i = 0; i < MAXINDEX_BR531K; i++) {
+			if (changeplusbr531k[i] > maxchange)
+				maxchange = changeplusbr531k[i]; 
+			if (changeminusbr531k[i] > maxchange)
+				maxchange = changeminusbr531k[i]; 
+		}
+		printf("  531kbr %.3f", maxchange);
+		
+		double maxchange2 = 0;
+		for (i = 0; i < MAXINDEX_BR4K; i++) {
+			if (changeplusbr4k[i] > maxchange2)
+				maxchange2 = changeplusbr4k[i];
+			if (changeminusbr4k[i] > maxchange2)
+				maxchange2 = changeminusbr4k[i];
+		}
+		printf("  4kbr %.3f", maxchange2);
+
+
+
+		for (i = 0; i < MAXKINGINDEX; i++) {
+			
+			// king single corner
+			double mult = 0.06; // 0.08;  //0.1
+			mult *= 2e7;
+			mult /= totalquietpositions; 
+#ifdef DUALCOLOR
+			mult *= 1.6;
+#endif
+#ifdef DUALCOLOR2
+			mult *= 0.9;
+#endif
+#ifdef BOOST
+			if (pass > 100)
+				mult *= 2; 
+#endif
+#ifdef BOOST2
+			if (pass > 200)
+				mult *= 1.5;
+#endif
+			if (changeplus[i] > 0 && (abs(weights[i]) < 5 * sqrt(indexknum[i]))) {
+				adjustplus++;
+				// Ed's suggestion for regularization:
+				//weights[i] *= 0.9999;// 0.998;
+				weights[i] += mult * changeplus[i];
+			}
+			if (changeminus[i] > 0 && (abs(weights[i]) < 5 * sqrt(indexknum[i]))) {
+				adjustminus++;
+				weights[i] -= mult * changeminus[i];
+			}
+
+
+			// king double corner and side
+			mult =  0.055;  // 0.09
+			mult *= 2e7;
+			mult /= totalquietpositions;
+#ifdef DUALCOLOR
+			mult *= 1.6;
+#endif
+#ifdef DUALCOLOR2
+			mult *= 0.9;
+#endif
+
+#ifdef BOOST
+			if (pass > 100)
+				mult *= 2;
+#endif
+#ifdef BOOST2
+			if (pass > 200)
+				mult *= 1.5;
+#endif
+			if (changeplus2[i] > 0 && (abs(weights2[i]) < 5 * sqrt(indexknum2[i]))) {
+				adjustplus2++;
+				weights2[i] += mult * changeplus2[i];
+			}
+			if (changeminus2[i] > 0 && (abs(weights2[i]) < 5 * sqrt(indexknum2[i]))) {
+				adjustminus2++;
+				weights2[i] -= mult * changeminus2[i];
+			}
+
+			if (changeplusside[i] > 0 && (abs(weightsside[i]) < 5 * sqrt(indexknumside[i]))) {
+				adjustplusside++;
+				// Ed's suggestion for regularization:
+				//weights[i] *= 0.9999;// 0.998;
+				weightsside[i] += mult * changeplusside[i];
+			}
+			if (changeminusside[i] > 0 && (abs(weightsside[i]) < 5 * sqrt(indexknumside[i]))) {
+				adjustminusside++;
+				weightsside[i] -= mult * changeminusside[i];
+			}
+#ifdef PAT5
+			if (changepluscenter[i] > 0 && (abs(weightscenter[i]) < 5 * sqrt(indexknumcenter[i]))) {
+				adjustpluscenter++;
+				// Ed's suggestion for regularization:
+				//weights[i] *= 0.9999;// 0.998;
+				weightscenter[i] += mult * changepluscenter[i];
+			}
+			if (changeminuscenter[i] > 0 && (abs(weightscenter[i]) < 5 * sqrt(indexknumcenter[i]))) {
+				adjustminuscenter++;
+				weightscenter[i] -= mult * changeminuscenter[i];
+			}
+#endif
+		}
+
+		for (i = 0; i < MAXINDEX_BR531K; i++) {
+			// example: if a pattern shows up 25 times, it is limited to value 25
+			// for 100 times, limited to 50
+			// for 400 times, to 100
+			// if a pattern is very rare, it only has a tiny change, and hardly gets anywhere
+			double mult = 0.21; // 0.2;
+			mult *= 2e7;
+			mult /= totalquietpositions;
+#ifdef DUALCOLOR2
+			//mult *= 1.2;
+#endif
+
+#ifdef BOOST
+			if (pass > 100)
+				mult *= 2;
+#endif
+#ifdef BOOST2
+			if (pass > 200)
+				mult *= 1.5;
+#endif
+			if (changeplusbr531k[i] > 0 && (abs(weightsbr531k[i]) < 5 * sqrt(indexnum[i]))) {
+				adjustplusbr531k++;
+				weightsbr531k[i] += mult * changeplusbr531k[i];
+			}
+			if (changeminusbr531k[i] > 0 && (abs(weightsbr531k[i]) < 5 * sqrt(indexnum[i]))) {
+				adjustminusbr531k++;
+				weightsbr531k[i] -= mult * changeminusbr531k[i];
+			}
+		}
+
+		for (i = 0; i < MAXINDEX_BR4K; i++) {
+			double mult = 0.15;// 0.15;
+			mult *= 2e7;
+			mult /= totalquietpositions;
+//#ifdef DUALCOLOR
+//			mult *= 1.6;
+//#endif
+
+#ifdef BOOST
+			if (pass > 100)
+				mult *= 2;
+#endif
+#ifdef BOOST2
+			if (pass > 200)
+				mult *= 1.5;
+#endif
+			if (changeplusbr4k[i] > 0) {
+				adjustplusbr4k++;
+				weightsbr4k[i] += mult * changeplusbr4k[i];
+			}
+			if (changeminusbr4k[i] > 0 ) {
+				adjustminusbr4k++;
+				weightsbr4k[i] -= mult * changeminusbr4k[i];
+			}
+		}
+
+		//printf("\npattern king optimizer: pass %i done %.2fs,  %i/%i/%i/%i/%i/%i adjust +, %i/%i/%i/%i/%i/%i  -!", pass, ((clock() - starttime) / CLK_TCK),
+		//	adjustplus, adjustplus2, adjustplusside, adjustpluscenter, adjustplusbr531k, adjustplusbr4k,
+		//	adjustminus, adjustminus2, adjustminusside, adjustminuscenter, adjustminusbr531k, adjustminusbr4k);
+		printf("\n%i, %.2f, ", pass, ((clock() - starttime) / CLK_TCK));
+		pass++;
+
+	}
+	// 12. after loop is done, loop over all weights (531441 of them)
+	//    13. if changeplus[index] is positive, add one to weight[index]
+	//    14. else if changeminus[index] is positive, subract one from weight[index]
+	// 15. if any changes were made, go back to step 3.
+
+	// write a file with pattern weights but better:
+	// write parameters as C code to file
+	FILE* fp;
+	fp = fopen("C:\\code\\checkersdata\\patternoutput_rounded.txt", "w");
+
+	int nonzero = 0;
+	int w;
+	for (i = 0; i < MAXINDEX_BR531K; i++) {
+		w = round(2 * weightsbr531k[i]);
+		if (w != 0) {
+			fprintf(fp, "pat1[%i] = %i;\n", i, w);  // cake eval divides weights by two, so write 2*weights
+			nonzero++;
+		}
+	}
+	printf("\npat1: %i weights of %i are nonzero", nonzero, MAXINDEX_BR531K);
+
+	nonzero = 0; 
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		w = round(2 * weights[i]);
+		if (w != 0) {
+			fprintf(fp, "pat2[%i] = %i;\n", i, w);  // cake eval divides weights by two, so write 2*weights
+			nonzero++;
+		}
+	}
+	printf("\npat2: %i weights of %i are nonzero", nonzero, MAXKINGINDEX);
+
+	nonzero = 0;
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		w = round(2 * weights2[i]);
+		if (w != 0) {
+			fprintf(fp, "pat3[%i] = %i;\n", i, w);  // cake eval divides weights by two, so write 2*weights
+			nonzero++;
+		}
+	}
+
+	printf("\npat3: %i weights of %i are nonzero - hit key to continue", nonzero, MAXKINGINDEX);
+	
+	
+
+	nonzero = 0;
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		w = round(2 * weightsside[i]);
+		if (w != 0) {
+			fprintf(fp, "pat4[%i] = %i;\n", i, w);  // cake eval divides weights by two, so write 2*weights
+			nonzero++;
+		}
+	}
+	printf("\npat4: %i weights of %i are nonzero", nonzero, MAXKINGINDEX);
+#ifdef PAT5
+	nonzero = 0;
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		w = round(2 * weightscenter[i]);
+		if (w != 0) {
+			fprintf(fp, "pat5[%i] = %i;\n", i, w);  // cake eval divides weights by two, so write 2*weights
+			nonzero++;
+		}
+	}
+	printf("\npat5: %i weights of %i are nonzero", nonzero, MAXKINGINDEX);
+#endif
+	/*fprintf(fp, "\n\n\nstatic int backrank[BRNUM] = {");
+	nonzero = 0;
+	for (i = 0; i < MAXINDEX_BR4K; i++) {
+		if (((int)weightsbr4k[i]) != 0) {
+			nonzero++;
+		}
+		w = round(2 * weightsbr4k[i]);
+		fprintf(fp, " %i,", w);
+		if (i % 32 == 0)
+			fprintf(fp, "\n");
+	}
+
+	fprintf(fp, "};");*/
+
+	fclose(fp);
+	getch();
+
+
+
+	// write a file with pattern weights for br4k
+	// write parameters as C code to file
+	//FILE* fp;
+	fp = fopen("C:\\code\\checkersdata\\patternoutput_br.txt", "w");
+
+	fprintf(fp, "\nstatic int backrank[BRNUM] = {");
+	nonzero = 0;
+	for (i = 0; i < MAXINDEX_BR4K; i++) {
+		if (((int)weightsbr4k[i]) != 0) {
+			nonzero++;
+		}
+		w = round(2 * weightsbr4k[i]);
+		fprintf(fp, " %i,", w);
+		if (i % 32 == 0)
+			fprintf(fp, "\n");
+	}
+
+	fprintf(fp, "};");
+	fclose(fp);
+	printf("\n%i weights of %i are nonzero", nonzero, MAXINDEX_BR4K);
+	//getch();
+
+	// finally finally set weights in Cake: 
+	// set the weights in Cake's eval
+	// next, set the br patterns found here in the eval so we can continue: 
+	int* weights_int = malloc(sizeof(int) * max(MAXKINGINDEX, MAXINDEX_BR531K));
+
+
+	for (i = 0; i < MAXINDEX_BR531K; i++)
+		weights_int[i] = round(2 * weightsbr531k[i]);
+	pattern_1_set(weights_int);
+
+	for (i = 0; i < MAXKINGINDEX; i++)
+		weights_int[i] = round(2 * weights[i]);
+	pattern_2_set(weights_int);
+	for (i = 0; i < MAXKINGINDEX; i++)
+		weights_int[i] = round(2 * weights2[i]);
+	pattern_3_set(weights_int);
+	for (i = 0; i < MAXKINGINDEX; i++)
+		weights_int[i] = round(2 * weightsside[i]);
+	pattern_4_set(weights_int);
+#ifdef PAT5
+	for (i = 0; i < MAXKINGINDEX; i++)
+		weights_int[i] = round(2 * weightscenter[i]);
+	pattern_5_set(weights_int);
+#endif
+	for (i = 0; i < MAXINDEX_BR4K; i++)
+		weights_int[i] = round(2 * weightsbr4k[i]);
+	pattern_br_set(weights_int);
+
+
+	// finally, calculate what will happen with the weights rounded to nearest integers:
+	for (i = 0; i < MAXKINGINDEX; i++) {
+		weights[i] = round(2 * weights[i]);
+		weights[i] /= 2;
+		weights2[i] = round(2 * weights2[i]);
+		weights2[i] /= 2; 
+		weightsside[i] = round(2 * weightsside[i]);
+		weightsside[i] /= 2; 
+#ifdef PAT5
+		weightscenter[i] = round(2 * weightscenter[i]);
+		weightscenter[i] /= 2;
+#endif
+	}
+
+	for (i = 0; i < MAXINDEX_BR4K; i++) {
+		weightsbr4k[i] = round(2 * weightsbr4k[i]); 
+		weightsbr4k[i] /= 2; 
+	}
+
+	for (i = 0; i < MAXINDEX_BR531K; i++) {
+		weightsbr531k[i] = round(2 * weightsbr531k[i]);
+		weightsbr531k[i] /= 2;
+	}
+
+	errorsum = 0;
+	num = 0;
+	for (i = 0; i < n; i++) {
+		p.bm = ep[i].bm;
+		p.bk = ep[i].bk;
+		p.wm = ep[i].wm;
+		p.wk = ep[i].wk;
+		p.color = ep[i].color;
+		// seems I am missing br4k here?
+		int index = getkingindex(&p);   // maybe just replace with &ep[i]?
+		int reverseindex = getreversekingindex(&p);
+		int index2 = getkingindex2(&p); 
+		int reverseindex2 = getreversekingindex2(&p); 
+		int indexbr = getindex_br531k(&p);
+		int reverseindexbr = getreverseindex_br531k(&p); 
+		int indexside = indexk_side_get_magic(&p);
+		int reverseindexside = indexk_side_reverse_get_magic(&p);
+#ifdef PAT5
+		int indexcenter = indexk_center_get_magic(&p);
+		int reverseindexcenter = indexk_center_reverse_get_magic(&p);
+#endif
+
+#ifdef BR4
+		int indexbr4k = (p.bm & 0xFFFF);
+		int reverseindexbr4k = fastrev16((p.wm >> 16));
+#else
+		int indexbr4k = (p.bm & 0xFFF);
+		int reverseindexbr4k = fastrev12((p.wm >> 20));
+#endif
+		double w = 0;
+
+		w = weights[index];
+		w -= weights[reverseindex];
+		w += weights2[index2]; 
+		w -= weights2[reverseindex2]; 
+		w += weightsbr531k[indexbr]; 
+		w -= weightsbr531k[reverseindexbr]; 
+
+		w += weightsbr4k[indexbr4k];
+		w -= weightsbr4k[reverseindexbr4k];
+
+		w += weightsside[indexside];
+		w -= weightsside[reverseindexside];
+#ifdef PAT5
+		w += weightscenter[indexcenter];
+		w -= weightscenter[reverseindexcenter];
+#endif
+
+#ifdef AVERAGE
+		num += (ep[i].wins + ep[i].draws + ep[i].losses);
+		error = (1.0 - sigmoid((double)staticeval[i] + w, c));
+		error = error * error;
+		sum = error * ep[i].wins;
+		error = (0.0 - sigmoid((double)staticeval[i] + w, c));
+		error = error * error;
+		sum += error * ep[i].draws;
+		error = (-1.0 - sigmoid((double)staticeval[i] + w, c));
+		error = error * error;
+		sum += error * ep[i].losses;
+		if (sum != sum) {
+			printf("\n%i! %i %.2f %.2f", i, staticeval[i], weights[index], weights[reverseindex]);
+			getch();
+		}
+		errorsum += sum;
+#endif
+	}
+	errorsum = errorsum / (double)num;
+	printf("\nerror sum after rounding is is %.12f", errorsum);
+	return 0; 
+	//getch();
+}
 
 
 double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
@@ -1081,8 +1837,7 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 	double res, error, errorsum = 0;
 	double sum;
 	int num = 0; 
-
-	 
+		 
 	for (i = 0; i < n; i++) {
 #ifdef STOCHASTIC
 		if (isinactive[i])
@@ -1101,7 +1856,6 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 		staticeval = evaluation(&p, &mc, 0, &delta, 0, 0);
 
 		//errorsum += abs(staticeval - ep[i].value);
-
 		//printboard(&p); 
 		//printf("\nstatic eval is %i", staticeval); 
 		//getch(); 
@@ -1126,15 +1880,15 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 
 #else
 		num += (ep[i].wins + ep[i].draws + ep[i].losses);
-		error = (1 - sigmoid(staticeval, c));
+		error = (1 - sigmoid((double)staticeval, c));
 		error = error * error;
 		sum = error * ep[i].wins;
 
-		error = (0 - sigmoid(staticeval, c));
+		error = (0 - sigmoid((double)staticeval, c));
 		error = error * error;
 		sum += error * ep[i].draws;
 
-		error = (-1 - sigmoid(staticeval, c));
+		error = (-1 - sigmoid((double)staticeval, c));
 		error = error * error;
 		sum += error * ep[i].losses;
 
@@ -1171,17 +1925,11 @@ double calc_error(int n, EVALUATEDPOSITION* ep, double c) {
 	return errorsum;
 }
 
-
-double sigmoid(int v, double c) {
+double sigmoid(double v, double c) {
 	double res;
-	//float c = 0.02; 
-	//res = exp(0.001);
-
 	res = 2 / (1 + exp((double) (-c * ((double)v)))) - 1;
 	return res; 
 }
-
-
 
 int testcapture(POSITION *p)
 {
@@ -1224,9 +1972,7 @@ int testcapture(POSITION *p)
 	return 0;
 }
 
-
 // some helper functions
-
 int32 attack_forwardjump(int32 x, int32 free)
 {
 	// return all squares which are forward-attacked by pieces in x, with free
@@ -1248,8 +1994,6 @@ int32 backwardjump(int32 x, int32 free, int32 other)
 	return ((((((x&LBJ1) >> 5)&other) >> 4)&free) | (((((x&LBJ2) >> 4)&other) >> 5)&free) | (((((x&RBJ1) >> 4)&other) >> 3)&free) | (((((x&RBJ2) >> 3)&other) >> 4)&free));
 }
 
-
-
 int countmaterial(POSITION *p, MATERIALCOUNT *m)
 {
 	m->bm = bitcount(p->bm);
@@ -1258,8 +2002,6 @@ int countmaterial(POSITION *p, MATERIALCOUNT *m)
 	m->wk = bitcount(p->wk);
 	return 0;
 }
-
-
 
 // table-lookup bitcount - newer CPUs are going to have a popcount instruction soon, would be
 // much more efficient.
@@ -1270,169 +2012,6 @@ int bitcount(int32 n)
 }
 
 
-
-/*Kingsrow(x64) 1.17d played 25 - 21
-analysis: value = 4, depth 22 / 21.5 / 41, 2.7s, 5497 kN / s, pv 25 - 21 9 - 14 29 - 25 11 - 15 23 - 18 14x23 27x11 8x15 17 - 14 10x17 21x14
-Cake 1.85_2017d(x64) played 9 - 14
-analysis : depth 19 / 40 / 20.6  time 1.38s  value = 10  nodes 5452751  3922kN / s  db 98 % cut 95.3% pv  9 - 14 22 - 18 13x22 26x17 11 - 15 18x11  8x15 29 - 25
-Kingsrow(x64) 1.17d played 21x14
-analysis : value = 2, depth 5 / 6.7 / 12, 0.0s, 13 kN / s, pv 21x14 4 - 8 24 - 19 15x24 28x19 8 - 11
-Cake 1.85_2017d(x64) played 12 - 16
-analysis : depth 19 / 34 / 19.3  time 2.70s  value = 2  nodes 9382738  3460kN / s  db 100 % cut 95.6% pv 12 - 16 32 - 27 16 - 20 24 - 19 15x24 28x19  4 - 8 25 - 21
-*/
-
-int analyze_matchlog(void) {
-	// read match log file
-	FILE* fp; 
-	char line[256]; 
-	int value, d1, d2;
-	double time, d3;
-	double timesum_kr = 0, timesum_cake = 0;
-	int n_kr = 0, n_cake = 0; 
-	double time_cake[100000];
-	double time_kingsrow[100000];
-
-	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog84.txt", "r");
-	while (!feof(fp)) {
-		fgets(line, 255, fp);
-		if (line[0] == 'a' && (line[10] == 'v' || line[33] == 'v')) {  // kingsrow
-			//printf("\n%s", line);
-			sscanf(line, "analysis: value=%i, depth  %i/%lf/%i, %lfs", &value, &d1, &d3, &d2, &time);
-			//sscanf(line, "analysis: time remaining:%fs   value=%i, depth  %i/%f/%i, %fs", &dummy, &value, &d1, &d3, &d2, &time);
-			if (d1 > 10 && d1 < 50
-				) {
-				timesum_kr += time;
-				time_kingsrow[n_kr] = time; 
-				n_kr++;
-			}
-			//printf("\n%i   %i/%.1f/%i   %.1f", value, d1, d3, d2, time);
-		}
-		if (line[0] == 'a' && (line[10] == 'd' || line[33] == 'd')) {  // cake
-			//printf("\n%s", line);
-			sscanf(line, "analysis: depth %i/%i/%lf  time %lf", &d1, &d2, &d3, &time);
-			//sscanf(line, "analysis: time remaining:%fs  depth %i/%i/%f  time %f", &dummy, &d1, &d2, &d3, &time);
-			//printf("\n%i/%i/%.1f %.2f", d1,d2,d3,time);
-			if (d1 > 10 && d1 < 50) {
-				timesum_cake += time;
-				time_cake[n_cake] = time; 
-				n_cake++;
-			}
-			//getch(); 
-		}
-	}
-	fclose(fp); 
-	printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
-	printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
-	printf("\naverage time cake: %.3f", timesum_cake / n_cake);
-
-	// write data to file
-	fp = fopen("C:\\code\\checkersdata\\time_cake.txt", "w");
-	for (int i = 0; i < n_cake; i++)
-		fprintf(fp, "%.3f\n", time_cake[i]);
-	fclose(fp); 
-	fp = fopen("C:\\code\\checkersdata\\time_kingsrow.txt", "w");
-	for (int i = 0; i < n_cake; i++)
-		fprintf(fp, "%.3f\n", time_kingsrow[i]);
-	fclose(fp);
-
-	getch();
-	exit(0);
-	return 0; 
-}
-
-int analyze_matchprogress(void) {
-	// read match progress file
-	FILE* fp;
-	
-	int i; 
-	int ballot; 
-	char res1, res2; 
-	int n[2401]; 
-	int wins[2401]; 
-	char filename[128]; 
-
-
-#define NUMFILES 37
-
-	char files[NUMFILES][128] = { "match_progress61.txt",
-							"match_progress60.txt",
-							"match_progress14.txt",
-							"match_progress13.txt",
-							"match_progress17.txt",
-							"match_progress26.txt",
-							"match_progress22.txt",
-							"match_progress12.txt",
-							"match_progress35.txt",
-							"match_progress59.txt",
-"match_progress6.txt",
-"match_progress53.txt",
-"match_progress21.txt",
-"match_progress34.txt",
-"match_progress25.txt",
-"match_progress37.txt",
-"match_progress46.txt",
-"match_progress50.txt",
-"match_progress58.txt",
-"match_progress41.txt",
-"match_progress49.txt",
-"match_progress18.txt",
-"match_progress27.txt",
-"match_progress54.txt",
-"match_progress52.txt",
-"match_progress56.txt",
-"match_progress43.txt",
-"match_progress66.txt",
-"match_progress67.txt",
-"match_progress70.txt",
-"match_progress75.txt",
-"match_progress83.txt",
-"match_progress73.txt",
-"match_progress69.txt",
-"match_progress84.txt",
-"match_progress82.txt",
-"match_progress79.txt"
-	};
-	char directory[128] = "C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\";
-
-
-	for (i = 0; i < 2400; i++) {
-		n[i] = 0; 
-		wins[i] = 0; 
-	}
-
-	for (i = 0; i < NUMFILES; i++) {
-		sprintf(filename, "%s%s", directory, files[i]);
-		printf("\nanalyzing %s", filename);
-		fp = fopen(filename, "r");
-		if (fp == NULL) {
-			printf("\nfile not found %s", filename);
-		}
-		while (!feof(fp)) {
-			fscanf(fp, "%i:%c%c", &ballot, &res1, &res2);
-			//printf("\nballot %i result %c%c", ballot, res1, res2);
-			n[ballot] += 2;
-			if (res1 == '+' || res1 == '-')
-				wins[ballot]++;
-			if (res2 == '+' || res2 == '-')
-				wins[ballot]++;
-		}
-	}
-	fclose(fp);
-	//printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
-	//printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
-	//printf("\naverage time cake: %.3f", timesum_cake / n_cake);
-
-	// write data to file
-	fp = fopen("C:\\code\\checkersdata\\ballot_difficulty.txt", "w");
-	for (int i = 1; i <= 2400; i++)
-		fprintf(fp, "%i\t%.3f\n", i, (double)wins[i]/(double)(n[i]));
-	fclose(fp);
-	
-
-	getch();
-	exit(0);
-	return 0;
-}
 
 int PositiontoFEN(POSITION* p, char* FEN) {
 	// W:WK7,11,14,18,22:B1,12,13,19,K30
@@ -1519,9 +2098,236 @@ int PositiontoFEN(POSITION* p, char* FEN) {
 	return 0; 
 }
 
+int getindex_br531k(POSITION* p) {
+	return index_get(p);
+}
+
+int getreverseindex_br531k(POSITION* p) {
+	return index_reverse_get(p);
+}
+
+int getkingindex(POSITION* p) {
+	//printf("\n %i %i ", indexk_get(p), indexk_get_magic(p)); 
+	//return indexk_get(p);
+	return indexk_get_magic(p);
+}
+
+int getreversekingindex(POSITION* p) {
+	//printf("\n %i %i ", indexk_reverse_get(p), indexk_reverse_get_magic(p));
+	//return indexk_reverse_get(p);
+	return indexk_reverse_get_magic(p);
+}
+
+int getkingindex2(POSITION* p) {
+	//printf("\n %i %i ", indexk2_get(p), indexk2_get_magic(p)); 
+	//return indexk2_get(p);
+	return indexk2_get_magic(p); 
+}
+
+int getreversekingindex2(POSITION* p) {
+	//printf("\n %i %i ", indexk2_reverse_get(p), indexk2_reverse_get_magic(p));
+	//return indexk2_reverse_get(p);
+	return indexk2_reverse_get_magic(p);
+}
+
+int getkingindexside(POSITION* p) {
+	//printf("\n %i %i ", indexk2_get(p), indexk2_get_magic(p)); 
+	//return indexk2_get(p);
+	return indexk_side_get_magic(p);
+}
+
+int getreversekingindexside(POSITION* p) {
+	//printf("\n %i %i ", indexk2_reverse_get(p), indexk2_reverse_get_magic(p));
+	//return indexk2_reverse_get(p);
+	return indexk_side_reverse_get_magic(p);
+}
+
+#ifdef PAT5
+int getkingindexcenter(POSITION* p) {
+	return indexk_center_get_magic(p);
+}
+
+int getreversekingindexcenter(POSITION* p) {
+	return indexk_center_reverse_get_magic(p);
+}
+#endif
+
+
+
+
+
+/*Kingsrow(x64) 1.17d played 25 - 21
+analysis: value = 4, depth 22 / 21.5 / 41, 2.7s, 5497 kN / s, pv 25 - 21 9 - 14 29 - 25 11 - 15 23 - 18 14x23 27x11 8x15 17 - 14 10x17 21x14
+Cake 1.85_2017d(x64) played 9 - 14
+analysis : depth 19 / 40 / 20.6  time 1.38s  value = 10  nodes 5452751  3922kN / s  db 98 % cut 95.3% pv  9 - 14 22 - 18 13x22 26x17 11 - 15 18x11  8x15 29 - 25
+Kingsrow(x64) 1.17d played 21x14
+analysis : value = 2, depth 5 / 6.7 / 12, 0.0s, 13 kN / s, pv 21x14 4 - 8 24 - 19 15x24 28x19 8 - 11
+Cake 1.85_2017d(x64) played 12 - 16
+analysis : depth 19 / 34 / 19.3  time 2.70s  value = 2  nodes 9382738  3460kN / s  db 100 % cut 95.6% pv 12 - 16 32 - 27 16 - 20 24 - 19 15x24 28x19  4 - 8 25 - 21
+*/
+/*
+int analyze_matchlog(void) {
+	// read match log file
+	FILE* fp;
+	char line[256];
+	int value, d1, d2;
+	double time, d3;
+	double timesum_kr = 0, timesum_cake = 0;
+	int n_kr = 0, n_cake = 0;
+	double time_cake[100000];
+	double time_kingsrow[100000];
+
+	fp = fopen("C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\matchlog84.txt", "r");
+	while (!feof(fp)) {
+		fgets(line, 255, fp);
+		if (line[0] == 'a' && (line[10] == 'v' || line[33] == 'v')) {  // kingsrow
+			//printf("\n%s", line);
+			sscanf(line, "analysis: value=%i, depth  %i/%lf/%i, %lfs", &value, &d1, &d3, &d2, &time);
+			//sscanf(line, "analysis: time remaining:%fs   value=%i, depth  %i/%f/%i, %fs", &dummy, &value, &d1, &d3, &d2, &time);
+			if (d1 > 10 && d1 < 50
+				) {
+				timesum_kr += time;
+				time_kingsrow[n_kr] = time;
+				n_kr++;
+			}
+			//printf("\n%i   %i/%.1f/%i   %.1f", value, d1, d3, d2, time);
+		}
+		if (line[0] == 'a' && (line[10] == 'd' || line[33] == 'd')) {  // cake
+			//printf("\n%s", line);
+			sscanf(line, "analysis: depth %i/%i/%lf  time %lf", &d1, &d2, &d3, &time);
+			//sscanf(line, "analysis: time remaining:%fs  depth %i/%i/%f  time %f", &dummy, &d1, &d2, &d3, &time);
+			//printf("\n%i/%i/%.1f %.2f", d1,d2,d3,time);
+			if (d1 > 10 && d1 < 50) {
+				timesum_cake += time;
+				time_cake[n_cake] = time;
+				n_cake++;
+			}
+			//getch();
+		}
+	}
+	fclose(fp);
+	printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
+	printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
+	printf("\naverage time cake: %.3f", timesum_cake / n_cake);
+
+	// write data to file
+	fp = fopen("C:\\code\\checkersdata\\time_cake.txt", "w");
+	for (int i = 0; i < n_cake; i++)
+		fprintf(fp, "%.3f\n", time_cake[i]);
+	fclose(fp);
+	fp = fopen("C:\\code\\checkersdata\\time_kingsrow.txt", "w");
+	for (int i = 0; i < n_cake; i++)
+		fprintf(fp, "%.3f\n", time_kingsrow[i]);
+	fclose(fp);
+
+	getch();
+	exit(0);
+	return 0;
+}
+*/
+
+
+/*
+int analyze_matchprogress(void) {
+	// read match progress file
+	FILE* fp;
+
+	int i;
+	int ballot;
+	char res1, res2;
+	int n[2401];
+	int wins[2401];
+	char filename[128];
+
+
+#define NUMFILES 37
+
+	char files[NUMFILES][128] = { "match_progress61.txt",
+							"match_progress60.txt",
+							"match_progress14.txt",
+							"match_progress13.txt",
+							"match_progress17.txt",
+							"match_progress26.txt",
+							"match_progress22.txt",
+							"match_progress12.txt",
+							"match_progress35.txt",
+							"match_progress59.txt",
+"match_progress6.txt",
+"match_progress53.txt",
+"match_progress21.txt",
+"match_progress34.txt",
+"match_progress25.txt",
+"match_progress37.txt",
+"match_progress46.txt",
+"match_progress50.txt",
+"match_progress58.txt",
+"match_progress41.txt",
+"match_progress49.txt",
+"match_progress18.txt",
+"match_progress27.txt",
+"match_progress54.txt",
+"match_progress52.txt",
+"match_progress56.txt",
+"match_progress43.txt",
+"match_progress66.txt",
+"match_progress67.txt",
+"match_progress70.txt",
+"match_progress75.txt",
+"match_progress83.txt",
+"match_progress73.txt",
+"match_progress69.txt",
+"match_progress84.txt",
+"match_progress82.txt",
+"match_progress79.txt"
+	};
+	char directory[128] = "C:\\Users\\Martin Fierz\\Documents\\Martin Fierz\\CheckerBoard\\games\\matches\\";
+
+
+	for (i = 0; i < 2400; i++) {
+		n[i] = 0;
+		wins[i] = 0;
+	}
+
+	for (i = 0; i < NUMFILES; i++) {
+		sprintf(filename, "%s%s", directory, files[i]);
+		printf("\nanalyzing %s", filename);
+		fp = fopen(filename, "r");
+		if (fp == NULL) {
+			printf("\nfile not found %s", filename);
+		}
+		while (!feof(fp)) {
+			fscanf(fp, "%i:%c%c", &ballot, &res1, &res2);
+			//printf("\nballot %i result %c%c", ballot, res1, res2);
+			n[ballot] += 2;
+			if (res1 == '+' || res1 == '-')
+				wins[ballot]++;
+			if (res2 == '+' || res2 == '-')
+				wins[ballot]++;
+		}
+	}
+	fclose(fp);
+	//printf("\nfound %i moves of kr, %i moves of cake", n_kr, n_cake);
+	//printf("\n\naverage time kingsrow: %.3f", timesum_kr / n_kr);
+	//printf("\naverage time cake: %.3f", timesum_cake / n_cake);
+
+	// write data to file
+	fp = fopen("C:\\code\\checkersdata\\ballot_difficulty.txt", "w");
+	for (int i = 1; i <= 2400; i++)
+		fprintf(fp, "%i\t%.3f\n", i, (double)wins[i]/(double)(n[i]));
+	fclose(fp);
+
+
+	getch();
+	exit(0);
+	return 0;
+} */
+
+
+
+/*
 int FENtoPosition(char* FEN, POSITION* p)
 {
-	/* parses the FEN string in *FEN and places the result in p and color */
+	// parses the FEN string in *FEN and places the result in p and color
 	// example FEN string:
 	// W:W32,31,30,29,28,27,26,25,24,22,21:B23,12,11,10,8,7,6,5,4,3,2,1.
 	// returns 1 on success, 0 on failure.
@@ -1536,7 +2342,7 @@ int FENtoPosition(char* FEN, POSITION* p)
 	char colorchar = 'x';
 
 
-	// find the full stop in the FEN string which terminates it and 
+	// find the full stop in the FEN string which terminates it and
 	// replace it with a 0 for termination
 	length = (int)strlen(FEN);
 	token = FEN;
@@ -1551,7 +2357,7 @@ int FENtoPosition(char* FEN, POSITION* p)
 	if (strcmp(FENstring, "") == 0)
 		return 0;
 
-	/* parse color ,whitestring, blackstring*/
+	// parse color ,whitestring, blackstring
 	col = strtok(FENstring, ":");
 
 	if (col == NULL)
@@ -1562,7 +2368,7 @@ int FENtoPosition(char* FEN, POSITION* p)
 	else
 		p->color = BLACK;
 
-	/* parse position: get white and black strings */
+	// parse position: get white and black strings
 
 	white = strtok(NULL, ":");
 	if (white == NULL)
@@ -1591,19 +2397,19 @@ int FENtoPosition(char* FEN, POSITION* p)
 	black++;
 
 
-	/* reset board */
+	// reset board
 	p->bm = 0;
 	p->wm = 0;
 	p->bk = 0;
 	p->wk = 0;
 
-	/* parse white string */
+	// parse white string
 	token = strtok(white, ",");
 
 	while (token != NULL)
 	{
-		/* While there are tokens in "string" */
-		/* a token might be 18, or 18K */
+		// While there are tokens in "string"
+		// a token might be 18, or 18K
 		piece = MAN;
 		if (token[0] == 'K')
 		{
@@ -1611,22 +2417,22 @@ int FENtoPosition(char* FEN, POSITION* p)
 			piece = KING;
 		}
 		number = atoi(token);
-		/* ok, piece and number found, transform number to coors */
+		// ok, piece and number found, transform number to coors
 		number = SquareToBit(number);
 
 		if (piece == MAN)
 			p->wm |= one << number;
 		else
 			p->wk |= one << number;
-		/* Get next token: */
+		// Get next token:
 		token = strtok(NULL, ",");
 	}
-	/* parse black string */
+	// parse black string
 	token = strtok(black, ",");
 	while (token != NULL)
 	{
-		/* While there are tokens in "string" */
-		/* a token might be 18, or 18K */
+		// While there are tokens in "string"
+		// a token might be 18, or 18K
 		piece = MAN;
 		if (token[0] == 'K')
 		{
@@ -1634,17 +2440,58 @@ int FENtoPosition(char* FEN, POSITION* p)
 			token++;
 		}
 		number = atoi(token);
-		/* ok, piece and number found, transform number to coors */
+		// ok, piece and number found, transform number to coors
 		number = SquareToBit(number);
 		if (piece == MAN)
 			p->bm |= one << number;
 		else
 			p->bk |= one << number;
-		/* Get next token: */
+		// Get next token:
 		token = strtok(NULL, ",");
 	}
 	return 1;
-}
+}*/
 
+
+/*
+int loadpatterns(double *weights) {
+	FILE *fp = fopen("C:\\code\\checkersdata\\patternoutput.txt", "r");
+	int i, weight;
+	while (!feof(fp)) {
+		fscanf(fp, "w[%i] = %i;\n", &i, &weight);
+		printf("\n%i %i", i, weight);
+		weights[i] = weight;
+	}
+	printf("\n\nfile read, hit key to continue");
+	getch();
+}*/
+
+/*int create_indices() {
+	int mult[12];
+
+	int totalindex;
+	// create multipliers for bits (12 squares, with base 3)
+	mult[0] = 1;
+	for (int i = 1; i < 12; i++)
+		mult[i] = mult[i - 1] * 3;
+
+
+	// create index for a 12-bit pattern
+	for (int i = 0; i < 4096; i++) {
+		index[i] = 0;
+		for (int j = 0; j < 12; j++) {
+			if (i & (1 << j))
+				index[i] += mult[j];
+		}
+	}
+
+
+	for (int i = 0; i < MAXINDEX; i++) {
+		// i is a number between 0 and 3^12, describing the pattern of the last 3 ranks 
+		// for the case that there is no opponent king on the 2nd or 3rd rank
+		indexnum[i] = 0;
+	}
+	return 1;
+}*/
 
 

@@ -13,6 +13,12 @@
 
 #include "optimizeCake.h"
 
+#define USE_KR_DB
+
+#ifdef USE_KR_DB
+#include "..\\egdb.h"
+#endif
+
 
 // cake-specific includes - structs defines structures, consts defines constants,
 // xxx.h defines function prototypes for xxx.c
@@ -79,7 +85,7 @@ typedef struct
 	
 } SHORTGAME;
 
-#define MAXGAMES 1000000
+#define MAXGAMES 2000000
 SHORTGAME* gamelist;
 
 
@@ -90,6 +96,7 @@ SHORTGAME* gamelist;
 
 
 char directory[64] = "C:\\code\\checkersdata\\";
+char DBpath[256] = "C:\\Programme\\CheckerBoard64\\db";
 
 
 // ugly globals
@@ -98,6 +105,11 @@ int positions = 0;
 int repetitions = 0;
 int captures = 0;
 int endgames = 0;
+
+#ifdef USE_KR_DB
+EGDB_DRIVER* handle;
+char* out = 0;
+#endif
 
 
 
@@ -120,8 +132,8 @@ int main()
 	char filename[128]; 
 
 	
-	ep = malloc(sizeof(EVALUATEDPOSITION) * MAXGAMES*50);  // allow for 50 million positions currently
-	gamelist = malloc(sizeof(SHORTGAME) * MAXGAMES); // allow for 1'000'000 games currently
+	ep = malloc(sizeof(EVALUATEDPOSITION) * MAXGAMES*50);  // allow for 100 million positions currently
+	gamelist = malloc(sizeof(SHORTGAME) * MAXGAMES); // allow for 2'000'000 games currently
 	if(gamelist != NULL)
 		memset(gamelist, 0, sizeof(SHORTGAME) * MAXGAMES); // set to 0
 
@@ -200,9 +212,10 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 
 	int movenumber; 
 	int moveindex; 
+	int maxpos = 40000000;
 
 
-	buffer = malloc(10000000);
+	buffer = malloc(maxpos);
 	if (buffer == NULL)
 		return 0;
 	fp = fopen(filename, "r");
@@ -210,7 +223,7 @@ int load_PDN(EVALUATEDPOSITION * ep, char *filename) {
 	if (!fp)
 		return positions;
 	/* load a PDN database into buffer */
-	bytesread = fread(buffer, 1, 10000000, fp);
+	bytesread = fread(buffer, 1, maxpos, fp);
 	//printf("read %i bytes in PDN database - hit a key", bytesread);
 	//getch();
 	fclose(fp);

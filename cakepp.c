@@ -8,6 +8,10 @@
  *		TODO: cakepp.c is 2600 lines of code, much too much
  */
 
+// note from ed gilbert 30.9.2021
+//BTW, I have noticed that cake 1.89f doesn't seem to be using the 10pc db sometimes. For example, if I give it this position
+//W:WK4, 13, 30, K31, K32 : BK1, K3, K7, K15, 21
+
 
 
 #include "switches.h"
@@ -33,6 +37,7 @@
 #include "boolean.h"
 #include "cake_book.h"
 #include "app_instance.h"
+#include "egdb.h"
 
 // define the two following for running the optimizer, undef them for normal operation
 #undef NOHASHRESET
@@ -46,12 +51,17 @@ int hashmegabytes = 512;				// default hashtable size in MB if no value in regis
 int dbmegabytes = 1536;				// default db cache size in MB if no value in registry is found
 int usethebook = 3;					// default: use best moves if no value in the registry is found
 int hashsize = HASHSIZE;
-int maxNdb=0;						// the largest number of stones which is still in the database 
-int bookentries = 0; // number of entries in book hashtable
-int bookmovenum = 0; // number of used entries in book
+
+int bookentries = 0;				// number of entries in book hashtable
+int bookmovenum = 0;				// number of used entries in book
+int enable_wld = 1;					// turn off usage of WLD database
+int maxPiecesToUse = 10;			// TODO: make setting of pieces to use lower possible than what is in db
+int maxPiecesInDB = 0;				// TODO: this is what the egbd driver should return
+int maxNdb = 0;						// this is what Cake will use as maximal number of pieces in its search
+
 
 static HASHENTRY *hashtable;		// pointer to the hashtable, is allocated at startup
-static HASHENTRY *book;				// pointer to the book hashtable, is allocated at startup
+static OLD_HASHENTRY *book;				// pointer to the book hashtable, is allocated at startup
 static int iscapture[MAXDEPTH];		// tells whether move at realdepth was a capture
 #ifdef PROMOTEEXTEND
 static int ispromote[MAXDEPTH];		// tells whether move at realdepth was a promotion
@@ -63,14 +73,23 @@ static int cakeisinit = 0;			// is set to 1 after cake is initialized, i.e. init
 static int32 hashxors[2][4][32];			// this is initialized to constant hashxors stored in the code.
 static int  norefresh;
 
-//FILE* cake_main_fp; 
+//int globalhashkey; 
 
-//int32 killer1[MAXDEPTH+10], killer2[MAXDEPTH+10];
+#ifdef USE_KR_DB
+EGDB_DRIVER* handle;
+char* out = 0; 
+#endif
+
+char DBpath[256];
+char dbinfo[64];
+
+
+
+
 #ifdef GLOBALMOVESTACK
 MOVE movestack[(MAXDEPTH + 10) * MAXMOVES];
 #endif
 
-//int ifs[100]; 
 
 #ifdef THREADSAFEHT
 CRITICAL_SECTION hash_access;		// is locked if a thread is accessing the hashtable
@@ -81,7 +100,13 @@ CRITICAL_SECTION hash_access;		// is locked if a thread is accessing the hashtab
 /*                                initialization                              */
 /*																			  */
 /*----------------------------------------------------------------------------*/
-
+#ifdef USE_KR_DB
+void print_msgs(char* msg)
+{
+	if(out != 0)
+	sprintf(out, "%s", msg);
+}
+#endif
 int initcake(char str[1024])
 	//  initcake must be called before any calls to cake_getmove can be made.
 	//	it initializes the database and some constants, like the arrays for lastone
@@ -95,6 +120,16 @@ int initcake(char str[1024])
 	FILE* fp; 
 	int g_app_instance = 0;					/* 0, 1, 2, ... */
 	char g_app_instance_suffix[16] =""; 
+#ifdef USE_KR_DB
+	EGDB_TYPE egdb_type;
+	//EGDB_DRIVER* handle;
+	int status, max_pieces;
+	//char DBpath[256];
+	out = str; 
+#endif
+
+
+
 
 	// first of all, set application instance to allow different logfiles for different instances
 	/* To support running multiple instances of CB, use suffixes in logfilenames. */
@@ -126,8 +161,40 @@ int initcake(char str[1024])
 #ifdef USEDB
 	sprintf(str, "initializing database");
 	maxNdb = db_init(dbmegabytes,str, fp);
-	//printf("\nfound %i-piece database in %s", maxNdb, dirname); 
+	printf("\nfound %i-piece database in %s, %i MB used", maxNdb, dirname, dbmegabytes); 
 #endif // USEDB
+
+#ifdef USE_KR_DB
+	// Check that db files are present, get db type and size. 
+	//sprintf(DBpath, "C:\\Program Files\\CheckerBoard64\\db");
+	
+	status = egdb_identify(DBpath, &egdb_type, &max_pieces);
+	if (status) {
+		printf("No database found at %s\n", DBpath);
+		max_pieces = 0; 
+		//return(1);
+	} else
+		printf("Database type %d found with max pieces %d\n", egdb_type, max_pieces);
+	maxPiecesInDB = max_pieces; 
+
+	//maxNdb = max_pieces;
+	sprintf(dbinfo, "endgame database with %i pieces", max_pieces);
+	
+	/* Open database for probing. */
+	//handle = egdb_open(EGDB_ROW_REVERSED, max_pieces, 1024, DBpath, print_msgs);
+
+	// new 28.5.21 in Cake 1.89e: only load up to what is set in Cake
+	max_pieces = min(max_pieces, maxPiecesToUse); 
+
+	handle = egdb_open(EGDB_ROW_REVERSED, max_pieces, dbmegabytes, DBpath, print_msgs);
+	if (!handle) {
+		printf("Error returned from egdb_open()\n");
+		max_pieces = 0; 
+		//return(1);
+	}
+#endif
+
+
 
 #ifdef BOOK
 	// next, load the book 
@@ -175,6 +242,11 @@ int initcake(char str[1024])
 	return 1;
 	}
 
+int initxors_only() {
+	// initialize xors 
+	initxors((int*)hashxors);
+}
+
 int hashreallocate(int newMB)  // call with hashmegabytes
 	{
 	// TODO: move to little-used functions file
@@ -185,7 +257,6 @@ int hashreallocate(int newMB)  // call with hashmegabytes
 
 	HASHENTRY *pointer = NULL;
 	int newsize;
-
 	hashmegabytes = newMB;
 	newsize = ((long)hashmegabytes)*(long)1048576/sizeof(HASHENTRY);
 
@@ -200,7 +271,8 @@ int hashreallocate(int newMB)  // call with hashmegabytes
 	VirtualFree(hashtable, 0, MEM_RELEASE);
 	pointer = VirtualAlloc(0, (newsize+HASHITER)*sizeof(HASHENTRY), MEM_COMMIT, PAGE_READWRITE);
 #else
-	_aligned_free(hashtable);
+	//_aligned_free(hashtable);
+	free(hashtable);
 	
 
 	while(pointer == NULL) {
@@ -268,6 +340,9 @@ int bookgen(OLDPOSITION *q, int color, int *numberofmoves, int values[MAXMOVES],
 	// initialize module if necessary
 	if(!cakeisinit) 
 		initcake(str);
+
+	maxNdb = min(maxPiecesInDB, maxPiecesToUse);
+	
 	
 	// reset all counters, nodes, database lookups etc 
 	resetsearchinfo(&si);
@@ -475,7 +550,7 @@ int bookmtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstgues
 		time = ( (clock()- si->start)/CLK_TCK);
 		getpv(si, p, Lstr2);
 
-		sprintf(si->out,"depth %i/%i/%.1f  time %.2fs  %s  nodes %i  %ikN/s  %s", 
+		sprintf(si->out,"depth %i/%i/%.1f  time %.2fs  %s  nodes %lli  %ikN/s  %s", 
 			(depth/FRAC),si->maxdepth,(float)si->leafdepth/((float)si->leaf+0.001) , time, Lstr1, 
 			si->negamax, (int)((float)si->negamax/time/1000),Lstr2); 
 #ifdef FULLLOG
@@ -489,6 +564,7 @@ int bookmtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstgues
 
 #endif //bookgen
 
+/*
 int analyze(POSITION *p, int color, int how, int depth, double searchtime, int *stat_eval)
 	{
 	// is a direct-access function for external analysis
@@ -615,7 +691,7 @@ int analyze(POSITION *p, int color, int how, int depth, double searchtime, int *
 
 	free(si.repcheck);
 	return value;
-	}
+	}*/
 
 
 int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
@@ -673,7 +749,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	int bookfound=1,bookbestvalue=-MATE;
 	MOVE bookmove;
 	int bookequals=0;
-	int bookdepth=0;
+	unsigned int bookdepth=0;
 	int bookindex=-1,booklookupvalue;
 	int values[MAXMOVES];
 	int reset = (info & 1);
@@ -693,6 +769,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	int32 difference = 0; 
 	int32 identical = 0; 
 	int irreversible = 0; 
+	int matescores = 0; 
 
 	/*
 	if (log) {
@@ -748,6 +825,7 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	// set time limits
 	si->maxtime = maximaltime;
 #ifdef TIMEOPTIMIZED
+	//si->aborttime = 3.0 * maximaltime;
 	si->aborttime = 2.5 * maximaltime;
 #else
 	//si->aborttime = 4 * maximaltime;
@@ -798,9 +876,13 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	//	p->wm == lastsearchpos.wm && p->wk == lastsearchpos.wk)
 	//	identical = 1; 
 
-	// clear the hashtable 
-	//if(reset)
+
+	// for testing: always clear hashtable here (should be disabled normally)
 	//memset(hashtable,0,(hashsize+HASHITER)*sizeof(HASHENTRY));
+	// for testing: set reset to 1
+	//reset = 1; 
+
+
 	// initialize hash key 
 	absolutehashkey(p, &(si->hash));
 	//sprintf(Lstr, "hash key before Cake's move is %i", si->hash.key);
@@ -814,9 +896,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	// what is this doing at all?
 	norefresh=0;
 
-	// what is this doing here?
-	//n = makecapturelist(p, movelist, values, 0);
-
 #ifdef REPCHECK
 	//logtofile(fp, "repcheck array at start of cake_getmove"); 
 	//for (i = 0; i <= HISTORYOFFSET; i++) {
@@ -826,27 +905,34 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	// initialize history list: holds the last few positions of the current game 
 	dummy.hash = 0;
 	dummy.irreversible = 0;
-	if(reset != 0)
+
+	if (!si->gamehistflag) {
+
+		if (reset != 0)
 		{
-		//logtofile(fp, "\nreset indicated by CB, resetting rep array\n"); 
-		for (i = 0; i < HISTORYOFFSET; i++) {
-			si->repcheck[i] = dummy;
-			}
-		}
-#ifdef NEWREPDETECTION
-	// no reset indicated by CB; check if we have to shift history array
-	else {
-		if (si->repcheck[HISTORYOFFSET].hash != si->hash.key) {
-			//logtofile(fp, "\nNo reset, shifting repcheck array by 1");
+			//logtofile(fp, "\nreset indicated by CB, resetting rep array\n"); 
 			for (i = 0; i < HISTORYOFFSET; i++) {
-				si->repcheck[i] = si->repcheck[i + 1];
+				si->repcheck[i] = dummy;
 			}
 			si->repcheck[HISTORYOFFSET].hash = si->hash.key;
-			si->repcheck[HISTORYOFFSET].irreversible = irreversible;  
+			si->repcheck[HISTORYOFFSET].irreversible = 1;
 		}
-		//else
-		//	logtofile(fp, "\nlast position found in repcheck array, not shifting it");
+#ifdef NEWREPDETECTION
+		// no reset indicated by CB; check if we have to shift history array
+		else {
+			if (si->repcheck[HISTORYOFFSET].hash != si->hash.key) {
+				//logtofile(fp, "\nNo reset, shifting repcheck array by 1");
+				for (i = 0; i < HISTORYOFFSET; i++) {
+					si->repcheck[i] = si->repcheck[i + 1];
+				}
+				si->repcheck[HISTORYOFFSET].hash = si->hash.key;
+				si->repcheck[HISTORYOFFSET].irreversible = irreversible;
+			}
+			//else
+			//	logtofile(fp, "\nlast position found in repcheck array, not shifting it");
+		}
 	}
+	si->gamehistflag = 0; 
 
 	/*if (reset != 0)
 		logtofile(fp, "\nReset indicated by calling function, resetting repcheck array"); 
@@ -935,8 +1021,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	else
 		bookfound=0;
 
-	//absolutehashkey(p, &(si->hash));
-	//countmaterial(p, &(si->matcount));
 	
 	// check if the move on the board is forced - if yes, we don't waste time on it.
 	forcedmove = isforced(p);
@@ -947,6 +1031,13 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	n = getorderedmovelist(p, movelist);
 
 	//printf("\nnumber of moves is %i", n);
+
+	// set number of pieces to use:
+	maxNdb = min(maxPiecesInDB, maxPiecesToUse);
+	if (enable_wld == 0)
+		maxNdb = 0; 
+
+	printf("\nmaxNdb is %i, enable_wld is %i", maxNdb, enable_wld); 
 
 	si->start = clock();
 	guess=0;
@@ -1031,9 +1122,14 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 					break;
 					}
 #endif
-				if(abs(value)>MATE-100) 
-					break;
+				if (abs(value) > MATE - 100)
+					matescores++; 
+
+				if (matescores > 0)
+					break; 
+					//break;
 				}
+			
 
 			if(*(si->play))
 				{
@@ -1059,6 +1155,9 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			norefresh = 1;
 			}		// end of for depth move
 		}
+
+		if (matescores > 0)
+			hashclear(); 
 
 	si->value = value; 
 	if (log & 2)
@@ -1105,7 +1204,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 
 
 	// calculate new hash key
-
 	absolutehashkey(p, &(si->hash));
 
 	// find out if move was likely reversible
@@ -1145,9 +1243,6 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 	if (fp != NULL)
 		fclose(fp); 
 
-	//PgoAutoSweep("");
-
-
 	// return value: WIN / LOSS / DRAW / UNKNOWN
 	// if this position occurred before, return a rep draw
 	int repetitions = 0; 
@@ -1179,14 +1274,29 @@ int cake_getmove(SEARCHINFO *si, POSITION *p, int how,double maximaltime,
 			}
 		}
 #endif
+
+#ifdef USE_KR_DB
+	countmaterial(p, &(si->matcount));
+	if (isdbpos(p, &(si->matcount)))
+	{
+		value = handle->lookup(handle, p, p->color & 1, 0);
+		//value = dblookup(p, 0, &(si->matcount));
+		if (value == EGDB_DRAW) {
+			strcat(str, " Cake claims a database draw");
+			return DRAW;
+		}
+	}
+#endif
+
+
 	return UNKNOWN;
 }
 
 
-#ifdef USEDB
+#if defined USEDB || defined USE_KR_DB
 int isdbpos(POSITION *p, MATERIALCOUNT *m)
 	{
-	if(m->bm + m->bk + m->wm + m->wk <= maxNdb && max(m->bm + m->bk, m->wm + m->wk) <= MAXPIECE)
+	if (m->bm + m->bk + m->wm + m->wk <= maxNdb && max(m->bm + m->bk, m->wm + m->wk) <= (maxNdb/2 + (maxNdb & 1)))
 		{
 		if(testcapture(p))
 			return 0;
@@ -1218,11 +1328,13 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 	// value?!
 	int g, lowerbound, upperbound, beta;
 #ifdef FASTUPDATE
-	MOVE lastbest = { .bm = 0,.bk = 0,.wm = 0,.wk = 0 };
+	MOVE lastbest = (*best); // {.bm = 0, .bk = 0, .wm = 0, .wk = 0 };
 #endif
 	double time;
 	char Lstr1[1024]="",Lstr2[1024]="";
 	int failedhigh = 0; 
+
+
 	
 	g = firstguess;  // or g = 0?
 	upperbound = MATE;
@@ -1247,6 +1359,9 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 			lowerbound=g;
 			failedhigh = 1; 
 			//lowerbound = beta;
+#ifdef FASTUPDATE
+			lastbest = *best;
+#endif
 			sprintf(Lstr1,"value>%i",beta-1);
 			// TODO: if fastupdate I should set best here if si->play is not set!
 			}
@@ -1261,8 +1376,8 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 #endif
 
 
-
-		searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
+		if(si->allscores == 0)
+			searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
 #ifdef FULLLOG
 		sprintf(Lstr,"\n -> %s",si->out);
 		logtofile(Lstr);
@@ -1276,12 +1391,13 @@ int mtdf(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int firstguess,in
 			(*best) = lastbest;
 			break;
 		}
-		else  // normal search, store best move
-			lastbest = (*best); 
+		//else  // normal search, store best move
+		//	lastbest = (*best); 
 #endif
 		}
 	sprintf(Lstr1,"value=%i",g);
-	searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
+	if(si->allscores == 0)
+		searchinfotostring(si->out, depth, time, Lstr1, Lstr2, si);
 //#ifndef NEWLOG
 //	logtofile(si->out);
 //#endif
@@ -1409,7 +1525,7 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 		return 0;
 	si->negamax++;
 
-	assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+	assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 
 
 	for(i=0;i<MAXMOVES;i++)
@@ -1460,7 +1576,7 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 #endif
 		tmpnodes = si->negamax;
 		/********************recursion********************/
-		assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+		assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 
 #ifdef LATEMOVEREDUCTIONROOT
 		// late move reduction: the assumption is that late moves will fail low, so we search
@@ -1526,13 +1642,16 @@ int firstnegamax(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, in
 		}
 	bestindex = i;
 
+
+	if (*(si->play) == 0) {
 #ifdef THREADSAFEHT
-	EnterCriticalSection(&hash_access);
+		EnterCriticalSection(&hash_access);
 #endif	
-	hashstore(si, p, bestvalue, alpha, d, best, bestindex);
+		hashstore(si, p, bestvalue, alpha, d, best, bestindex);
 #ifdef THREADSAFEHT
-	LeaveCriticalSection(&hash_access);
+		LeaveCriticalSection(&hash_access);
 #endif
+	}
 
 
 	// set global Gbestindex for learn function
@@ -1575,19 +1694,24 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 	POSITION q;
 	int forcefirst = MAXMOVES - 1;
 	MATERIALCOUNT mc;
-	int killer = 0;
-	int bestmoveindex = 0;
+	unsigned int killer = 0;
+	unsigned int bestmoveindex = 0;
 
 	si->qsearch++;
 	si->negamax++;
 
 	// check material:
+#ifndef NEW_NOMATERIAL_CHECK
 	if (p->bm + p->bk == 0)
 		return evaluation_nomaterial_black(p, si->realdepth);
 	if (p->wm + p->wk == 0)
 		return evaluation_nomaterial_white(p, si->realdepth);
+#else
+	assert(p->bm + p->bk > 0); 
+	assert(p->wm + p->wk > 0); 
+#endif
 
-	assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+	assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 
 	/* what does qs do?
 	 * 1) generate moves that lead to a capture for the opponent (taking care there is a recapture??)
@@ -1617,7 +1741,7 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 
 			// could assert testcapture here
 			// TODO: why can this assert fail?
-			assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+			assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 
 			/*if (testcapture(&q) == 0) {
 				printboard(p);
@@ -1635,11 +1759,14 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 			updatehashkey(&(movelist[i]), &(si->hash));
 
 			// updatematerial 
-			if (p->color == BLACK)
+			// TODO: check if this can ever happen? I can't quite see how!?
+			/*if (p->color == BLACK)
 			{
 				if (movelist[i].bk && movelist[i].bm)
 				{
 					si->matcount.bk++; si->matcount.bm--;
+					printf("\n!!!!!");
+					getch(); 
 				}
 			}
 			else
@@ -1647,8 +1774,10 @@ int qsearch(SEARCHINFO* si, POSITION* p, int alpha, int beta, int qsdepth)
 				if (movelist[i].wk && movelist[i].wm)
 				{
 					si->matcount.wk++; si->matcount.wm--;
+					printf("\n!!!!!");
+					getch(); 
 				}
-			}
+			}*/
 
 			//recursion
 			// here, we only increase qsdepth if we do a real qs:
@@ -1757,17 +1886,21 @@ int csearch(SEARCHINFO *si, POSITION *p, int alpha, int beta)
 	int delta;
 	MATERIALCOUNT mc;
 
-	//si->qsearch++;
 	si->negamax++;
 
-	// check material:
 // check material:
+
+#ifndef NEW_NOMATERIAL_CHECK
 	if(p->bm + p->bk == 0)
 		return evaluation_nomaterial_black(p, si->realdepth); 
 	if(p->wm + p->wk == 0)
 		return evaluation_nomaterial_white(p, si->realdepth); 
+#else
+	assert(p->bm + p->bk > 0); 
+	assert(p->wm + p->wk > 0); 
+#endif
 
-	assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+	assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 	/* what does cs do?
 	 * 1) recursion over all capture moves
 	 * 2) return the value
@@ -1781,6 +1914,8 @@ int csearch(SEARCHINFO *si, POSITION *p, int alpha, int beta)
 		return evaluation(p, &(si->matcount), alpha, &delta, 0, maxNdb);	
 	
 	n = makecapturelist(p, movelist, values, forcefirst);
+
+	// TODO: could add an assert here?
 	
 	
 	// if no more captures, return eval
@@ -1799,7 +1934,7 @@ int csearch(SEARCHINFO *si, POSITION *p, int alpha, int beta)
 	for(i=0;i<n;i++)
 		{
 		domove(q,p,movelist[i]);
-		assert((p->bm & p->bk) | (p->wm & p->wk) == 0);
+		assert(((p->bm & p->bk) | (p->wm & p->wk)) == 0);
 
 		// if we arrive here, the opponent has a capture now - so
 		// we search this move.
@@ -1813,6 +1948,11 @@ int csearch(SEARCHINFO *si, POSITION *p, int alpha, int beta)
 			{
 			si->matcount.wm -= bitcount(movelist[i].wm);
 			si->matcount.wk -= bitcount(movelist[i].wk);
+
+#ifdef NEW_NOMATERIAL_CHECK
+			if (si->matcount.wm + si->matcount.wk == 0)
+				return MATE - si->realdepth;
+#endif
 			
 			if(movelist[i].bk && movelist[i].bm) 
 				{si->matcount.bk++; si->matcount.bm--;}
@@ -1821,6 +1961,10 @@ int csearch(SEARCHINFO *si, POSITION *p, int alpha, int beta)
 			{
 			si->matcount.bm -= bitcount(movelist[i].bm);
 			si->matcount.bk -= bitcount(movelist[i].bk);
+#ifdef NEW_NOMATERIAL_CHECK
+			if (si->matcount.bm + si->matcount.bk == 0)
+				return MATE - si->realdepth;
+#endif
 				
 			if(movelist[i].wk && movelist[i].wm)
 				{si->matcount.wk++; si->matcount.wm--;}
@@ -1940,7 +2084,76 @@ int reverseposition(POSITION* p, POSITION* q)
 }
 #endif
 
-int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, int *bestmoveindex, int truncationdepth, int truncationdepth2, int iid)
+#ifdef SMOTHERDETECT
+int smotherdetect(POSITION* p)
+{
+	// smotherdetect tries to detect a potential smother
+
+
+	int32 tmp;
+	int32 free;
+	int32 safe;
+	// TODO: improve with safe2:
+	//int32 safe2;
+	int32 movers = 0;
+	int32 jumpers = 0; 
+	int32 blocked = 0;
+
+	// smothers basically only work with kings on board
+	if (!p->bk)
+		return 0; 
+
+	// this is not working properly, as men kings that can jump are detected as blocked!
+	// improved version, but still not good, as pieces that can be captured by opponend can also be counted as blocked
+
+
+
+	// can compute free only with men, since safemoves cannot be called with kings.
+	
+	free = ~(p->bm | p->wm | p->wk | p->bk);
+
+	// mark all black pieces that can move right forward
+	if (p->bk) {
+		movers = ((p->bm | p->bk) & leftbackward(free));
+		movers |= ((p->bm | p->bk) & rightbackward(free));
+		movers |= (p->bk & leftforward(free));
+		movers |= (p->bk & rightforward(free));
+
+		jumpers = ((p->bm | p->bk) & leftbackward(p->wm|p->wk) & twoleftbackward(free));
+		jumpers |= ((p->bm | p->bk) & rightbackward(p->wm|p->wk) & tworightbackward(free));
+		jumpers |= (p->bk & leftforward(p->wm|p->wk) & twoleftforward(free));
+		jumpers |= (p->bk & rightforward(p->wm|p->wk) & tworightforward(free));
+
+		movers |= jumpers; 
+		
+
+		blocked = ((p->bm | p->bk) & (~movers));
+		if (bitcount(blocked) >= (bitcount(p->bm | p->bk) / 2) &&
+			!(p->bk & movers) &&
+			(p->bk & blocked)) {
+			//printboard(p);
+			//printint32(blocked);
+			//printf("\nblack is restricted");
+			//getch();
+			return 1;
+		}
+	}
+
+	/*movers = ((p->wm | p->wk) & leftforward(free));
+	movers |= ((p->wm | p->wk) & rightforward(free));
+	movers |= (p->wk & leftbackward(free));
+	movers |= (p->wk & rightbackward(free));
+	blocked = ((p->wm | p->wk) & (~movers));
+	if (bitcount(blocked) > bitcount(p->wm | p->wk)/2) {
+		printboard(p);
+		printf("\nwhite is restricted");
+		return 1;
+	}*/
+	return 0;
+}
+#endif  // SMOTHERDETECT
+
+int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, unsigned int *bestmoveindex, int truncationdepth, int truncationdepth2, int iid)
 	/*----------------------------------------------------------------------------
 	|		TODO: incredibly, negamax is 540 lines of code!						  |
 	|		negamax: the basic recursion routine of cake++						  |
@@ -1967,7 +2180,7 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	int32 Lkiller=0;
 	int stmcapture = 0;
 	int sntmcapture = 0;
-#ifdef USEDB
+#if defined USEDB || defined USE_KR_DB
 	int dbresult;
 #endif
 	int isdbpos = 0;
@@ -1989,17 +2202,13 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	MOVE movelist[MAXMOVES];// movelist
 #endif
 	
-	
 	int values[MAXMOVES];   // move ordering values
 	
 #ifdef LATEMOVEREDUCTION
 	int reduction = 0; 
-	//	char movestring[16]; 
-	//char bestmovestring[16];
-	//int lmrvalue; 
 #endif
 
-	//int futile = 0; 
+	int futile = 0; 
 	
 
 	/* 
@@ -2070,7 +2279,7 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 			*(si->play)=1;
 #endif
 	si->negamax++;
-
+	//globalhashkey = si->hash.key; 
 
 #ifndef NEW_NOMATERIAL_CHECK
 	// check material:  // todo: only execute this after capture moves directly without calling negamax again?
@@ -2078,13 +2287,17 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 		return evaluation_nomaterial_black(p, si->realdepth); 
 	if(p->wm + p->wk == 0)
 		return evaluation_nomaterial_white(p, si->realdepth); 
+#else
+	assert(p->bm + p->bk != 0); 
+	assert(p->wm + p->wk != 0); 
+	//assert(0); 
 #endif
 
 	// return if calculation interrupt is requested
 	if(*(si->play) != 0) 
 		return 0;
 
-	assert((p->bm& p->bk) | (p->wm & p->wk) == 0);
+	assert(((p->bm& p->bk) | (p->wm & p->wk)) == 0);
 
 	// stop search if maximal search depth is reached - this should basically never happen
 	if(si->realdepth >= MAXDEPTH) 
@@ -2162,21 +2375,8 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 #endif
 
 #ifdef IITERD // TODO: if we do the dblookup first, then we haven't counted the pieces properly?!
-#ifdef USEDB
-	/*
-	if (forcefirst == MAXMOVES - 1)
-		ifs[0]++; 
-	if (d > IIDDEPTH)
-		ifs[1]++; 
-	if (si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
-		ifs[2]++;
+#if defined USEDB || defined USE_KR_DB
 
-		ifs[0]: 611963291
-		ifs[1]: 8515074
-		ifs[2]: 600260589
-		*/
-
-	//if (forcefirst == MAXMOVES - 1 && d > IIDDEPTH && si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
 	if (d > IIDDEPTH && forcefirst == MAXMOVES - 1  && si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk > maxNdb)
 #else
 	if (forcefirst == MAXMOVES - 1 && d > IIDDEPTH)
@@ -2269,6 +2469,68 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 #endif // USEDB
 
 
+#ifdef USE_KR_DB
+	if (si->matcount.bm + si->matcount.bk + si->matcount.wm + si->matcount.wk <= maxNdb && max(si->matcount.bm + si->matcount.bk, si->matcount.wm + si->matcount.wk) <= MAXPIECE)
+	{
+		isdbpos = 1;
+		if (!(stmcapture | sntmcapture))
+		{
+			// this position can be looked up! only if neither side has a capture
+			si->dblookup++;
+			if (d < CLDEPTH * FRAC && !ispvnode)
+				cl = 1;
+			//dbresult = dblookup(p, cl, &(si->matcount));
+			//printf("\n%i", si->hash.key); 
+			dbresult = handle->lookup(handle, p, p->color & 1, cl);
+			//printf("\n%i", dbresult);
+			//printboard(p); 
+
+			// statistics
+			/*if (dbresult == EGDB_UNKNOWN) {
+				printboard(p); 
+				printf("!"); 
+				getch();
+				
+			}*/
+			if (dbresult == EGDB_NOT_IN_CACHE || dbresult == EGDB_SUBDB_UNAVAILABLE)
+				si->dblookupfail++;
+			else if (dbresult != EGDB_UNKNOWN)
+			{
+				si->dblookupsuccess++;
+
+				if (dbresult == EGDB_DRAW)
+					return 0;
+				if (dbresult == EGDB_WIN)
+				{
+					// we only need accurate value of db win if we are searching dbwin starting positions!
+					if (alpha < 300)
+						return 400;
+					value = dbwineval(p, &(si->matcount));
+					if (value > alpha)
+						return value;
+					localeval = value;
+				}
+				if (dbresult == EGDB_LOSS)
+				{
+					if (alpha > -300)
+						return -400;
+
+					p->color ^= CC;
+					value = -dbwineval(p, &(si->matcount));
+					p->color ^= CC;
+
+					if (value <= alpha)
+						return value;
+					localeval = value;
+				}
+			}
+			}
+		}
+#endif // USEDB
+
+
+
+
 #ifdef BOOKHT
 	if(d>BOOKHTMINDEPTH && d<BOOKHTMAXDEPTH)
 		{
@@ -2299,17 +2561,11 @@ int negamax(SEARCHINFO *si, POSITION *p, int d, int alpha, int32 *protokiller, i
 	
 	// TODO: there used to be &!sntmcapture here - good or not?
 	
-	/*
-	if (!stmcapture)
-		ifs[4]++; 
-	if (!isdbpos)
-		ifs[5]++; 
-	if (!ispvnode)
-		ifs[6]++; 
-		ifs[4]: 369847505
-ifs[5]: 619939913
-ifs[6]: 648698573*/
-	if(!stmcapture & !isdbpos & !ispvnode)
+#ifdef SMOTHERDETECT
+	if (!stmcapture & !isdbpos & !ispvnode && !smotherdetect(p))
+#else
+	if (!stmcapture & !isdbpos & !ispvnode)
+#endif
 		{
 		// only get evaluation here if we don't have it already!
 		assert(localeval == MATE);
@@ -2320,36 +2576,32 @@ ifs[6]: 648698573*/
 		// todo: sntmcapture could mean we should prune less? maybe add something to delta if sntmcapture? or just not call
 		// prune function because calling it will make search re-extend...?
 
-		/* tested while making cake 1.88 13.1.2020 - such a nice idea but tested badly...
+		// tested while making cake 1.88 13.1.2020 - such a nice idea but tested badly...
 		// check if we can improve on local eval due to hashtable bounds
-		if (valuetype == LOWER && value > localeval) {
-			//printf("\nlocal eval %i, improved by HT to %i", localeval, value); 
+		/*if (valuetype == LOWER && value > localeval) {
+			//printf("\nlocal eval %i, improved (increased) by HT to %i", localeval, value); 
 			localeval = value;
 		}
 		if (valuetype == UPPER && value < localeval) {
+			//printf("\nlocal eval %i, improved (decreased) by HT to %i", localeval, value);
 			localeval = value;
-		}
-		*/
+		}*/
+		
 
 
 		d = prune(max(alpha-localeval, localeval-(alpha+1)), p, delta, d, &truncationdepth, &truncationdepth2); 
 		}
 
+#ifdef SMOTHERDETECT
+	if (smotherdetect(p)) {
+		d += SMOTHEREXTEND;
+		//printf("!");
+	}
+#endif
+
 
 	
 #ifdef SAFE
-	/*
-	if (!stmcapture)
-		ifs[7]++; 
-	if (localeval > alpha)
-		ifs[8]++; 
-	if (p->bk + p->wk == 0)
-		ifs[9]++; 
-		ifs[7]: 369847505
-ifs[8]: 453057992
-ifs[9]: 382939399
-*/
-
 	if((!stmcapture) & (localeval > alpha) & ((p->bk+p->wk)==0))
 		safemovenum = safemoves(p);
 #endif // SAFE
@@ -2366,40 +2618,41 @@ ifs[9]: 382939399
 	// TODO take this if and the next if together - they both need !stmcapture && safemovnum > SAFEMOVENUM
 	// TODO: !iid should also be here, right? because the point of having iid is to generate a best move, and if
 	// we return here we don't get a best move
-	/*
-	if (!iid)
-		ifs[10]++; 
-	if (!ispvnode)
-		ifs[11]++; 
-	if (!stmcapture)
-		ifs[12]++; 
-	if (!sntmcapture)
-		ifs[13]++; 
-	if (safemovenum > SAFEMOVENUM)
-		ifs[14]++; 
-	if (originaldepth < 10 * FRAC)
-		ifs[15]++; 
-	if (localeval - 40 - (max(originaldepth, 0)) * 2 > alpha)
-		ifs[16]++; 
-	if (localeval != MATE)
-		ifs[17]++; 
-		ifs[10]: 648756494
-		ifs[11]: 648698573
-		ifs[12]: 369847505
-		ifs[13]: 588609816
-		ifs[14]: 642778444
-		ifs[15]: 648436520
-		ifs[16]: 361701578
-		ifs[17]: 355706825
-*/
 
-	//if (!iid && !ispvnode && !stmcapture && !sntmcapture && safemovenum > SAFEMOVENUM && originaldepth < 10 * FRAC &&
-	//	(localeval - 40 - (max(originaldepth, 0)) * 2 > alpha) && localeval != MATE) {
-	if (!stmcapture && localeval != MATE && !sntmcapture  && !iid && !ispvnode && safemovenum > SAFEMOVENUM && originaldepth < 10 * FRAC &&
+	// current version
+	if (!stmcapture && localeval != MATE && !sntmcapture && !iid && !ispvnode && safemovenum > SAFEMOVENUM && 
+		originaldepth < 10 * FRAC && !isdbpos &&
 		(localeval - 40 - (max(originaldepth, 0)) * 2 > alpha)) {
-			//futile = 1; 
+		
+	// current test version with less aggressive pruning - was a little bit worse
+	//if (!stmcapture && localeval != MATE && !sntmcapture  && !iid && !ispvnode && safemovenum > SAFEMOVENUM && originaldepth < 8 * FRAC &&
+	//	(localeval - 50 - (max(originaldepth, 0)) * 3 > alpha)) {
+		//futile = 1; 
+#ifdef CHECKDANGER
+		if (p->color == BLACK) {
+			if (!checkwhiteshots(p) && !checkwhitesqueeze(p))
+				return localeval;
+		}
+		else {
+			if (!checkblackshots(p) && !checkblacksqueeze(p))
+				return localeval; 
+		}
+		/*if (p->color == BLACK) {
+			if (checkwhiteshots(p) || checkwhitesqueeze(p))
+				printf("*");
+			else
+				printf("!");
+		}
+		else {
+			if (checkblackshots(p) || checkblacksqueeze(p))
+				printf("*");
+			else
+				printf("!");
+		}*/
+#else
 		//printf("!"); 
 		return localeval;
+#endif
 	}
 #endif
 
@@ -2409,18 +2662,8 @@ ifs[9]: 382939399
 	// depth must be <=0, and sidetomove has no capture  //
 	//---------------------------------------------------//
 
-	/*
-	if (d <= 0)
-		ifs[18]++; 
-	if (!stmcapture)
-		ifs[19]++; 
-	if (safemovenum > SAFEMOVENUM)
-		ifs[20]++; 
-		ifs[18]: 427980362
-ifs[19]: 311624538
-ifs[20]: 584555477
-*/
-	if((d<=0) & (!stmcapture) & (!iid) & (safemovenum >SAFEMOVENUM)) // // TODO: safemovenum computation has changed, need to revisit "2"
+
+	if((d<=0) & (!stmcapture) & (!iid) & (safemovenum > SAFEMOVENUM)) // // TODO: safemovenum computation has changed, need to revisit "2"
 		{
 		// normally, we'd be stopping here, but if the side to move "has something", we shouldn't do this
 		if(!sntmcapture)
@@ -2449,6 +2692,7 @@ ifs[20]: 584555477
 					if((localeval > alpha) || (localeval < alpha-QSEARCHLEVEL))
 						return localeval;
 					}
+				
 				return max(localeval, qsearch(si, p, alpha, alpha+1, 0));
 				}
 #endif
@@ -2481,11 +2725,15 @@ ifs[20]: 584555477
 			}
 		}
 
+	// todo: theoretically, with forcefirst != MAXMOVES-1 there is no need to calculate all order evals?! could defer this?
+	/*if (forcefirst != MAXMOVES - 1)
+		printf("!");
+	else
+		printf("_");*/
 
 	// we already made a capture list - if we have moves from there, we don't need to make a movelist.
 	if(!n)
 		n = makemovelist(si, p, movelist, values, forcefirst, *protokiller);
-		//n = makemovelist(si, p, movelist, values, forcefirst, killer1[si->realdepth]);
 
 	if(n==0)  // this can happen if side to move is stalemated.
 		return evaluation_nomove(si->realdepth); 
@@ -2503,15 +2751,20 @@ ifs[20]: 584555477
 #else
 	// new version
 	// TODO: a non-capture single move gets a 1/2 ply extension, whereas a recapture gets a 1/2 ply extension too
-	// these should be tested separately
-	if(n==1) {
-		if (!iscapture[si->realdepth])
-			d += SINGLEEXTEND;	
-		else if (iscapture[si->realdepth - 1])
-			d += SINGLEEXTEND; 
-		} 
+	// these should be tested 
 
-	
+#ifdef CAPTUREEXTENDALWAYS
+	if (n == 1 || stmcapture)
+		d +=  FRAC / 2;
+#else
+	if (n == 1) {
+		// testcake numbers show: singleextend_only hardly ever happens!
+		if (!iscapture[si->realdepth])
+			d += SINGLEEXTEND_ONLY;	
+		else if (iscapture[si->realdepth - 1])
+			d += SINGLEEXTEND_RECAPTURE; 
+		} 
+#endif
 #endif
 
 #ifdef PROMOTEEXTEND
@@ -2583,7 +2836,7 @@ ifs[20]: 584555477
 		// domove 
 		domove(q,p,movelist[index]);
 
-		assert((p->bm& p->bk) | (p->wm & p->wk) == 0);
+		assert(((p->bm& p->bk) | (p->wm & p->wk)) == 0);
 		
 		// if we had no hashmove, we have to set bestindex on the first iteration of this loop
 		
@@ -2605,9 +2858,13 @@ ifs[20]: 584555477
 			if (movelist[index].bk && movelist[index].bm)
 			{
 				si->matcount.bk++; si->matcount.bm--;
-				//ispromote[si->realdepth] = 1;
+#ifdef PROMOTEEXTEND
+				ispromote[si->realdepth] = 1;
+#endif
 			}
-			//else ispromote[si->realdepth] = 0; 
+#ifdef PROMOTEEXTEND
+			else ispromote[si->realdepth] = 0; 
+#endif
 			}
 		else
 			{
@@ -2623,9 +2880,13 @@ ifs[20]: 584555477
 			if (movelist[index].wk && movelist[index].wm)
 			{
 				si->matcount.wk++; si->matcount.wm--;
-				//ispromote[si->realdepth] = 1;
+#ifdef PROMOTEEXTEND
+				ispromote[si->realdepth] = 1;
+#endif
 			}
-			//else ispromote[si->realdepth] = 0; 
+#ifdef PROMOTEEXTEND
+			else ispromote[si->realdepth] = 0; 
+#endif
 			}
 		//the above is equivalent to: countmaterial();
 
@@ -2652,12 +2913,15 @@ ifs[20]: 584555477
 #ifdef LMR_AGGRESSIVE
 		if (d <= LATEMOVEMINDEPTH ||  i < 2 ||  testcapture(&q) || ispvnode)
 #else
-		if (d <= LATEMOVEMINDEPTH || i < LATEMOVENUM || ispvnode)
+		//if (d <= LATEMOVEMINDEPTH || i < LATEMOVENUM || ispvnode) // this was LMR2 with decent results for LATEMOVEMINDEPTH 6*FRAC and 4FRAC
+		//if (d >= LATEMOVEMINDEPTH || i < LATEMOVENUM || ispvnode)  // this is LMR3 with decent results for LATEMOVEMINDEPTH 8*FRAC; in both LMR2 and LMR3 LATEMOVENUM is 3
+		if (i<LATEMOVENUM || ispvnode)  // LMR4 superagressive
 #endif
 			value = -negamax(si, &q,d-FRAC,-(alpha+1),&Lkiller, &forcefirst, truncationdepth,truncationdepth2,0);
 		else
 			// we have a candidate for reduction
 			{
+			//printf("*");
 			//reduction = i / 2; 
 			//if (reduction > 4)
 			reduction = 4; 
@@ -2680,6 +2944,7 @@ ifs[20]: 584555477
 				value = -negamax(si, &q, d - FRAC, -(alpha + 1), &Lkiller, &forcefirst, truncationdepth, truncationdepth2, 0);
 				}
 			else {
+				//printf("*"); 
 				//printboard(p); 
 				//printf("\late move success at index %i/%i", i, n); 
 				//printf(".");
@@ -2714,6 +2979,12 @@ ifs[20]: 584555477
 	// save the position in the hashtable 
 	// we can/should restore the depth with which negamax was originally entered 
 	// since this is the depth with which it would have been compared 
+
+
+	// TODO: test this: don't store stuff in hashtable if search was aborted!
+	if (*(si->play) != 0)
+		return 0;
+
 #ifdef STOREEXACTDEPTH
 	d = originaldepth;
 #endif
@@ -2733,19 +3004,30 @@ ifs[20]: 584555477
 		*protokiller = movelist[bestindex].bm|movelist[bestindex].bk;
 	else
 		*protokiller = movelist[bestindex].wm|movelist[bestindex].wk;
-	// TODO: do I ever use killer2 and killer1??
-	//killer2[si->realdepth] = killer1[si->realdepth];
-	//killer1[si->realdepth] = *protokiller;
 #endif
 
 	// show futility failures
-	/*if (value <= alpha && futile) {
-		printf("!"); 
+	/*
+	if (value <= alpha && futile) {
 		printboard(p);
 		printf("\nthis should have been futile (alpha=%i, value = %i, localeval =%i, depth %i)", 
 			alpha, maxvalue, localeval, originaldepth); 
+#ifdef CHECKDANGER
+		if (p->color == BLACK) {
+			printf("\ncheckshots: %i", checkwhiteshots(p)); 
+			printf("\nchecksqueeze: %i", checkwhitesqueeze(p));
+		}
+		else {
+			printf("\ncheckshots: %i", checkblackshots(p));
+			printf("\nchecksqueeze: %i", checkblacksqueeze(p));
+		}
+#endif
 		getch(); 
-	}*/
+	}
+	*/
+	//if (value > alpha && futile) {
+	//	printf("!");
+	//}
 
 	// return best value
 	return maxvalue;
@@ -2781,7 +3063,8 @@ int	prune(int v1, POSITION *p, int delta, int d, int *truncationdepth, int *trun
 		v1 += TRUNCLEVELHARD; 
 		// limit maximum truncation amount to MAXTRUNC:
 		v1 = min(v1, MAXTRUNC*TRUNCDIVHARD); 
-		*truncationdepth += v1/TRUNCDIVHARD; 
+		*truncationdepth += v1/TRUNCDIVHARD; // here we get 100/12 or 8.3 = 2.1 ply. 
+		// this feels kind of wrong, it should be a smooth transition from trunc div soft?!
 		d-= v1/TRUNCDIVHARD;  
 		}
 	else //not outside window with strong truncation - reexpand and check if we also have to reexpand the weak truncation.
@@ -2789,17 +3072,28 @@ int	prune(int v1, POSITION *p, int delta, int d, int *truncationdepth, int *trun
 		// reexpand
 		d += *truncationdepth;
 		*truncationdepth = 0;
+
+		// re-expand by half?
+		//d += (*truncationdepth)/2;
+		//*truncationdepth = (*truncationdepth) / 2;
+
 		//new double trunc code
-		if(v2)
+		if(v2)  // can be 0...70
 			{
-			v2 += TRUNCLEVELSOFT;
-			*truncationdepth2 += v2/TRUNCDIVSOFT;
+			v2 += TRUNCLEVELSOFT;  // can now be 30...100
+			*truncationdepth2 += v2/TRUNCDIVSOFT;  // can be 2...6  1/4 ply reduction
 			d -= v2/TRUNCDIVSOFT; 
 			}
 		else
 			{
+			// todo: harmonize this with truncdivsoft that it continues at same amount here as truncdivsoft leaves off
+			// todo: test what happens if I don't fully re-expand but only half?
 			d += *truncationdepth2;
 			*truncationdepth2 = 0;
+
+			// re-expand by half?
+			//d += (*truncationdepth2) / 2;
+			//*truncationdepth2 = (*truncationdepth2) / 2;
 			}
 		// end new double trunc code
 		}
@@ -2877,7 +3171,8 @@ int ETClookup(SEARCHINFO *si, POSITION *p, MOVE movelist[MAXMOVES], int d, int n
 
 	int i;
 	HASH localhash = si->hash;
-	int ETCvalue, ETCvaluetype,ETCdummy,bestETCvalue=-MATE;
+	int ETCvalue, ETCvaluetype, bestETCvalue=-MATE;
+	unsigned int ETCdummy;
 	int dummy;
 	int color = p->color ^CC;
 
@@ -2967,26 +3262,17 @@ void hashstore(SEARCHINFO *si, POSITION *p, int value, int alpha, int depth, MOV
 		if (p->color == BLACK)
 		{
 			if ((best->bm | best->bk) != 0) {
-				//from = (best->bm | best->bk) & (p->bm | p->bk);    // bit set on square from 
-				//to = (best->bm | best->bk) & (~(p->bm | p->bk));
-				//si->history[LSB(from)][LSB(to)] += 1;
 				_BitScanForward(&from, (best->bm | best->bk) & (p->bm | p->bk));
 				_BitScanForward(&to, (best->bm | best->bk) & (~(p->bm | p->bk)));
 				si->history[(from)][(to)] += (depth); // +FRAC);	// candidate for faster LSB
-				//si->history[LSB(from)][LSB(to)] += (depth); // +FRAC);	// candidate for faster LSB
 			}
 		}
 		else
 		{
 			if ((best->wm | best->wk) != 0) {
-				//from = (best->wm | best->wk) & (p->wm | p->wk);
-				//to = (best->wm | best->wk) & (~(p->wm | p->wk));
-				//si->history[LSB(from)][LSB(to)] += 1;
-				//si->history[LSB(from)][LSB(to)] += (depth); // +FRAC);	// candidate for faster LSB
 				_BitScanForward(&from, (best->wm | best->wk) & (p->wm | p->wk));
 				_BitScanForward(&to, (best->wm | best->wk) & (~(p->wm | p->wk)));
 				si->history[(from)][(to)] += (depth); // +FRAC);	// candidate for faster LSB
-
 			}
 		}
 #endif
@@ -2997,6 +3283,13 @@ void hashstore(SEARCHINFO *si, POSITION *p, int value, int alpha, int depth, MOV
 	index = index & (0xFFFFFFFC);
 
 	minindex = index;
+
+#ifdef MATEHASHSCORES
+	if (value > MATE - MAXDEPTH)
+		value += si->realdepth;
+	else if (value < -MATE + MAXDEPTH)
+		value -= si->realdepth; 
+#endif
 
 	while(iter<HASHITER)
 		{
@@ -3013,7 +3306,9 @@ void hashstore(SEARCHINFO *si, POSITION *p, int value, int alpha, int depth, MOV
 				hashtable[index].valuetype = LOWER;
 			else
 				hashtable[index].valuetype = UPPER;
-
+			// TODO: update hashtable age!
+			hashtable[index].age = si->age; 
+			
 			return;
 			}
 		else
@@ -3099,6 +3394,10 @@ int hashlookup(SEARCHINFO *si, int *value, int *valuetype, int depth, int32 *for
 		if(hashtable[index].lock == si->hash.lock && ((int)hashtable[index].color==(color>>1)))
 			{
 			// we have found the position 
+
+			// set its age to current age - tested once with worse result but not clear whether significant
+			//hashtable[index].age = si->age; 
+
 			*ispvnode=hashtable[index].ispvnode;
 			
 			// move ordering 
@@ -3113,6 +3412,14 @@ int hashlookup(SEARCHINFO *si, int *value, int *valuetype, int depth, int32 *for
 			if ((int)hashtable[index].depth >= depth)
 			{
 				*value=hashtable[index].value;
+#ifdef MATEHASHSCORES
+				if (*value > MATE - MAXDEPTH)
+					*value -= si->realdepth;
+				else if (*value < -MATE + MAXDEPTH)
+					*value += si->realdepth;
+#endif
+
+
 				*valuetype=hashtable[index].valuetype;
 				return 1;
 			}
@@ -3316,6 +3623,18 @@ int perft(SEARCHINFO *si, POSITION *p, int depth)
 	
 	//logtofile("");
 	//logtofile("perft");
+
+	// open the log file at the start of a search
+#ifndef NOLOGFILE
+	FILE* fp; 
+	fp = getlogfile(0);
+	logtofile(fp, "\nperft called");
+	printboardtofile(p, fp); 
+	
+#else
+	fp = NULL;
+#endif
+
 	for(i=1; i<=depth; i++)
 		{
 		resetsearchinfo(si);
@@ -3323,10 +3642,12 @@ int perft(SEARCHINFO *si, POSITION *p, int depth)
 		perftrec(si, p, i);
 		t = clock(); 
 		t = (t-si->start)/CLK_TCK; 
-		sprintf(str, "depth %i positions %i  time %f   %.1f kN/s", i, si->negamax, t, si->negamax/(t*1000));
+		sprintf(str, "depth %i positions %lli  time %f   %.1f kN/s", i, si->negamax, t, si->negamax/(t*1000));
 		//logtofile(str);
 		}
-	return si->negamax; 
+	if(fp != NULL)
+		fclose(fp); 
+	return (unsigned int) si->negamax; 
 	}
 
 int perftrec(SEARCHINFO *si, POSITION *p, int depth)
