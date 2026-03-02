@@ -114,7 +114,7 @@ int __stdcall WINAPI enginecommand(char str[256], char reply[256])
 	int dbresult;
 	char* movestring;
 	const char split[2] = " ";
-	REPETITION dummy;
+	//REPETITION dummy;
 	//char* stopstring;
 	//FILE* fp; 
 
@@ -579,7 +579,7 @@ int __stdcall WINAPI getmove(int b[8][8],int color, double maxtime, char str[102
 		//static SEARCHINFO si;
 		HASH h; 
 		// todo: just for tesing, remove again
-		char reply[256]; 
+		//char reply[256]; 
 		//FILE* fp; 
 		
 		if(!cake_is_init)

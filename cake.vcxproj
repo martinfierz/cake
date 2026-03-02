@@ -294,15 +294,12 @@
     <ClCompile Include="cakedll.c" />
     <ClCompile Include="cakepp.c" />
     <ClCompile Include="cake_book.c" />
-    <ClCompile Include="cake_eval_185.c" />
     <ClCompile Include="cake_eval_parametrized.c" />
-    <ClCompile Include="cake_learn.c" />
     <ClCompile Include="cake_misc.c" />
     <ClCompile Include="dblookup.c" />
     <ClCompile Include="initcake.c" />
     <ClCompile Include="move_gen.c" />
     <ClCompile Include="pattern.c" />
-    <ClCompile Include="spa.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cakedll.def" />

@@ -86,19 +86,10 @@
     <ClCompile Include="cake_book.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cake_learn.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cake_eval_parametrized.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="spa.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="app_instance.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cake_eval_185.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pattern.c">

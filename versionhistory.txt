@@ -1,3 +1,7 @@
+20.6.2021
+Cake 1.89f officially released according to my webpage www.fierz.ch/checkers.htm but I have no idea
+what I changed. 
+
 16.4.2021
 currently known bugs to fix:
 
